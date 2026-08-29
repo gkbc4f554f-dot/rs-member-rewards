@@ -159,6 +159,58 @@
   .search-result span.tag{ font-size:10.5px; color:var(--amber); font-weight:800; text-transform:uppercase; }
   .search-empty{ font-size:13px; color:var(--ink-dim); padding:14px 4px; text-align:center; }
 
+  /* ===== ACCOUNTS / PROFILE ===== */
+  .nav-account-badge{ width:34px; height:34px; border-radius:50%; background:var(--amber); color:#1a1204; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; font-family:'Anton',sans-serif; cursor:pointer; transition: transform 0.12s cubic-bezier(0.32,0.72,0,1); }
+  .nav-account-badge:active{ transform: scale(0.9); }
+  .profile-hero{ padding: 150px 5vw 40px; display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
+  .profile-avatar{ width:64px; height:64px; border-radius:50%; background:var(--amber); color:#1a1204; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:22px; font-family:'Anton',sans-serif; flex-shrink:0; }
+  .profile-hero h1{ font-size: clamp(28px,4vw,40px); margin-bottom:4px; }
+  .profile-hero p{ color:var(--ink-dim); font-size:14px; }
+  .profile-grid{ display:grid; grid-template-columns: 1.2fr 1fr; gap:20px; padding: 0 5vw 90px; align-items:start; }
+  .profile-card{ background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:26px; }
+  .profile-card h3{ font-size:15px; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-dim); margin-bottom:18px; }
+  .profile-stat-row{ display:flex; gap:24px; margin-bottom:22px; }
+  .profile-stat b{ display:block; font-family:'Anton',sans-serif; font-size:30px; color:var(--amber); }
+  .profile-stat span{ font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-dim); font-weight:700; }
+  .verify-badge{ display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:999px; font-size:12.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.03em; }
+  .verify-badge.approved{ background:rgba(90,200,120,0.15); color:#7fe0a0; border:1px solid rgba(90,200,120,0.35); }
+  .verify-badge.declined{ background:rgba(224,100,92,0.15); color:#f28b85; border:1px solid rgba(224,100,92,0.35); }
+  .verify-badge.pending, .verify-badge.in_review{ background:rgba(232,163,61,0.15); color:var(--amber); border:1px solid rgba(232,163,61,0.35); }
+  .verify-badge.not_started{ background:rgba(255,255,255,0.08); color:var(--ink-dim); border:1px solid var(--line); }
+  .referral-box{ display:flex; gap:8px; margin-top:10px; }
+  .referral-box input{ flex:1; background:var(--panel-2); border:1px solid var(--line); border-radius:6px; padding:10px 12px; color:var(--ink); font-size:13px; }
+  .referral-copy-btn{ background:var(--amber); color:#1a1204; font-weight:800; font-size:12px; padding:0 16px; border-radius:6px; cursor:pointer; border:none; white-space:nowrap; }
+
+  /* verification prompt popup */
+  .verify-prompt-icon{ width:52px; height:52px; border-radius:50%; background:rgba(232,163,61,0.15); border:1px solid var(--amber); color:var(--amber); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:22px; }
+
+  /* countdown */
+  .countdown-row{ display:flex; gap:14px; }
+  .countdown-unit{ text-align:center; }
+  .countdown-unit b{ display:block; font-family:'Anton',sans-serif; font-size:24px; color:var(--amber); }
+  .countdown-unit span{ font-size:9.5px; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-dim); font-weight:700; }
+
+  /* FAQ accordion */
+  .faq-item{ border-bottom:1px solid var(--line); }
+  .faq-q{ width:100%; text-align:left; padding:20px 0; background:none; border:none; color:var(--ink); font-size:16px; font-weight:700; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:16px; }
+  .faq-q::after{ content:"+"; font-size:22px; color:var(--amber); transition: transform 0.2s ease; flex-shrink:0; }
+  .faq-item.open .faq-q::after{ transform: rotate(45deg); }
+  .faq-a{ max-height:0; overflow:hidden; transition: max-height 0.3s cubic-bezier(0.16,1,0.3,1); }
+  .faq-item.open .faq-a{ max-height:300px; }
+  .faq-a p{ padding-bottom:20px; color:var(--ink-dim); font-size:14px; line-height:1.6; max-width:640px; }
+
+  /* social proof strip */
+  .social-proof-strip{ display:flex; align-items:center; justify-content:center; gap:48px; flex-wrap:wrap; padding:36px 5vw; border-top:1px solid var(--line); border-bottom:1px solid var(--line); opacity:0.6; }
+  .social-proof-strip span{ font-family:'Anton',sans-serif; font-size:18px; text-transform:uppercase; letter-spacing:0.04em; }
+
+  /* admin page */
+  .admin-gate{ max-width:360px; margin:160px auto; padding:0 5vw; text-align:center; }
+  .admin-table{ width:100%; border-collapse:collapse; font-size:13px; }
+  .admin-table th{ text-align:left; padding:12px; border-bottom:1px solid var(--line); color:var(--ink-dim); text-transform:uppercase; font-size:10.5px; letter-spacing:0.06em; }
+  .admin-table td{ padding:12px; border-bottom:1px solid var(--line); }
+  .admin-winner-box{ background:var(--panel-2); border:1px solid var(--amber); border-radius:10px; padding:24px; margin-bottom:24px; display:none; }
+  .admin-winner-box.show{ display:block; }
+
   section{ padding: 88px 5vw; position:relative; }
   .section-head{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:40px; flex-wrap:wrap; gap:18px; }
   .section-title{ font-size:clamp(28px,3.6vw,42px); line-height:1; }
@@ -308,6 +360,7 @@
     .grid-4, .grid-3{ grid-template-columns:1fr 1fr; }
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -409,7 +462,7 @@
         <div class="card-hover">
           <div class="card-hover-stats">
             <div class="card-hover-stat"><b>$18K</b><span>Prize Pool</span></div>
-            <div class="card-hover-stat"><b>3 Days</b><span>Left to Enter</span></div>
+            <div class="card-hover-stat"><b><span data-countdown="days">3</span>d</b><span>Left to Enter</span></div>
           </div>
           <div class="card-hover-title display">The Rooftop Giveaway</div>
           <div class="card-hover-desc">This season's flagship drop, funded by ad revenue from partner brands. No purchase required — members get 2x entries automatically.</div>
@@ -542,6 +595,36 @@
     </div>
   </section>
 
+  <div class="social-proof-strip">
+    <span data-entry-count>0</span>
+    <span style="opacity:0.7; font-size:13px; font-family:'Manrope',sans-serif; text-transform:none; letter-spacing:0;">members have entered a drop</span>
+  </div>
+
+  <section id="faq">
+    <div class="section-head">
+      <h2 class="section-title display">FAQ</h2>
+      <p class="section-desc">The honest answers to what people actually ask.</p>
+    </div>
+    <div style="max-width:720px;">
+      <div class="faq-item">
+        <button class="faq-q">How are winners picked?</button>
+        <div class="faq-a"><p>Winners are chosen at random from verified entrants only — you need a confirmed PU Prime account before you're eligible, which stops duplicate or fake entries.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">When do I actually get paid?</button>
+        <div class="faq-a"><p>Placeholder — describe your real payout timeline here once it's finalized.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Is this legit?</button>
+        <div class="faq-a"><p>Every drop is funded by ad partner revenue, not entry fees — you're never asked to pay to enter. Identity verification exists purely so we can confirm it's really you before any payout.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Do I have to verify my PU Prime account to sign up?</button>
+        <div class="faq-a"><p>No — creating an RS account is instant and free. Verification only matters once you want to actually be eligible to win, and it's a one-time step.</p></div>
+      </div>
+    </div>
+  </section>
+
   <section class="support-hero">
     <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221400%22%20height%3D%22700%22%20viewBox%3D%220%200%201400%20700%22%3E%0A%3Cdefs%3E%0A%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22hsl%2815%2C38%25%2C16%25%29%22/%3E%0A%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22hsl%2855%2C45%25%2C10%25%29%22/%3E%0A%3C/linearGradient%3E%0A%3Cpattern%20id%3D%22p%22%20width%3D%2214%22%20height%3D%2214%22%20patternTransform%3D%22rotate%2845%29%22%20patternUnits%3D%22userSpaceOnUse%22%3E%0A%3Cline%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%2214%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.045%29%22%20stroke-width%3D%227%22/%3E%0A%3C/pattern%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%221400%22%20height%3D%22700%22%20fill%3D%22url%28%23g%29%22/%3E%0A%3Crect%20width%3D%221400%22%20height%3D%22700%22%20fill%3D%22url%28%23p%29%22/%3E%0A%3Ccircle%20cx%3D%221148.0%22%20cy%3D%22126.0%22%20r%3D%22196.00000000000003%22%20fill%3D%22rgba%28232%2C163%2C61%2C0.10%29%22/%3E%0A%3Ctext%20x%3D%2224%22%20y%3D%22676%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2231%22%20fill%3D%22rgba%28243%2C241%2C234%2C0.55%29%22%20font-weight%3D%22700%22%20letter-spacing%3D%221%22%3ESUPPORT1%3C/text%3E%0A%3C/svg%3E" alt="">
     <div class="support-hero-content">
@@ -556,6 +639,7 @@
       <a href="#/support">Contact</a>
       <button data-open="careers">Careers</button>
       <a href="#/newswire">Community Resources</a>
+      <a href="#/terms">Terms & Eligibility</a>
       <button data-open="scrollNewsletter">Subscribe</button>
     </div>
     <div class="footer-bottom">
@@ -622,8 +706,91 @@
   </section>
 </div>
 
+<!-- ===================== PROFILE ===================== -->
+<div class="page" id="page-profile">
+  <div class="profile-hero">
+    <div class="profile-avatar" id="profileAvatar">?</div>
+    <div style="flex:1;">
+      <h1 id="profileName">Loading…</h1>
+      <p id="profileEmail"></p>
+    </div>
+    <button class="btn-ghost" data-open="logout" style="border:1px solid rgba(243,241,234,0.35);">Log Out</button>
+  </div>
+  <div class="profile-grid">
+    <div class="profile-card">
+      <h3>Your Rewards</h3>
+      <div class="profile-stat-row">
+        <div class="profile-stat"><b id="profilePoints">0</b><span>Credits</span></div>
+      </div>
+      <h3>Verification</h3>
+      <div id="profileVerifyBadge"><span class="verify-badge not_started">Not Started</span></div>
+      <div id="profileVerifyAction" style="margin-top:16px;"></div>
+    </div>
+    <div class="profile-card">
+      <h3>PU Prime Account</h3>
+      <form id="puprimeForm" novalidate>
+        <div class="form-field" id="profilePuprimeField">
+          <label for="profilePuprime">PU Prime ID (8 digits)</label>
+          <input id="profilePuprime" placeholder="12345678" maxlength="8" inputmode="numeric">
+          <div class="form-error">Enter exactly 8 digits.</div>
+        </div>
+        <button type="submit" class="form-submit">Save PU Prime ID</button>
+      </form>
+      <h3 style="margin-top:26px;">Your Referral Link</h3>
+      <p style="font-size:12.5px; color:var(--ink-dim); margin-bottom:4px;">Share this — you both earn credits when they verify.</p>
+      <div class="referral-box">
+        <input id="referralLinkInput" readonly>
+        <button class="referral-copy-btn" id="referralCopyBtn" type="button">Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== ADMIN ===================== -->
+<div class="page" id="page-admin">
+  <div class="admin-gate" id="adminGate">
+    <h1 class="display" style="font-size:32px; margin-bottom:16px;">Admin Access</h1>
+    <div class="form-field" id="adminPassField">
+      <label for="adminPass" class="sr-only">Password</label>
+      <input id="adminPass" type="password" placeholder="Admin password">
+      <div class="form-error">Incorrect password.</div>
+    </div>
+    <button class="form-submit" id="adminLoginBtn">Enter</button>
+  </div>
+  <div id="adminPanel" style="display:none; padding:150px 5vw 90px;">
+    <div class="section-head">
+      <h2 class="section-title display">Entrants</h2>
+      <button class="btn-primary" id="pickWinnerBtn" style="border:none;">Pick Random Winner</button>
+    </div>
+    <div class="admin-winner-box" id="adminWinnerBox"></div>
+    <div style="overflow-x:auto;">
+      <table class="admin-table" id="adminTable">
+        <thead><tr><th>Name</th><th>Email</th><th>PU Prime ID</th><th>Status</th></tr></thead>
+        <tbody id="adminTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TERMS ===================== -->
+<div class="page" id="page-terms">
+  <div class="inner-hero">
+    <h1 class="display">Terms & Eligibility</h1>
+    <p>Placeholder legal text for design review — replace with real terms reviewed by a lawyer before launch.</p>
+  </div>
+  <div style="padding: 0 5vw 90px; max-width:720px;">
+    <h3 style="font-size:18px; margin-bottom:10px;">Eligibility</h3>
+    <p style="color:var(--ink-dim); font-size:14px; line-height:1.7; margin-bottom:24px;">You must be 18 years or older to enter any RS giveaway. Entry requires a verified PU Prime trading account. Per PU Prime's own stated regional restrictions, residents of the United States, China, India, the Philippines, Singapore, North Korea, Cuba, Iran, and FATF-blacklisted jurisdictions are not eligible to participate.</p>
+    <h3 style="font-size:18px; margin-bottom:10px;">How Winners Are Selected</h3>
+    <p style="color:var(--ink-dim); font-size:14px; line-height:1.7; margin-bottom:24px;">Placeholder — describe your actual random-selection process here once finalized.</p>
+    <h3 style="font-size:18px; margin-bottom:10px;">Payouts</h3>
+    <p style="color:var(--ink-dim); font-size:14px; line-height:1.7;">Placeholder — describe how and when winners are paid once finalized.</p>
+  </div>
+</div>
+
 <div id="modalRoot"></div>
 <div id="toastRoot" class="toast" role="status" aria-live="polite"><span class="dot-ok"></span><span id="toastMsg"></span></div>
+
 
 <script>
   const posterImgs = [
@@ -768,6 +935,7 @@
   (function(){
     const modalRoot = document.getElementById('modalRoot');
     let activeCleanup = null;
+    window.closeAnyModal = function(){ if (activeCleanup) activeCleanup(); };
 
     function openModal(html){
       if (activeCleanup) activeCleanup();
@@ -803,6 +971,7 @@
       activeCleanup = close;
       return { panel, close };
     }
+    window.openModal = openModal;
 
     function showToast(msg){
       const toast = document.getElementById('toastRoot');
@@ -811,6 +980,7 @@
       clearTimeout(toast._t);
       toast._t = setTimeout(() => toast.classList.remove('show'), 3200);
     }
+    window.showToast = showToast;
 
     function wireForm(formEl, fields, onSuccess){
       formEl.addEventListener('submit', e => {
@@ -835,12 +1005,12 @@
     // ---- Modal templates ----
     const tpl = {
       join: () => `
-        <div class="modal-eyebrow">Membership · Verified Rewards</div>
-        <h3 class="modal-title">Join RS — it's free</h3>
-        <div class="modal-body">Boosted giveaway odds, early store access, and monthly bonus credits. We verify your identity once so we can confirm winners and pay out prizes safely — this takes about 2 minutes.</div>
+        <div class="modal-eyebrow">Membership · Free</div>
+        <h3 class="modal-title">Create your RS account</h3>
+        <div class="modal-body">Just an email and password to start. You can verify your PU Prime account any time after — no rush.</div>
         <form id="joinForm" novalidate>
           <div class="form-field" id="joinNameField">
-            <label for="joinName">Full Name (as it appears on your ID)</label>
+            <label for="joinName">Full Name</label>
             <input id="joinName" required>
             <div class="form-error">Enter your full name.</div>
           </div>
@@ -849,25 +1019,46 @@
             <input id="joinEmail" type="email" required>
             <div class="form-error">Enter a valid email address.</div>
           </div>
-          <div class="form-field" id="joinPhoneField">
-            <label for="joinPhone">Phone Number</label>
-            <input id="joinPhone" type="tel" placeholder="+44 7700 900000" required>
-            <div class="form-error">Enter a valid phone number.</div>
-          </div>
-          <div class="form-field" id="joinDobField">
-            <label for="joinDob">Date of Birth</label>
-            <input id="joinDob" type="date" required>
-            <div class="form-error">Enter your date of birth.</div>
+          <div class="form-field" id="joinPasswordField">
+            <label for="joinPassword">Password</label>
+            <input id="joinPassword" type="password" required>
+            <div class="form-error">Password must be at least 8 characters.</div>
           </div>
           <div class="form-field" id="joinPuprimeField">
-            <label for="joinPuprime">PU Prime Account Number</label>
-            <input id="joinPuprime" placeholder="e.g. PU123456" required>
-            <div class="form-error">Enter your PU Prime account number.</div>
+            <label for="joinPuprime">PU Prime ID <span style="color:var(--ink-dim); font-weight:600; text-transform:none;">— optional, add later if you prefer</span></label>
+            <input id="joinPuprime" placeholder="12345678" maxlength="8" inputmode="numeric">
+            <div class="form-error">If entered, PU Prime ID must be exactly 8 digits.</div>
           </div>
-          <button type="submit" class="form-submit">Continue to Verification</button>
-          <p style="font-size:11.5px; color:var(--ink-dim); text-align:center; margin-top:12px; line-height:1.5;">You'll be securely redirected to our verification partner to scan your ID and confirm it's really you. We never see or store your ID document.</p>
+          <button type="submit" class="form-submit">Create Account</button>
+          <p style="text-align:center; font-size:12.5px; color:var(--ink-dim); margin-top:16px;">Already have an account? <button type="button" data-open="login" style="background:none;border:none;color:var(--amber);font-weight:700;cursor:pointer;padding:0;">Log in</button></p>
         </form>
-        <div class="form-success" id="joinSuccess"><div class="check">✓</div><h4>Almost there.</h4><p>Redirecting you to identity verification now…</p></div>
+        <div class="form-success" id="joinSuccess"><div class="check">✓</div><h4>You're in.</h4><p>Welcome to RS.</p></div>
+      `,
+      login: () => `
+        <div class="modal-eyebrow">Welcome Back</div>
+        <h3 class="modal-title">Log in to RS</h3>
+        <form id="loginForm" novalidate>
+          <div class="form-field" id="loginEmailField">
+            <label for="loginEmail">Email</label>
+            <input id="loginEmail" type="email" required>
+            <div class="form-error">Enter a valid email address.</div>
+          </div>
+          <div class="form-field" id="loginPasswordField">
+            <label for="loginPassword">Password</label>
+            <input id="loginPassword" type="password" required>
+            <div class="form-error">Enter your password.</div>
+          </div>
+          <button type="submit" class="form-submit">Log In</button>
+          <p style="text-align:center; font-size:12.5px; color:var(--ink-dim); margin-top:16px;">No account? <button type="button" data-open="join" style="background:none;border:none;color:var(--amber);font-weight:700;cursor:pointer;padding:0;">Create one free</button></p>
+        </form>
+        <div class="form-success" id="loginSuccess"><div class="check">✓</div><h4>Welcome back.</h4><p>Signed in.</p></div>
+      `,
+      "verify-prompt": () => `
+        <div class="verify-prompt-icon">🛡</div>
+        <h3 class="modal-title" style="text-align:center;">Verify your account</h3>
+        <div class="modal-body" style="text-align:center;">Verifying your PU Prime account once means we can confirm you if you ever win a giveaway. It only takes about 2 minutes, and you won't be asked again after this.</div>
+        <button type="button" class="form-submit" id="verifyNowBtn">Verify Now</button>
+        <button type="button" class="modal-close-secondary" id="verifyLaterBtn" style="width:100%; background:none; border:none; color:var(--ink-dim); font-size:13px; font-weight:700; padding:14px; cursor:pointer;">Maybe later</button>
       `,
       tag: () => `
         <div class="modal-eyebrow">Customize</div>
@@ -911,9 +1102,9 @@
         <h3 class="modal-title">The Rooftop Giveaway</h3>
         <div class="modal-stats">
           <div><b>$18K</b><span>Prize Pool</span></div>
-          <div><b>3 Days</b><span>Left to Enter</span></div>
+          <div><b><span data-countdown="days">3</span>d <span data-countdown="hours">00</span>h <span data-countdown="mins">00</span>m</b><span>Left to Enter</span></div>
         </div>
-        <div class="modal-body">Funded entirely by this season's ad partners. No purchase required — members get 2x entries automatically, RS Plus members get 2.4x.</div>
+        <div class="modal-body">Funded entirely by this season's ad partners. No purchase required — members get 2x entries automatically, RS Plus members get 2.4x. Entry requires a verified PU Prime account so we can confirm winners and pay out prizes safely.</div>
         <button type="button" class="form-submit" data-open="join">Enter Free</button>
       `,
       support: () => `
@@ -966,6 +1157,7 @@
         <button type="button" class="form-submit" data-open="${item.action}">${item.cta}</button>
       `
     };
+    window.tpl = tpl;
 
     // ---- Delegated click handling ----
     document.addEventListener('click', function(e){
@@ -982,12 +1174,12 @@
         form.addEventListener('submit', async (ev) => {
           ev.preventDefault();
 
+          const puprimeVal = panel.querySelector('#joinPuprime').value.trim();
           const fields = [
             { fieldId: 'joinNameField', inputId: 'joinName', validate: notEmpty },
             { fieldId: 'joinEmailField', inputId: 'joinEmail', validate: isEmail },
-            { fieldId: 'joinPhoneField', inputId: 'joinPhone', validate: v => v.replace(/[^0-9]/g, '').length >= 7 },
-            { fieldId: 'joinDobField', inputId: 'joinDob', validate: notEmpty },
-            { fieldId: 'joinPuprimeField', inputId: 'joinPuprime', validate: v => v.length >= 3 },
+            { fieldId: 'joinPasswordField', inputId: 'joinPassword', validate: v => v.length >= 8 },
+            { fieldId: 'joinPuprimeField', inputId: 'joinPuprime', validate: v => v === '' || /^\d{8}$/.test(v) },
           ];
           let valid = true;
           fields.forEach(f => {
@@ -1000,53 +1192,95 @@
           if (!valid) return;
 
           submitBtn.disabled = true;
-          submitBtn.textContent = 'Checking…';
+          submitBtn.textContent = 'Creating…';
+
+          const fullName = panel.querySelector('#joinName').value.trim();
+          const email = panel.querySelector('#joinEmail').value.trim();
+          const password = panel.querySelector('#joinPassword').value;
 
           try {
-            const res = await fetch('/.netlify/functions/signup', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                fullName: panel.querySelector('#joinName').value.trim(),
-                email: panel.querySelector('#joinEmail').value.trim(),
-                phone: panel.querySelector('#joinPhone').value.trim(),
-                dob: panel.querySelector('#joinDob').value.trim(),
-                puprimeAccount: panel.querySelector('#joinPuprime').value.trim(),
-              }),
+            const { data, error } = await sb.auth.signUp({
+              email, password,
+              options: { data: { full_name: fullName } }
             });
-            const data = await res.json();
 
-            if (res.status === 422 && data.errors) {
-              Object.entries(data.errors).forEach(([key, msg]) => {
-                const map = { fullName: 'joinNameField', email: 'joinEmailField', phone: 'joinPhoneField', dob: 'joinDobField', puprimeAccount: 'joinPuprimeField' };
-                const wrap = panel.querySelector('#' + map[key]);
-                if (wrap) {
-                  wrap.classList.add('invalid');
-                  const err = wrap.querySelector('.form-error');
-                  if (err) err.textContent = msg;
-                }
-              });
+            if (error) {
+              showToast(error.message || 'Could not create account — try again.');
               submitBtn.disabled = false;
-              submitBtn.textContent = 'Continue to Verification';
+              submitBtn.textContent = 'Create Account';
               return;
             }
 
-            if (!res.ok || !data.verificationUrl) {
-              showToast(data.error || 'Something went wrong — try again in a moment.');
-              submitBtn.disabled = false;
-              submitBtn.textContent = 'Continue to Verification';
-              return;
+            // Give the DB trigger a beat to create the profile row, then attach optional fields.
+            await new Promise(r => setTimeout(r, 400));
+            const refCode = sessionStorage.getItem('rs_ref');
+            const updates = {};
+            if (puprimeVal) updates.puprime_id = puprimeVal;
+            if (refCode) updates.referred_by = refCode;
+            if (Object.keys(updates).length && data.user) {
+              await sb.from('profiles').update(updates).eq('id', data.user.id);
+              if (puprimeVal) {
+                fetch('/.netlify/functions/sync-puprime', {
+                  method: 'POST', headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ userId: data.user.id, email, fullName, puprimeId: puprimeVal })
+                }).catch(() => {});
+              }
             }
 
             form.style.display = 'none';
             panel.querySelector('#joinSuccess').classList.add('show');
-            setTimeout(() => { window.location.href = data.verificationUrl; }, 1200);
+            showToast('Account created — welcome to RS.');
+            setTimeout(async () => { closeAnyModal(); await refreshAuthUI(true); }, 1000);
           } catch (err) {
             showToast('Network error — check your connection and try again.');
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Continue to Verification';
+            submitBtn.textContent = 'Create Account';
           }
         });
+      }
+      else if (type === 'login') {
+        e.preventDefault();
+        const { panel } = openModal(tpl.login());
+        const form = panel.querySelector('#loginForm');
+        const submitBtn = form.querySelector('button[type="submit"]');
+
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          const fields = [
+            { fieldId: 'loginEmailField', inputId: 'loginEmail', validate: isEmail },
+            { fieldId: 'loginPasswordField', inputId: 'loginPassword', validate: notEmpty },
+          ];
+          let valid = true;
+          fields.forEach(f => {
+            const wrap = panel.querySelector('#' + f.fieldId);
+            const input = panel.querySelector('#' + f.inputId);
+            const ok = f.validate(input.value.trim());
+            wrap.classList.toggle('invalid', !ok);
+            if (!ok) valid = false;
+          });
+          if (!valid) return;
+
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Logging in…';
+
+          const email = panel.querySelector('#loginEmail').value.trim();
+          const password = panel.querySelector('#loginPassword').value;
+
+          const { error } = await sb.auth.signInWithPassword({ email, password });
+          if (error) {
+            showToast('Incorrect email or password.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Log In';
+            return;
+          }
+          form.style.display = 'none';
+          panel.querySelector('#loginSuccess').classList.add('show');
+          setTimeout(async () => { closeAnyModal(); await refreshAuthUI(true); }, 800);
+        });
+      }
+      else if (type === 'logout') {
+        e.preventDefault();
+        sb.auth.signOut().then(() => { showToast('Signed out.'); location.hash = '#/home'; refreshAuthUI(); });
       }
       else if (type === 'tag') {
         e.preventDefault();
@@ -1089,11 +1323,29 @@
       else if (type === 'social') { e.preventDefault(); showToast(`This would open RS on ${trigger.dataset.platform}.`); }
       else if (type === 'account') {
         e.preventDefault();
-        const { panel } = openModal(tpl.account());
-        wireForm(panel.querySelector('#accountForm'), [
-          { fieldId: 'acctEmailField', inputId: 'acctEmail', validate: isEmail },
-          { fieldId: 'acctPassField', inputId: 'acctPass', validate: notEmpty }
-        ], () => { panel.querySelector('#acctSuccess').classList.add('show'); showToast('Signed in.'); });
+        if (window.currentUser) {
+          location.hash = '#/profile';
+        } else {
+          const { panel } = openModal(tpl.login());
+          const form = panel.querySelector('#loginForm');
+          form.addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            const emailEl = panel.querySelector('#loginEmail');
+            const passEl = panel.querySelector('#loginPassword');
+            const emailWrap = panel.querySelector('#loginEmailField');
+            const passWrap = panel.querySelector('#loginPasswordField');
+            const emailOk = isEmail(emailEl.value.trim());
+            const passOk = notEmpty(passEl.value.trim());
+            emailWrap.classList.toggle('invalid', !emailOk);
+            passWrap.classList.toggle('invalid', !passOk);
+            if (!emailOk || !passOk) return;
+            const { error } = await sb.auth.signInWithPassword({ email: emailEl.value.trim(), password: passEl.value });
+            if (error) { showToast('Incorrect email or password.'); return; }
+            form.style.display = 'none';
+            panel.querySelector('#loginSuccess').classList.add('show');
+            setTimeout(async () => { closeAnyModal(); await refreshAuthUI(true); }, 800);
+          });
+        }
       }
       else if (type === 'scrollNewsletter') {
         e.preventDefault();
@@ -1145,6 +1397,293 @@
         newsletterForm.querySelector('button[type="submit"]').style.display = 'none';
         document.getElementById('newsletterSuccess').style.display = 'block';
         showToast("Subscribed — welcome to RS Dispatch.");
+      });
+    }
+  })();
+
+  // ===================================================================
+  // Accounts: Supabase auth, profile, one-time verification prompt,
+  // referral capture. Wrapped defensively — if the Supabase script fails
+  // to load (ad blocker, network hiccup), the rest of the site (nav,
+  // modals, countdown, FAQ, admin) still works fine.
+  // ===================================================================
+  let sb = null;
+  try {
+    if (!window.supabase) throw new Error('Supabase client library did not load.');
+
+    const SUPABASE_URL = 'https://sfmzvxjmiplxzlicuigk.supabase.co/rest/v1/';
+    const SUPABASE_ANON_KEY = 'PASTE_YOUR_SUPABASE_ANON_KEY_HERE';
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    window.sb = sb;
+
+  let currentUser = null;
+  let currentProfile = null;
+
+  function initialOf(profile, user){
+    const name = (profile && profile.full_name) || (user && user.email) || '?';
+    return name.trim().charAt(0).toUpperCase();
+  }
+
+  function verifyBadgeHTML(status){
+    const labels = { approved: 'Approved', declined: 'Declined', pending: 'Pending', in_review: 'In Review', not_started: 'Not Verified' };
+    const cls = labels[status] ? status : 'not_started';
+    return `<span class="verify-badge ${cls}">${labels[cls]}</span>`;
+  }
+
+  window.refreshAuthUI = refreshAuthUI;
+  async function refreshAuthUI(justAuthed){
+    const { data: { session } } = await sb.auth.getSession();
+    currentUser = session ? session.user : null;
+    window.currentUser = currentUser;
+    const navRight = document.querySelector('.nav-right');
+    const navCta = document.querySelector('.nav-right .nav-cta');
+
+    if (currentUser) {
+      const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+      currentProfile = profile;
+
+      if (navCta) {
+        navCta.textContent = 'My Profile';
+        navCta.setAttribute('data-open', '');
+        navCta.onclick = (e) => { e.preventDefault(); location.hash = '#/profile'; };
+      }
+
+      // one-time verification prompt
+      if (profile && profile.verification_status === 'not_started' && !profile.verification_prompted && justAuthed) {
+        const { panel } = window.openModal(tpl['verify-prompt']());
+        panel.querySelector('#verifyNowBtn').addEventListener('click', startVerification);
+        panel.querySelector('#verifyLaterBtn').addEventListener('click', () => window.closeAnyModal());
+        await sb.from('profiles').update({ verification_prompted: true }).eq('id', currentUser.id);
+      }
+    } else {
+      currentProfile = null;
+      if (navCta) {
+        navCta.textContent = 'Join Free';
+        navCta.setAttribute('data-open', 'join');
+        navCta.onclick = null;
+      }
+    }
+
+    if (location.hash === '#/profile') renderProfilePage();
+  }
+
+  window.startVerification = startVerification;
+  async function startVerification(){
+    if (!currentUser) return;
+    window.closeAnyModal();
+    window.showToast('Starting verification…');
+    try {
+      const res = await fetch('/.netlify/functions/verify-start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: currentUser.id, email: currentUser.email })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.verificationUrl) {
+        window.showToast(data.error || 'Could not start verification — try again shortly.');
+        return;
+      }
+      window.location.href = data.verificationUrl;
+    } catch (err) {
+      window.showToast('Network error — try again.');
+    }
+  }
+
+  window.renderProfilePage = renderProfilePage;
+  async function renderProfilePage(){
+    if (!currentUser) {
+      // not logged in — bounce to home and prompt login
+      location.hash = '#/home';
+      const { panel } = window.openModal(tpl.login());
+      wireLoginForm(panel);
+      return;
+    }
+    const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+    currentProfile = profile;
+
+    document.getElementById('profileAvatar').textContent = initialOf(profile, currentUser);
+    document.getElementById('profileName').textContent = (profile && profile.full_name) || 'Member';
+    document.getElementById('profileEmail').textContent = currentUser.email;
+    document.getElementById('profilePoints').textContent = (profile && profile.points) || 0;
+    document.getElementById('profileVerifyBadge').innerHTML = verifyBadgeHTML(profile ? profile.verification_status : 'not_started');
+
+    const actionEl = document.getElementById('profileVerifyAction');
+    const status = profile ? profile.verification_status : 'not_started';
+    if (status === 'approved') {
+      actionEl.innerHTML = '';
+    } else if (status === 'pending' || status === 'in_review') {
+      actionEl.innerHTML = '<p style="font-size:12.5px; color:var(--ink-dim);">Your verification is being reviewed — check back soon.</p>';
+    } else {
+      const label = status === 'declined' ? 'Try Verification Again' : 'Verify Account';
+      actionEl.innerHTML = `<button class="form-submit" id="profileVerifyBtn" style="margin-top:0;">${label}</button>`;
+      document.getElementById('profileVerifyBtn').addEventListener('click', startVerification);
+    }
+
+    const puprimeInput = document.getElementById('profilePuprime');
+    puprimeInput.value = (profile && profile.puprime_id) || '';
+
+    const refInput = document.getElementById('referralLinkInput');
+    if (profile && profile.referral_code) {
+      refInput.value = `${location.origin}${location.pathname}?ref=${profile.referral_code}`;
+    }
+  }
+
+  window.wireLoginForm = wireLoginForm;
+  function wireLoginForm(panel){
+    const form = panel.querySelector('#loginForm');
+    if (!form) return;
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const email = panel.querySelector('#loginEmail').value.trim();
+      const password = panel.querySelector('#loginPassword').value;
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) { window.showToast('Incorrect email or password.'); return; }
+      window.closeAnyModal();
+      await refreshAuthUI(true);
+    });
+  }
+
+  // PU Prime ID save (profile page)
+  document.addEventListener('submit', async (e) => {
+    if (e.target && e.target.id === 'puprimeForm') {
+      e.preventDefault();
+      if (!currentUser) return;
+      const wrap = document.getElementById('profilePuprimeField');
+      const input = document.getElementById('profilePuprime');
+      const val = input.value.trim();
+      const ok = /^\d{8}$/.test(val);
+      wrap.classList.toggle('invalid', !ok);
+      if (!ok) return;
+
+      await sb.from('profiles').update({ puprime_id: val }).eq('id', currentUser.id);
+      window.showToast('PU Prime ID saved.');
+      fetch('/.netlify/functions/sync-puprime', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: currentUser.id, email: currentUser.email, fullName: currentProfile ? currentProfile.full_name : '', puprimeId: val })
+      }).catch(() => {});
+    }
+  });
+
+  // Referral link copy button
+  document.addEventListener('click', (e) => {
+    if (e.target && e.target.id === 'referralCopyBtn') {
+      const input = document.getElementById('referralLinkInput');
+      input.select();
+      navigator.clipboard.writeText(input.value).then(() => window.showToast('Referral link copied.'));
+    }
+  });
+
+  // Capture ?ref= on any page load
+  (function captureReferral(){
+    const params = new URLSearchParams(location.search);
+    const ref = params.get('ref');
+    if (ref) sessionStorage.setItem('rs_ref', ref);
+  })();
+
+  // Auth state changes (covers login/logout/signup from anywhere)
+  sb.auth.onAuthStateChange(() => { refreshAuthUI(false); });
+  refreshAuthUI(false);
+
+  // Re-render profile whenever we navigate to it
+  window.addEventListener('hashchange', () => { if (location.hash === '#/profile') renderProfilePage(); });
+  } catch (err) {
+    console.error('Accounts system did not initialize (Supabase may be blocked):', err);
+    // Nav still shows "Join Free" as a harmless fallback; rest of the site is unaffected.
+  }
+
+  // ===== Countdown timer =====
+  (function countdown(){
+    const target = new Date('2026-09-05T20:00:00Z').getTime();
+    function tick(){
+      const now = Date.now();
+      const diff = Math.max(0, target - now);
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      document.querySelectorAll('[data-countdown="days"]').forEach(el => el.textContent = d);
+      document.querySelectorAll('[data-countdown="hours"]').forEach(el => el.textContent = String(h).padStart(2,'0'));
+      document.querySelectorAll('[data-countdown="mins"]').forEach(el => el.textContent = String(m).padStart(2,'0'));
+      document.querySelectorAll('[data-countdown="secs"]').forEach(el => el.textContent = String(s).padStart(2,'0'));
+    }
+    tick();
+    setInterval(tick, 1000);
+  })();
+
+  // ===== Live entry counter =====
+  (function entryCounter(){
+    fetch('/.netlify/functions/entry-count')
+      .then(r => r.json())
+      .then(data => {
+        document.querySelectorAll('[data-entry-count]').forEach(el => {
+          el.textContent = (data.count || 0).toLocaleString() + (data.approx ? '+' : '');
+        });
+      })
+      .catch(() => {});
+  })();
+
+  // ===== FAQ accordion =====
+  document.addEventListener('click', (e) => {
+    const q = e.target.closest('.faq-q');
+    if (!q) return;
+    q.closest('.faq-item').classList.toggle('open');
+  });
+
+  // ===== Admin panel =====
+  (function admin(){
+    const gate = document.getElementById('adminGate');
+    const panel = document.getElementById('adminPanel');
+    const loginBtn = document.getElementById('adminLoginBtn');
+    if (!loginBtn) return;
+
+    function renderTable(rows){
+      const body = document.getElementById('adminTableBody');
+      if (!rows.length) { body.innerHTML = '<tr><td colspan="4">No entrants yet.</td></tr>'; return; }
+      body.innerHTML = rows.map(r => `<tr>
+        <td>${r.fullName || ''}</td>
+        <td>${r.email || ''}</td>
+        <td>${r.puprimeId || ''}</td>
+        <td>${r.status || ''}</td>
+      </tr>`).join('');
+    }
+
+    async function loadEntrants(pw){
+      const res = await fetch('/.netlify/functions/admin-list', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw })
+      });
+      if (!res.ok) return null;
+      return res.json();
+    }
+
+    loginBtn.addEventListener('click', async () => {
+      const pw = document.getElementById('adminPass').value;
+      const wrap = document.getElementById('adminPassField');
+      const data = await loadEntrants(pw);
+      if (!data) { wrap.classList.add('invalid'); return; }
+      wrap.classList.remove('invalid');
+      sessionStorage.setItem('rs_admin_pw', pw);
+      gate.style.display = 'none';
+      panel.style.display = 'block';
+      renderTable(data.entrants || []);
+    });
+
+    const pickBtn = document.getElementById('pickWinnerBtn');
+    if (pickBtn) {
+      pickBtn.addEventListener('click', async () => {
+        const pw = sessionStorage.getItem('rs_admin_pw');
+        const res = await fetch('/.netlify/functions/admin-pick-winner', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: pw })
+        });
+        const data = await res.json();
+        const box = document.getElementById('adminWinnerBox');
+        if (!res.ok || !data.winner) {
+          box.innerHTML = `<p>${data.error || 'No eligible entrants to pick from.'}</p>`;
+        } else {
+          box.innerHTML = `<h3 style="margin-bottom:8px;">🎉 Winner Selected</h3><p style="font-size:18px; font-weight:800;">${data.winner.fullName}</p><p style="color:var(--ink-dim); font-size:13px;">${data.winner.email} · PU Prime ID ${data.winner.puprimeId || 'N/A'}</p>`;
+        }
+        box.classList.add('show');
       });
     }
   })();
