@@ -1024,6 +1024,11 @@
             <input id="joinPassword" type="password" required>
             <div class="form-error">Password must be at least 8 characters.</div>
           </div>
+          <div class="form-field" id="joinPasswordConfirmField">
+            <label for="joinPasswordConfirm">Confirm Password</label>
+            <input id="joinPasswordConfirm" type="password" required>
+            <div class="form-error">Passwords don't match.</div>
+          </div>
           <div class="form-field" id="joinPuprimeField">
             <label for="joinPuprime">PU Prime ID <span style="color:var(--ink-dim); font-weight:600; text-transform:none;">— optional, add later if you prefer</span></label>
             <input id="joinPuprime" placeholder="12345678" maxlength="8" inputmode="numeric">
@@ -1189,6 +1194,15 @@
             wrap.classList.toggle('invalid', !ok);
             if (!ok) valid = false;
           });
+
+          // Password confirmation has to match the password field itself, not just its own format.
+          const passwordVal = panel.querySelector('#joinPassword').value;
+          const passwordConfirmVal = panel.querySelector('#joinPasswordConfirm').value;
+          const confirmWrap = panel.querySelector('#joinPasswordConfirmField');
+          const passwordsMatch = passwordVal === passwordConfirmVal && passwordConfirmVal.length > 0;
+          confirmWrap.classList.toggle('invalid', !passwordsMatch);
+          if (!passwordsMatch) valid = false;
+
           if (!valid) return;
 
           submitBtn.disabled = true;
@@ -1411,8 +1425,8 @@
   try {
     if (!window.supabase) throw new Error('Supabase client library did not load.');
 
-    const SUPABASE_URL = 'https://sfmzvxjmiplxzlicuigk.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmbXp2eGptaXBseHpsaWN1aWdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMDUzODksImV4cCI6MjEwMzU4MTM4OX0.LWoo9zQ1Z80ZFK6dAvwN-rUSrbGR6MYEviA6nC_6IdU';
+    const SUPABASE_URL = 'PASTE_YOUR_SUPABASE_PROJECT_URL_HERE';
+    const SUPABASE_ANON_KEY = 'PASTE_YOUR_SUPABASE_ANON_KEY_HERE';
     sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     window.sb = sb;
 
