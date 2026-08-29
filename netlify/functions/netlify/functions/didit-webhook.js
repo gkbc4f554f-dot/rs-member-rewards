@@ -1,52 +1,70 @@
 // netlify/functions/didit-webhook.js
 //
-// Didit calls this URL every time a verification session's status changes.
-// We check the signature (so nobody can fake a "verified" result), then
-// update the matching Airtable row.
-//
-// Set this exact URL as your Webhook URL in the Didit Business Console:
-//   https://YOUR-SITE.netlify.app/.netlify/functions/didit-webhook
+// Didit calls this every time a verification session's status changes.
+// vendor_data is the Supabase user id we sent when the session was created.
 //
 // Required environment variables:
-//   WEBHOOK_SECRET_KEY   - shown once in the Didit console when you add the webhook
-//   AIRTABLE_TOKEN
-//   AIRTABLE_BASE_ID
-//   AIRTABLE_TABLE_NAME
+//   WEBHOOK_SECRET_KEY          - from the Didit console when you registered this webhook
+//   SUPABASE_URL
+//   SUPABASE_SERVICE_ROLE_KEY   - server-only, bypasses RLS so we can write verification results
+//   AIRTABLE_TOKEN / AIRTABLE_BASE_ID / AIRTABLE_TABLE_NAME
 
 const crypto = require("crypto");
+const { upsertAirtableRecord } = require("./_lib/airtable");
 
-const AIRTABLE_URL = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${encodeURIComponent(process.env.AIRTABLE_TABLE_NAME || "Signups")}`;
-
-function verifySignature(rawBody, signature, timestamp, secret) {
+// ---- Didit's official X-Signature-V2 canonicalisation ----
+function shortenFloats(v) {
+  if (Array.isArray(v)) return v.map(shortenFloats);
+  if (v && typeof v === "object") {
+    return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, shortenFloats(x)]));
+  }
+  if (typeof v === "number" && !Number.isInteger(v) && v % 1 === 0) return Math.trunc(v);
+  return v;
+}
+function sortKeys(v) {
+  if (Array.isArray(v)) return v.map(sortKeys);
+  if (v && typeof v === "object") {
+    return Object.keys(v).sort().reduce((acc, k) => { acc[k] = sortKeys(v[k]); return acc; }, {});
+  }
+  return v;
+}
+function verifySignatureV2(rawBody, signature, timestamp, secret) {
   if (!signature || !timestamp || !secret) return false;
-
   const now = Math.floor(Date.now() / 1000);
   const incoming = parseInt(timestamp, 10);
-  if (!incoming || Math.abs(now - incoming) > 300) return false; // reject anything older than 5 min (replay protection)
-
-  const expected = crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
-
+  if (!incoming || Math.abs(now - incoming) > 300) return false; // 5 min replay window
+  let parsed;
+  try { parsed = JSON.parse(rawBody); } catch { return false; }
+  const canonical = JSON.stringify(sortKeys(shortenFloats(parsed)));
+  const expected = crypto.createHmac("sha256", secret).update(canonical, "utf8").digest("hex");
   const expectedBuf = Buffer.from(expected, "utf8");
   const providedBuf = Buffer.from(signature, "utf8");
   if (expectedBuf.length !== providedBuf.length) return false;
   return crypto.timingSafeEqual(expectedBuf, providedBuf);
 }
 
-// Airtable's "Verification Status" single-select field should have these
-// exact options: Pending, Approved, Declined, In Review, Abandoned, Not Started
-function mapStatus(diditStatus) {
-  const known = ["Approved", "Declined", "In Review", "Abandoned", "Not Started", "In Progress"];
-  return known.includes(diditStatus) ? diditStatus : "Pending";
+// Supabase profiles.verification_status — our own simplified vocabulary
+function mapSupabaseStatus(diditStatus) {
+  const map = {
+    "Approved": "approved", "Declined": "declined", "In Review": "in_review",
+    "Not Started": "not_started", "Abandoned": "not_started", "Expired": "not_started",
+    "Kyc Expired": "not_started", "In Progress": "pending", "Awaiting User": "pending",
+    "Resubmitted": "pending",
+  };
+  return map[diditStatus] || "pending";
 }
 
-async function findRecordByVendorData(vendorData) {
-  // vendor_data is the Airtable record id we handed Didit at signup time,
-  // so we can fetch it directly instead of searching.
-  const res = await fetch(`${AIRTABLE_URL}/${vendorData}`, {
-    headers: { Authorization: `Bearer ${process.env.AIRTABLE_TOKEN}` },
-  });
-  if (!res.ok) return null;
-  return res.json();
+// Airtable's "Verification Status" single-select only has these 6 exact options —
+// mapping every possible Didit status onto one of them avoids the
+// INVALID_MULTIPLE_CHOICE_OPTIONS error we hit earlier.
+function mapAirtableStatus(diditStatus) {
+  const map = {
+    "Approved": "Approved", "Declined": "Declined", "In Review": "In Review",
+    "Abandoned": "Abandoned", "Not Started": "Not Started",
+    "In Progress": "Pending", "Awaiting User": "Pending", "Resubmitted": "Pending",
+    "Expired": "Abandoned", "Kyc Expired": "Not Started",
+  };
+  return map[diditStatus] || "Pending";
 }
 
 exports.handler = async (event) => {
@@ -55,11 +73,10 @@ exports.handler = async (event) => {
   }
 
   const rawBody = event.body || "";
-  const signature = event.headers["x-signature"] || event.headers["X-Signature"];
+  const signature = event.headers["x-signature-v2"] || event.headers["X-Signature-V2"];
   const timestamp = event.headers["x-timestamp"] || event.headers["X-Timestamp"];
 
-  const valid = verifySignature(rawBody, signature, timestamp, process.env.WEBHOOK_SECRET_KEY);
-  if (!valid) {
+  if (!verifySignatureV2(rawBody, signature, timestamp, process.env.WEBHOOK_SECRET_KEY)) {
     console.error("Webhook signature verification failed");
     return { statusCode: 401, body: JSON.stringify({ message: "Unauthorized" }) };
   }
@@ -72,69 +89,71 @@ exports.handler = async (event) => {
   }
 
   const { session_id, status, vendor_data, decision } = body;
-
   if (!vendor_data) {
-    // Nothing we can match this to — acknowledge so Didit doesn't retry forever.
     console.warn("Webhook had no vendor_data, session:", session_id);
     return { statusCode: 200, body: JSON.stringify({ message: "Acknowledged, no vendor_data" }) };
   }
 
-  const record = await findRecordByVendorData(vendor_data);
-  if (!record) {
-    console.warn("No Airtable record found for vendor_data:", vendor_data);
-    return { statusCode: 200, body: JSON.stringify({ message: "Acknowledged, record not found" }) };
+  const userId = vendor_data; // Supabase auth user id
+  const SUPABASE_URL = process.env.SUPABASE_URL;
+  const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!SUPABASE_URL || !SERVICE_ROLE) {
+    console.error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY — cannot process webhook");
+    return { statusCode: 200, body: JSON.stringify({ message: "Acknowledged, server not fully configured" }) };
   }
 
-  const fields = {
-    "Verification Status": mapStatus(status),
-    "Didit Session ID": session_id,
-  };
+  // Fetch the profile so we can cross-check the name and get the email for Airtable.
+  let profile = null;
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}&select=*`, {
+      headers: { apikey: SERVICE_ROLE, Authorization: `Bearer ${SERVICE_ROLE}` },
+    });
+    const rows = await res.json();
+    profile = rows && rows[0];
+  } catch (err) {
+    console.error("Supabase profile fetch failed:", err);
+  }
 
-  // When Didit finishes a full decision, cross-check the ID document against
-  // what the person typed at signup. This is the actual fraud check — it
-  // catches someone verifying with their OWN id but typing a DIFFERENT
-  // person's name/PU Prime account into the form.
-  if (decision && decision.id_verification) {
-    const idv = decision.id_verification;
-    fields["Verified Full Name (from ID)"] = idv.full_name || "";
-    fields["Verified Date of Birth (from ID)"] = idv.date_of_birth || "";
-    fields["ID Document Status"] = idv.status || "";
+  let supabaseStatus = mapSupabaseStatus(status);
 
-    const typedName = (record.fields["Full Name"] || "").trim().toLowerCase();
-    const verifiedName = (idv.full_name || "").trim().toLowerCase();
-    const typedDob = (record.fields["Date of Birth"] || "").trim();
-    const verifiedDob = (idv.date_of_birth || "").trim();
-
+  // Fraud check: if the ID was approved but the name on it doesn't match what
+  // they typed at signup, don't auto-approve — flag it for a human to check.
+  if (decision && decision.id_verifications && decision.id_verifications.length) {
+    const idv = decision.id_verifications[0];
+    const typedName = ((profile && profile.full_name) || "").trim().toLowerCase();
+    const verifiedName = `${idv.first_name || ""} ${idv.last_name || ""}`.trim().toLowerCase();
     const nameMatches = typedName && verifiedName && typedName === verifiedName;
-    const dobMatches = typedDob && verifiedDob && typedDob === verifiedDob;
-    fields["Name Matches ID"] = nameMatches;
-    fields["DOB Matches ID"] = dobMatches;
-
-    // If the document itself was approved but the typed details don't match,
-    // flag it for a human to check rather than auto-approving.
-    if (idv.status === "Approved" && (!nameMatches || !dobMatches)) {
-      fields["Verification Status"] = "In Review";
-      fields["Review Reason"] = "ID verified, but typed name/DOB does not match the document. Check before paying out.";
+    if (idv.status === "Approved" && supabaseStatus === "approved" && !nameMatches) {
+      supabaseStatus = "in_review";
     }
   }
 
   try {
-    const patchRes = await fetch(`${AIRTABLE_URL}/${vendor_data}`, {
+    await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}`, {
       method: "PATCH",
       headers: {
-        Authorization: `Bearer ${process.env.AIRTABLE_TOKEN}`,
+        apikey: SERVICE_ROLE,
+        Authorization: `Bearer ${SERVICE_ROLE}`,
         "Content-Type": "application/json",
+        Prefer: "return=minimal",
       },
-      body: JSON.stringify({ fields }),
+      body: JSON.stringify({ verification_status: supabaseStatus, didit_session_id: session_id }),
     });
-    if (!patchRes.ok) {
-      const errBody = await patchRes.text();
-      console.error("Failed to update Airtable record:", errBody);
-      // Still return 200 — Didit doesn't need to retry just because our
-      // database write failed; that's on us to notice via logs.
-    }
   } catch (err) {
-    console.error("Airtable update failed:", err);
+    console.error("Supabase profile update failed:", err);
+  }
+
+  if (profile && profile.email) {
+    try {
+      await upsertAirtableRecord(profile.email, {
+        "Full Name": profile.full_name || "",
+        "PU Prime Account Number": profile.puprime_id || "",
+        "Verification Status": mapAirtableStatus(status),
+      });
+    } catch (err) {
+      console.error("Airtable sync failed:", err);
+    }
   }
 
   return { statusCode: 200, body: JSON.stringify({ message: "Webhook processed" }) };
