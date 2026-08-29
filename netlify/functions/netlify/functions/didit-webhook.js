@@ -1,4 +1,4 @@
-// netlify/functions/didit-webhook.js
+// netlify/functions/didit-webhook.js 
 //
 // Didit calls this every time a verification session's status changes.
 // vendor_data is the Supabase user id we sent when the session was created.
