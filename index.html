@@ -60,7 +60,7 @@
 
   /* ===== HERO ===== */
   .hero{ position:relative; height:100vh; min-height:640px; display:flex; align-items:flex-end; overflow:hidden; }
-  .hero-media{ position:fixed; top:0; left:0; width:100%; height:100vh; z-index:0; pointer-events:none; }
+  .hero-media{ position:fixed; top:0; left:0; width:100%; height:100vh; z-index:0; pointer-events:none; overflow:hidden; }
   .hero-media video, .hero-media img{ width:100%; height:100%; object-fit:cover; }
   .hero-media video{ filter: brightness(0.6) saturate(1.1); }
   .hero-media::after{
@@ -91,6 +91,12 @@
   @keyframes dotFill{ from{ width:0%; } to{ width:100%; } }
 
   .video-ph{ position:relative; width:100%; height:100%; overflow:hidden; background: linear-gradient(120deg, hsl(28,75%,26%), hsl(205,70%,20%), hsl(330,65%,24%), hsl(45,80%,30%)); background-size:320% 320%; animation: phMove 9s ease-in-out infinite; filter: saturate(1.25) brightness(1.05); }
+
+  /* Hero: real sliding carousel (not crossfade) — forward advances slide left-to-reveal-from-right, reverse is mirrored */
+  .hero-slides{ position:absolute; inset:0; display:flex; width:300%; height:100%; transition: transform 0.75s cubic-bezier(0.65, 0, 0.35, 1); }
+  .hero-slide{ position:relative; width:33.3333%; height:100%; flex-shrink:0; overflow:hidden; }
+  .hero-slide::before{ content:""; position:absolute; inset:0; background-image: repeating-linear-gradient(115deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 9px); mix-blend-mode: overlay; }
+  .hero-slide::after{ content: attr(data-label); position:absolute; left:20px; bottom:16px; font-size:11px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color: rgba(243,241,234,0.5); }
   .video-ph.paused{ animation-play-state: paused; }
   .video-ph::before{ content:""; position:absolute; inset:0; background-image: repeating-linear-gradient(115deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 9px); mix-blend-mode: overlay; }
   .video-ph::after{ content: attr(data-label); position:absolute; left:20px; bottom:16px; font-size:11px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color: rgba(243,241,234,0.6); z-index:2; }
@@ -211,6 +217,51 @@
   .admin-winner-box{ background:var(--panel-2); border:1px solid var(--amber); border-radius:10px; padding:24px; margin-bottom:24px; display:none; }
   .admin-winner-box.show{ display:block; }
 
+  /* ===== STORE / CART / CHECKOUT ===== */
+  .product-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; padding:0 5vw 90px; }
+  .product-card{ background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; }
+  .product-card .video-ph{ height:220px; }
+  .product-body{ padding:16px 18px 18px; display:flex; flex-direction:column; gap:10px; flex:1; }
+  .product-body .tag{ font-size:10.5px; font-weight:800; color:var(--amber); text-transform:uppercase; letter-spacing:0.08em; }
+  .product-body h3{ font-size:16px; }
+  .product-price-row{ display:flex; align-items:baseline; gap:8px; }
+  .product-price{ font-family:'Anton',sans-serif; font-size:18px; color:var(--amber); }
+  .product-price-strike{ font-size:13px; color:var(--ink-dim); text-decoration:line-through; }
+  .size-row{ display:flex; gap:6px; flex-wrap:wrap; margin-top:2px; }
+  .size-btn{ min-width:34px; height:30px; padding:0 8px; border-radius:6px; border:1px solid var(--line); background:var(--panel-2); color:var(--ink); font-size:12px; font-weight:700; cursor:pointer; }
+  .size-btn.selected{ border-color:var(--amber); color:var(--amber); }
+  .add-to-cart-btn{ margin-top:auto; background:var(--amber); color:#1a1204; font-weight:800; font-size:12.5px; letter-spacing:0.04em; text-transform:uppercase; padding:12px; border-radius:999px; border:none; cursor:pointer; transition: transform 0.12s cubic-bezier(0.32,0.72,0,1); }
+  .add-to-cart-btn:active{ transform: scale(0.96); }
+
+  .nav-cart-btn{ position:relative; }
+  .cart-badge{ position:absolute; top:-6px; right:-6px; background:var(--amber); color:#1a1204; font-size:10px; font-weight:800; min-width:16px; height:16px; border-radius:999px; display:flex; align-items:center; justify-content:center; padding:0 3px; }
+
+  .cart-item-row{ display:flex; gap:12px; align-items:center; padding:12px 0; border-bottom:1px solid var(--line); }
+  .cart-item-row .video-ph{ width:56px; height:56px; border-radius:8px; flex-shrink:0; }
+  .cart-item-info{ flex:1; }
+  .cart-item-info .name{ font-size:13.5px; font-weight:700; }
+  .cart-item-info .meta{ font-size:11.5px; color:var(--ink-dim); }
+  .cart-qty-controls{ display:flex; align-items:center; gap:8px; }
+  .cart-qty-controls button{ width:22px; height:22px; border-radius:50%; background:var(--panel-2); border:1px solid var(--line); color:var(--ink); cursor:pointer; font-size:13px; line-height:1; }
+  .cart-remove-btn{ font-size:11px; color:var(--ink-dim); background:none; border:none; cursor:pointer; text-decoration:underline; }
+  .cart-empty{ text-align:center; padding:30px 10px; color:var(--ink-dim); font-size:13.5px; }
+  .cart-subtotal-row{ display:flex; justify-content:space-between; padding-top:14px; font-weight:800; font-size:15px; }
+
+  .checkout-layout{ display:grid; grid-template-columns:1.2fr 1fr; gap:24px; padding:0 5vw 90px; align-items:start; }
+  .checkout-discount-note{ font-size:12px; color:var(--amber); margin-top:10px; }
+  .checkout-totals{ margin-top:14px; border-top:1px solid var(--line); padding-top:14px; }
+  .checkout-totals .row{ display:flex; justify-content:space-between; font-size:13px; color:var(--ink-dim); margin-bottom:6px; }
+  .checkout-totals .row.total{ color:var(--ink); font-weight:800; font-size:16px; margin-top:8px; }
+
+  @media (max-width: 980px){
+    .product-grid{ grid-template-columns:repeat(2,1fr); }
+    .checkout-layout{ grid-template-columns:1fr; }
+  }
+  @media (max-width: 480px){
+    .product-grid{ grid-template-columns:1fr 1fr; }
+  }
+
+
   section{ padding: 88px 5vw; position:relative; }
   .section-head{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:40px; flex-wrap:wrap; gap:18px; }
   .section-title{ font-size:clamp(28px,3.6vw,42px); line-height:1; }
@@ -220,7 +271,7 @@
 
   /* ===== CARD ROW (Jump Into) ===== */
   .card-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
-  .card{ position:relative; aspect-ratio:3/4; border-radius:var(--radius); overflow:hidden; background:var(--panel); cursor:pointer; }
+  .card{ position:relative; aspect-ratio:3/4; border-radius:20px; overflow:hidden; background:var(--panel); cursor:pointer; }
   .card-bg{ position:absolute; inset:0; background-size:cover; background-position:center; transition: transform 0.6s cubic-bezier(.2,.8,.2,1); }
   .card:hover .card-bg{ transform: scale(1.07); }
   .card::after{ content:""; position:absolute; inset:0; background: linear-gradient(to top, rgba(10,10,12,0.95) 0%, rgba(10,10,12,0.25) 55%, transparent 100%); z-index:1; }
@@ -381,6 +432,10 @@
     <button class="icon-btn" title="Account" aria-label="Account" data-open="account">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
     </button>
+    <button class="icon-btn nav-cart-btn" title="Cart" aria-label="View cart" id="navCartBtn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+    </button>
     <button class="nav-cta" data-open="join">Join Free</button>
   </div>
 </nav>
@@ -390,7 +445,11 @@
 
   <section class="hero" style="padding:0;">
     <div class="hero-media">
-      <div class="video-ph" data-label="Hero video placeholder — swap for your render"></div>
+      <div class="hero-slides" id="heroSlides">
+        <div class="hero-slide" style="background: linear-gradient(160deg, #3a2408, #1a1204);" data-label="Hero slide 1 — swap for your render"></div>
+        <div class="hero-slide" style="background: linear-gradient(160deg, #0c1c2e, #050a12);" data-label="Hero slide 2 — swap for your render"></div>
+        <div class="hero-slide" style="background: linear-gradient(160deg, #2e0c14, #150508);" data-label="Hero slide 3 — swap for your render"></div>
+      </div>
     </div>
     <div class="hero-content">
       <div class="hero-eyebrow">Member Rewards · Season 04</div>
@@ -560,6 +619,29 @@
     <div class="poster-row" id="posterRow"></div>
   </section>
 
+  <section class="spotlight" id="spotlight-plus">
+    <div class="video-ph spotlight-media" data-label="Spotlight video placeholder"></div>
+    <div class="spotlight-fade"></div>
+    <div class="spotlight-crumb"><a href="#/games">Experiences</a> / <span>RS Plus</span></div>
+    <div class="spotlight-content">
+      <div class="spotlight-lockup">
+        <div class="spotlight-lockup-top display">Go</div>
+        <div class="spotlight-lockup-bottom display">Plus</div>
+      </div>
+      <div class="spotlight-info">
+        <div class="spotlight-crumb-inline"><a href="#/games">Experiences</a> / <span>RS Plus</span></div>
+        <p>Boosted odds on every giveaway, early access to every drop 48 hours before anyone else, and a monthly bonus credit deposit — free, funded entirely by our advertising partners.</p>
+        <div class="spotlight-actions">
+          <button class="btn-ghost" data-open="video" data-video-title="RS Plus — Overview"><span class="play">▶</span> Watch Overview</button>
+          <button class="btn-primary" style="background:transparent;border:1px solid rgba(243,241,234,0.35);color:var(--ink);" data-open="join">Join RS Plus</button>
+        </div>
+        <div class="spotlight-platforms">
+          <span>Web</span><span>iOS</span><span>Android</span><span>In-Store</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="store" id="store-teaser" style="padding-top:0;">
     <div class="section-head">
       <h2 class="section-title display">Store</h2>
@@ -689,9 +771,66 @@
 <div class="page" id="page-store">
   <div class="inner-hero">
     <h1 class="display">Store</h1>
-    <p>Every purchase earns credits toward free gear and bonus giveaway entries.</p>
+    <p>Every purchase earns credits toward free gear and bonus giveaway entries. Members get £10 off every apparel item.</p>
   </div>
-  <div class="grid-4" id="storeGrid"></div>
+  <div class="product-grid" id="productGrid"></div>
+</div>
+
+<!-- ===================== CHECKOUT ===================== -->
+<div class="page" id="page-checkout">
+  <div class="inner-hero">
+    <h1 class="display">Checkout</h1>
+    <p>Payment processing isn't live yet — this places a real preview order without charging a card.</p>
+  </div>
+  <div class="checkout-layout">
+    <div class="checkout-form-col">
+      <div class="profile-card">
+        <h3>Order Details</h3>
+        <form id="checkoutForm" novalidate>
+          <div class="form-field" id="checkoutNameField">
+            <label for="checkoutName">Full Name</label>
+            <input id="checkoutName" required>
+            <div class="form-error">Enter your full name.</div>
+          </div>
+          <div class="form-field" id="checkoutEmailField">
+            <label for="checkoutEmail">Email</label>
+            <input id="checkoutEmail" type="email" required>
+            <div class="form-error">Enter a valid email address.</div>
+          </div>
+          <div class="form-field" id="checkoutAddressField">
+            <label for="checkoutAddress">Address</label>
+            <input id="checkoutAddress" required>
+            <div class="form-error">Enter your address.</div>
+          </div>
+          <div class="form-field" id="checkoutCityField">
+            <label for="checkoutCity">City</label>
+            <input id="checkoutCity" required>
+            <div class="form-error">Enter your city.</div>
+          </div>
+          <div class="form-field" id="checkoutPostcodeField">
+            <label for="checkoutPostcode">Postcode</label>
+            <input id="checkoutPostcode" required>
+            <div class="form-error">Enter your postcode.</div>
+          </div>
+          <button type="submit" class="form-submit" id="checkoutSubmitBtn">Place Order</button>
+        </form>
+        <div class="form-success" id="checkoutSuccess">
+          <div class="check">✓</div>
+          <h4>Order placed.</h4>
+          <p id="checkoutOrderIdText"></p>
+          <p style="margin-top:8px;">A confirmation has been sent to your email.</p>
+        </div>
+      </div>
+    </div>
+    <div class="checkout-summary-col">
+      <div class="profile-card">
+        <h3>Order Summary</h3>
+        <div id="checkoutItems"></div>
+        <div class="checkout-discount-note" id="checkoutDiscountNote"></div>
+        <div class="checkout-totals" id="checkoutTotals"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ===================== SUPPORT ===================== -->
@@ -818,7 +957,6 @@
   const cardHTML = (it, i) => `<button class="simple-card" data-open="detail" data-i="${i}"><img src="${it.img}" alt=""><div class="simple-card-body"><span class="tag">${it.tag}</span><h3>${it.title}</h3><p>${it.desc}</p></div></button>`;
   document.getElementById('gamesGrid').innerHTML = items.map(cardHTML).join('');
   document.getElementById('newsGrid').innerHTML = items.slice(0,6).map(cardHTML).join('');
-  document.getElementById('storeGrid').innerHTML = items.map(cardHTML).join('');
 
   document.getElementById('videosGrid').innerHTML = items.slice(0,6).map((it,i) =>
     `<button class="simple-card" data-open="video" data-video-title="${it.title}"><div class="video-ph" data-label="Video placeholder" style="height:200px;" aria-hidden="true"></div><div class="simple-card-body"><span class="tag">${it.tag}</span><h3>${it.title}</h3><p>${it.desc}</p></div></button>`
@@ -841,14 +979,69 @@
   window.addEventListener('hashchange', () => routeTo(location.hash));
   routeTo(location.hash);
 
+  // ===== Newsletter popup (once per visit/session, unless already subscribed) =====
+  (function(){
+    if (sessionStorage.getItem('rs_newsletter_seen')) return;
+
+    function tryShow(attemptsLeft){
+      if (!window.openModal || !window.tpl) return;
+      // Never interrupt a modal the person already has open (e.g. their cart),
+      // and never interrupt an active checkout — wait and check again shortly.
+      const blocked = document.querySelector('.modal-backdrop.open') || location.hash === '#/checkout';
+      if (blocked) {
+        if (attemptsLeft > 0) setTimeout(() => tryShow(attemptsLeft - 1), 1500);
+        return;
+      }
+      sessionStorage.setItem('rs_newsletter_seen', '1');
+      const { panel } = window.openModal(window.tpl['newsletter-popup']());
+      const form = panel.querySelector('#newsletterPopupForm');
+      const skipBtn = panel.querySelector('#newsletterPopupSkip');
+
+      skipBtn.addEventListener('click', () => window.closeAnyModal());
+
+      form.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const wrap = panel.querySelector('#newsletterPopupEmailField');
+        const input = panel.querySelector('#newsletterPopupEmail');
+        const email = input.value.trim();
+        const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        wrap.classList.toggle('invalid', !ok);
+        if (!ok) return;
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Subscribing…';
+
+        try {
+          await fetch('/.netlify/functions/newsletter-subscribe', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+          });
+        } catch (err) {
+          // non-fatal — still show success, the popup's job is done either way
+        }
+
+        form.style.display = 'none';
+        panel.querySelector('#newsletterPopupSuccess').classList.add('show');
+        if (window.showToast) window.showToast('Subscribed — £10 off apparel is on your account.');
+      });
+    }
+
+    setTimeout(() => tryShow(5), 1800);
+  })();
+
   // Hero dots + pause control
   (function(){
     const dots = Array.from(document.querySelectorAll('#heroDots button'));
     const pauseBtn = document.getElementById('heroPauseBtn');
-    const heroVideo = document.querySelector('.hero .video-ph');
+    const heroSlides = document.getElementById('heroSlides');
     let active = 0;
     let paused = false;
     let timer = null;
+
+    function slideTo(i){
+      if (heroSlides) heroSlides.style.transform = `translateX(-${i * (100/3)}%)`;
+    }
 
     function setActive(i){
       dots.forEach((d, idx) => {
@@ -858,6 +1051,7 @@
         if (idx < i) d.classList.add('done');
       });
       dots[i].classList.add('on');
+      slideTo(i);
       active = i;
     }
 
@@ -877,7 +1071,6 @@
     pauseBtn.addEventListener('click', () => {
       paused = !paused;
       pauseBtn.textContent = paused ? '▶' : '❚❚';
-      if (heroVideo) heroVideo.classList.toggle('paused', paused);
       const activeFill = dots[active].querySelector('.fill');
       if (paused) {
         clearInterval(timer);
@@ -892,20 +1085,24 @@
     startTimer();
   })();
 
-  // Spotlight section fade — dissolves in from below, holds, dissolves out as it exits through the top
+  // Spotlight section fade — dissolves in from below, holds, dissolves out as it exits through the top.
+  // Works for every .spotlight section on the page, not just one.
   (function(){
-    const section = document.getElementById('spotlight');
-    const media = section ? section.querySelector('.spotlight-media') : null;
-    if (!section || !media) return;
+    const sections = Array.from(document.querySelectorAll('.spotlight'));
+    if (!sections.length) return;
     function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
     function updateSpotlightFade(){
-      const rect = section.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const fadeDist = vh * 0.6;
-      const inProgress = 1 - clamp(rect.top / fadeDist, 0, 1);
-      const outProgress = clamp(rect.bottom / fadeDist, 0, 1);
-      const opacity = Math.max(0, Math.min(inProgress, outProgress));
-      media.style.opacity = String(opacity);
+      sections.forEach(section => {
+        const media = section.querySelector('.spotlight-media');
+        if (!media) return;
+        const rect = section.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const fadeDist = vh * 0.6;
+        const inProgress = 1 - clamp(rect.top / fadeDist, 0, 1);
+        const outProgress = clamp(rect.bottom / fadeDist, 0, 1);
+        const opacity = Math.max(0, Math.min(inProgress, outProgress));
+        media.style.opacity = String(opacity);
+      });
     }
     window.addEventListener('scroll', updateSpotlightFade, { passive: true });
     window.addEventListener('resize', updateSpotlightFade);
@@ -1064,6 +1261,28 @@
         <div class="modal-body" style="text-align:center;">Verifying your PU Prime account once means we can confirm you if you ever win a giveaway. It only takes about 2 minutes, and you won't be asked again after this.</div>
         <button type="button" class="form-submit" id="verifyNowBtn">Verify Now</button>
         <button type="button" class="modal-close-secondary" id="verifyLaterBtn" style="width:100%; background:none; border:none; color:var(--ink-dim); font-size:13px; font-weight:700; padding:14px; cursor:pointer;">Maybe later</button>
+      `,
+      cart: () => `
+        <div class="modal-eyebrow">Your Cart</div>
+        <h3 class="modal-title">Cart</h3>
+        <div id="cartModalItems"></div>
+        <div class="cart-subtotal-row" id="cartModalSubtotal"></div>
+        <button type="button" class="form-submit" id="cartCheckoutBtn">Proceed to Checkout</button>
+      `,
+      "newsletter-popup": () => `
+        <div class="modal-eyebrow">Welcome to RS</div>
+        <h3 class="modal-title">Get £10 off every piece of apparel — for life.</h3>
+        <div class="modal-body">Sign up for the RS newsletter and every apparel item in the store is £10 cheaper, permanently, for as long as you're a member. First word on drops and giveaways too.</div>
+        <form id="newsletterPopupForm" novalidate>
+          <div class="form-field" id="newsletterPopupEmailField">
+            <label for="newsletterPopupEmail" class="sr-only">Email</label>
+            <input id="newsletterPopupEmail" type="email" placeholder="you@email.com" required>
+            <div class="form-error">Enter a valid email address.</div>
+          </div>
+          <button type="submit" class="form-submit">Subscribe & Save £10</button>
+        </form>
+        <button type="button" id="newsletterPopupSkip" style="width:100%; background:none; border:none; color:var(--ink-dim); font-size:13px; font-weight:700; padding:14px; cursor:pointer;">Not now</button>
+        <div class="form-success" id="newsletterPopupSuccess"><div class="check">✓</div><h4>You're on the list.</h4><p>£10 off apparel is now applied to your account — sign in at checkout to use it.</p></div>
       `,
       tag: () => `
         <div class="modal-eyebrow">Customize</div>
@@ -1701,6 +1920,262 @@
       });
     }
   })();
+
+  // ===================================================================
+  // Store: products, cart (localStorage), checkout, discount, order email
+  // ===================================================================
+  const RS_PRODUCTS = [
+    { id: 'p1', name: 'RS Track Jacket', category: 'Apparel', price: 68, sizes: ['S','M','L','XL'], seed: 'trackjacket' },
+    { id: 'p2', name: 'RS Track Pants', category: 'Apparel', price: 58, sizes: ['S','M','L','XL'], seed: 'trackpants' },
+    { id: 'p3', name: 'RS Pullover Hoodie', category: 'Apparel', price: 64, sizes: ['S','M','L','XL'], seed: 'pulloverhoodie' },
+    { id: 'p4', name: 'RS Zip Hoodie', category: 'Apparel', price: 68, sizes: ['S','M','L','XL'], seed: 'ziphoodie' },
+    { id: 'p5', name: 'RS Crew Tee', category: 'Apparel', price: 34, sizes: ['S','M','L','XL'], seed: 'crewtee' },
+    { id: 'p6', name: 'RS Quarter-Zip', category: 'Apparel', price: 58, sizes: ['S','M','L','XL'], seed: 'quarterzip' },
+    { id: 'p7', name: 'RS Snapback Cap', category: 'Accessories', price: 28, sizes: ['One Size'], seed: 'snapback' },
+    { id: 'p8', name: 'RS Bucket Hat', category: 'Accessories', price: 26, sizes: ['One Size'], seed: 'buckethat' },
+  ];
+  window.RS_PRODUCTS = RS_PRODUCTS;
+
+  function getCart(){
+    try { return JSON.parse(localStorage.getItem('rs_cart') || '[]'); } catch { return []; }
+  }
+  function saveCart(cart){
+    localStorage.setItem('rs_cart', JSON.stringify(cart));
+    updateCartBadge();
+  }
+  function updateCartBadge(){
+    const cart = getCart();
+    const count = cart.reduce((sum, i) => sum + i.qty, 0);
+    const badge = document.getElementById('cartBadge');
+    if (!badge) return;
+    badge.textContent = String(count);
+    badge.style.display = count > 0 ? 'flex' : 'none';
+  }
+  function addToCart(product, size){
+    const cart = getCart();
+    const existing = cart.find(i => i.id === product.id && i.size === size);
+    if (existing) { existing.qty += 1; }
+    else { cart.push({ id: product.id, name: product.name, category: product.category, price: product.price, size, qty: 1 }); }
+    saveCart(cart);
+  }
+  function removeFromCart(index){
+    const cart = getCart();
+    cart.splice(index, 1);
+    saveCart(cart);
+  }
+  function setQty(index, qty){
+    const cart = getCart();
+    if (qty <= 0) { cart.splice(index, 1); }
+    else { cart[index].qty = qty; }
+    saveCart(cart);
+  }
+  window.rsCart = { get: getCart, add: addToCart, remove: removeFromCart, setQty, updateBadge: updateCartBadge };
+
+  function isLoggedIn(){ return !!window.currentUser; }
+
+  function computeTotals(cart){
+    const subtotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+    const apparelQty = cart.filter(i => i.category === 'Apparel').reduce((sum, i) => sum + i.qty, 0);
+    const discount = isLoggedIn() ? apparelQty * 10 : 0;
+    const total = Math.max(0, subtotal - discount);
+    return { subtotal, discount, total, apparelQty };
+  }
+
+  function renderProductGrid(){
+    const grid = document.getElementById('productGrid');
+    if (!grid) return;
+    grid.innerHTML = RS_PRODUCTS.map(p => `
+      <div class="product-card">
+        <div class="video-ph" data-label="${p.name}" aria-hidden="true"></div>
+        <div class="product-body">
+          <span class="tag">${p.category}</span>
+          <h3>${p.name}</h3>
+          <div class="product-price-row"><span class="product-price">£${p.price}</span></div>
+          ${p.sizes[0] !== 'One Size' ? `<div class="size-row" data-product="${p.id}">${p.sizes.map((s,i) => `<button type="button" class="size-btn${i===0?' selected':''}" data-size="${s}">${s}</button>`).join('')}</div>` : ''}
+          <button type="button" class="add-to-cart-btn" data-add-product="${p.id}">Add to Cart</button>
+        </div>
+      </div>
+    `).join('');
+
+    grid.querySelectorAll('.size-row').forEach(row => {
+      row.addEventListener('click', e => {
+        const btn = e.target.closest('.size-btn');
+        if (!btn) return;
+        row.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+    });
+
+    grid.querySelectorAll('[data-add-product]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.addProduct;
+        const product = RS_PRODUCTS.find(p => p.id === id);
+        const sizeRow = grid.querySelector(`.size-row[data-product="${id}"]`);
+        const size = sizeRow ? sizeRow.querySelector('.selected').dataset.size : 'One Size';
+        addToCart(product, size);
+        if (window.showToast) window.showToast(`${product.name} added to cart.`);
+      });
+    });
+  }
+
+  function cartItemRowHTML(item, index){
+    return `<div class="cart-item-row">
+      <div class="video-ph" data-label="" aria-hidden="true"></div>
+      <div class="cart-item-info">
+        <div class="name">${item.name}</div>
+        <div class="meta">${item.size} · £${item.price} each</div>
+      </div>
+      <div class="cart-qty-controls">
+        <button type="button" data-qty-down="${index}">−</button>
+        <span>${item.qty}</span>
+        <button type="button" data-qty-up="${index}">+</button>
+      </div>
+      <button type="button" class="cart-remove-btn" data-remove="${index}">Remove</button>
+    </div>`;
+  }
+
+  function wireCartRowControls(container, onChange){
+    container.querySelectorAll('[data-qty-up]').forEach(b => b.addEventListener('click', () => {
+      const cart = getCart(); const i = parseInt(b.dataset.qtyUp,10); setQty(i, cart[i].qty + 1); onChange();
+    }));
+    container.querySelectorAll('[data-qty-down]').forEach(b => b.addEventListener('click', () => {
+      const cart = getCart(); const i = parseInt(b.dataset.qtyDown,10); setQty(i, cart[i].qty - 1); onChange();
+    }));
+    container.querySelectorAll('[data-remove]').forEach(b => b.addEventListener('click', () => {
+      removeFromCart(parseInt(b.dataset.remove,10)); onChange();
+    }));
+  }
+
+  function renderCartModal(panel){
+    const itemsEl = panel.querySelector('#cartModalItems');
+    const subtotalEl = panel.querySelector('#cartModalSubtotal');
+    const cart = getCart();
+    if (!cart.length) {
+      itemsEl.innerHTML = '<div class="cart-empty">Your cart is empty.</div>';
+      subtotalEl.innerHTML = '';
+      panel.querySelector('#cartCheckoutBtn').style.display = 'none';
+      return;
+    }
+    panel.querySelector('#cartCheckoutBtn').style.display = 'block';
+    itemsEl.innerHTML = cart.map(cartItemRowHTML).join('');
+    wireCartRowControls(itemsEl, () => renderCartModal(panel));
+    const { subtotal } = computeTotals(cart);
+    subtotalEl.innerHTML = `<span>Subtotal</span><span>£${subtotal.toFixed(2)}</span>`;
+  }
+
+  document.getElementById('navCartBtn').addEventListener('click', () => {
+    const { panel } = window.openModal(window.tpl.cart());
+    renderCartModal(panel);
+    panel.querySelector('#cartCheckoutBtn').addEventListener('click', () => {
+      window.closeAnyModal();
+      location.hash = '#/checkout';
+    });
+  });
+
+  function renderCheckoutPage(){
+    const cart = getCart();
+    const itemsEl = document.getElementById('checkoutItems');
+    const totalsEl = document.getElementById('checkoutTotals');
+    const discountNoteEl = document.getElementById('checkoutDiscountNote');
+    if (!itemsEl) return;
+
+    if (!cart.length) {
+      itemsEl.innerHTML = '<div class="cart-empty">Your cart is empty. <a href="#/store" style="color:var(--amber);">Go shopping →</a></div>';
+      totalsEl.innerHTML = '';
+      discountNoteEl.innerHTML = '';
+      document.getElementById('checkoutSubmitBtn').disabled = true;
+      return;
+    }
+    document.getElementById('checkoutSubmitBtn').disabled = false;
+    itemsEl.innerHTML = cart.map(cartItemRowHTML).join('');
+    wireCartRowControls(itemsEl, renderCheckoutPage);
+
+    const { subtotal, discount, total, apparelQty } = computeTotals(cart);
+    totalsEl.innerHTML = `
+      <div class="row"><span>Subtotal</span><span>£${subtotal.toFixed(2)}</span></div>
+      ${discount > 0 ? `<div class="row"><span>Member discount</span><span>−£${discount.toFixed(2)}</span></div>` : ''}
+      <div class="row total"><span>Total</span><span>£${total.toFixed(2)}</span></div>
+    `;
+    discountNoteEl.textContent = isLoggedIn()
+      ? (apparelQty > 0 ? `£10 member discount applied to ${apparelQty} apparel item${apparelQty > 1 ? 's' : ''}.` : '')
+      : 'Log in to save £10 on every apparel item.';
+
+    // Pre-fill from profile if logged in
+    if (window.currentProfile) {
+      const nameInput = document.getElementById('checkoutName');
+      const emailInput = document.getElementById('checkoutEmail');
+      if (nameInput && !nameInput.value) nameInput.value = window.currentProfile.full_name || '';
+      if (emailInput && !emailInput.value) emailInput.value = window.currentUser ? window.currentUser.email : '';
+    }
+  }
+  window.renderCheckoutPage = renderCheckoutPage;
+  window.addEventListener('hashchange', () => { if (location.hash === '#/checkout') renderCheckoutPage(); });
+
+  const checkoutForm = document.getElementById('checkoutForm');
+  if (checkoutForm) {
+    checkoutForm.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const cart = getCart();
+      if (!cart.length) return;
+
+      const fields = [
+        { fieldId: 'checkoutNameField', inputId: 'checkoutName', validate: v => v.length > 0 },
+        { fieldId: 'checkoutEmailField', inputId: 'checkoutEmail', validate: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+        { fieldId: 'checkoutAddressField', inputId: 'checkoutAddress', validate: v => v.length > 0 },
+        { fieldId: 'checkoutCityField', inputId: 'checkoutCity', validate: v => v.length > 0 },
+        { fieldId: 'checkoutPostcodeField', inputId: 'checkoutPostcode', validate: v => v.length > 0 },
+      ];
+      let valid = true;
+      fields.forEach(f => {
+        const wrap = document.getElementById(f.fieldId);
+        const input = document.getElementById(f.inputId);
+        const ok = f.validate(input.value.trim());
+        wrap.classList.toggle('invalid', !ok);
+        if (!ok) valid = false;
+      });
+      if (!valid) return;
+
+      const submitBtn = document.getElementById('checkoutSubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Placing order…';
+
+      const { subtotal, discount, total } = computeTotals(cart);
+      const payload = {
+        customerName: document.getElementById('checkoutName').value.trim(),
+        email: document.getElementById('checkoutEmail').value.trim(),
+        address: document.getElementById('checkoutAddress').value.trim(),
+        city: document.getElementById('checkoutCity').value.trim(),
+        postcode: document.getElementById('checkoutPostcode').value.trim(),
+        items: cart,
+        subtotal, discount, total,
+      };
+
+      try {
+        const res = await fetch('/.netlify/functions/create-order', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          if (window.showToast) window.showToast(data.error || 'Could not place order — try again.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Place Order';
+          return;
+        }
+        saveCart([]);
+        checkoutForm.style.display = 'none';
+        document.getElementById('checkoutOrderIdText').textContent = `Order #${data.orderId}`;
+        document.getElementById('checkoutSuccess').classList.add('show');
+      } catch (err) {
+        if (window.showToast) window.showToast('Network error — check your connection and try again.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Place Order';
+      }
+    });
+  }
+
+  renderProductGrid();
+  updateCartBadge();
 
   // Nav background on scroll
   const nav = document.getElementById('nav');
