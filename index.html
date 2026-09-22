@@ -253,6 +253,25 @@
   .checkout-totals .row{ display:flex; justify-content:space-between; font-size:13px; color:var(--ink-dim); margin-bottom:6px; }
   .checkout-totals .row.total{ color:var(--ink); font-weight:800; font-size:16px; margin-top:8px; }
 
+  /* ===== CHAUFFEUR ===== */
+  .chauffeur-banner{ margin: 0 5vw; padding: 22px 28px; background: linear-gradient(120deg, rgba(232,163,61,0.14), rgba(232,163,61,0.03)); border:1px solid rgba(232,163,61,0.3); border-radius:16px; display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+  .chauffeur-banner-text b{ font-family:'Anton',sans-serif; font-size:18px; letter-spacing:0.02em; display:block; margin-bottom:4px; }
+  .chauffeur-banner-text span{ font-size:13px; color:var(--ink-dim); }
+  .chauffeur-hero{ padding: 150px 5vw 40px; }
+  .chauffeur-hero h1{ font-size: clamp(32px,5vw,48px); margin-bottom:14px; }
+  .chauffeur-hero p{ color:var(--ink-dim); max-width:560px; font-size:15px; line-height:1.6; }
+  .chauffeur-layout{ display:grid; grid-template-columns:1fr 1fr; gap:24px; padding:0 5vw 90px; align-items:start; }
+  .rush-notice{ display:none; font-size:12.5px; color:var(--amber); background:rgba(232,163,61,0.1); border:1px solid rgba(232,163,61,0.3); padding:12px 14px; border-radius:8px; margin-bottom:14px; }
+  .rush-notice.show{ display:block; }
+  .searching-state{ display:none; text-align:center; padding:40px 10px; }
+  .searching-state.show{ display:block; }
+  .searching-spinner{ width:52px; height:52px; border-radius:50%; border:3px solid rgba(232,163,61,0.2); border-top-color:var(--amber); margin:0 auto 20px; animation: spin 0.9s linear infinite; }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  .confirmed-state{ display:none; text-align:center; padding:30px 10px; }
+  .confirmed-state.show{ display:block; }
+  .confirmed-icon{ width:56px; height:56px; border-radius:50%; background:rgba(90,200,120,0.15); border:1px solid rgba(90,200,120,0.4); color:#7fe0a0; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:24px; }
+  @media (max-width: 900px){ .chauffeur-layout{ grid-template-columns:1fr; } }
+
   @media (max-width: 980px){
     .product-grid{ grid-template-columns:repeat(2,1fr); }
     .checkout-layout{ grid-template-columns:1fr; }
@@ -423,6 +442,7 @@
     <a href="#/newswire" data-page="newswire">Newswire</a>
     <a href="#/videos" data-page="videos">Videos</a>
     <a href="#/store" data-page="store">Store</a>
+    <a href="#/chauffeur" data-page="chauffeur">Chauffeur</a>
     <a href="#/support" data-page="support">Support</a>
   </div>
   <div class="nav-right">
@@ -467,6 +487,16 @@
       </div>
     </div>
   </section>
+
+  <div style="padding: 40px 0 0;">
+    <a href="#/chauffeur" class="chauffeur-banner" style="text-decoration:none; color:inherit; cursor:pointer;">
+      <div class="chauffeur-banner-text">
+        <b>Need a ride? Book an RS Chauffeur.</b>
+        <span>Members only — book 24h ahead free, or get a driver same-day for a flat rush fee.</span>
+      </div>
+      <span class="link-arrow">Book Now →</span>
+    </a>
+  </div>
 
   <section id="experiences">
     <div class="section-head">
@@ -907,6 +937,88 @@
         <thead><tr><th>Name</th><th>Email</th><th>PU Prime ID</th><th>Status</th></tr></thead>
         <tbody id="adminTableBody"></tbody>
       </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== CHAUFFEUR ===================== -->
+<div class="page" id="page-chauffeur">
+  <div class="chauffeur-hero">
+    <h1 class="display">Book an RS Chauffeur</h1>
+    <p>Members-only chauffeur service. Book 24 hours ahead for free, or request same-day for a flat £200 rush fee. First available driver confirms your ride.</p>
+  </div>
+  <div class="chauffeur-layout">
+    <div class="profile-card">
+      <h3>Ride Details</h3>
+      <div class="rush-notice" id="rushNotice"></div>
+      <form id="chauffeurForm" novalidate>
+        <div class="form-field" id="chauffeurNameField">
+          <label for="chauffeurName">Full Name</label>
+          <input id="chauffeurName" required>
+          <div class="form-error">Enter your full name.</div>
+        </div>
+        <div class="form-field" id="chauffeurEmailField">
+          <label for="chauffeurEmail">Email</label>
+          <input id="chauffeurEmail" type="email" required>
+          <div class="form-error">Enter a valid email address.</div>
+        </div>
+        <div class="form-field" id="chauffeurPickupField">
+          <label for="chauffeurPickup">Pickup Location</label>
+          <input id="chauffeurPickup" required>
+          <div class="form-error">Enter a pickup location.</div>
+        </div>
+        <div class="form-field" id="chauffeurDropoffField">
+          <label for="chauffeurDropoff">Drop-off Location</label>
+          <input id="chauffeurDropoff" required>
+          <div class="form-error">Enter a drop-off location.</div>
+        </div>
+        <div class="form-field" id="chauffeurDateField">
+          <label for="chauffeurDate">Pickup Date & Time</label>
+          <input id="chauffeurDate" type="datetime-local" required>
+          <div class="form-error">Choose a valid future date and time.</div>
+        </div>
+        <div class="form-field" id="chauffeurPassengersField">
+          <label for="chauffeurPassengers">Passengers</label>
+          <input id="chauffeurPassengers" type="number" min="1" max="8" value="1">
+        </div>
+        <div class="form-field" id="chauffeurNotesField">
+          <label for="chauffeurNotes">Notes (optional)</label>
+          <textarea id="chauffeurNotes" rows="3"></textarea>
+        </div>
+        <button type="submit" class="form-submit" id="chauffeurSubmitBtn">Request Chauffeur</button>
+      </form>
+
+      <div class="searching-state" id="chauffeurSearching">
+        <div class="searching-spinner"></div>
+        <h4>Scanning for available drivers…</h4>
+        <p style="color:var(--ink-dim); font-size:13.5px; margin-top:8px;">We'll email you the moment a driver accepts — feel free to leave this page.</p>
+      </div>
+
+      <div class="confirmed-state" id="chauffeurConfirmed">
+        <div class="confirmed-icon">✓</div>
+        <h4 id="chauffeurConfirmedTitle">Driver confirmed!</h4>
+        <p id="chauffeurConfirmedText" style="color:var(--ink-dim); font-size:13.5px; margin-top:8px;"></p>
+      </div>
+    </div>
+    <div class="profile-card">
+      <h3>How It Works</h3>
+      <div class="steps" style="display:flex; flex-direction:column; gap:16px;">
+        <div class="step" style="padding:0;">
+          <div class="step-num display" style="margin-bottom:6px;">01</div>
+          <h3 style="font-size:15px; margin-bottom:4px;">Request a ride</h3>
+          <p style="font-size:13px;">Tell us when and where — 24h+ notice is free, same-day adds a flat £200.</p>
+        </div>
+        <div class="step" style="padding:0;">
+          <div class="step-num display" style="margin-bottom:6px;">02</div>
+          <h3 style="font-size:15px; margin-bottom:4px;">We find a driver</h3>
+          <p style="font-size:13px;">Available drivers are notified instantly — first to confirm gets your job.</p>
+        </div>
+        <div class="step" style="padding:0;">
+          <div class="step-num display" style="margin-bottom:6px;">03</div>
+          <h3 style="font-size:15px; margin-bottom:4px;">You're confirmed</h3>
+          <p style="font-size:13px;">You'll get an email the moment your driver accepts, with all the details.</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -2176,6 +2288,123 @@
 
   renderProductGrid();
   updateCartBadge();
+
+  // ===================================================================
+  // Chauffeur booking: live rush preview, submit, poll for confirmation
+  // ===================================================================
+  (function(){
+    const form = document.getElementById('chauffeurForm');
+    if (!form) return;
+
+    const dateInput = document.getElementById('chauffeurDate');
+    const rushNotice = document.getElementById('rushNotice');
+    const RUSH_HOURS = 24;
+    const RUSH_FEE = 200;
+
+    function checkRush(){
+      if (!dateInput.value) { rushNotice.classList.remove('show'); return; }
+      const picked = new Date(dateInput.value);
+      const hoursUntil = (picked.getTime() - Date.now()) / 3600000;
+      if (hoursUntil >= 0 && hoursUntil < RUSH_HOURS) {
+        rushNotice.textContent = `This pickup time is less than 24 hours away — a £${RUSH_FEE} rush fee applies.`;
+        rushNotice.classList.add('show');
+      } else {
+        rushNotice.classList.remove('show');
+      }
+    }
+    dateInput.addEventListener('input', checkRush);
+
+    // Pre-fill from account if logged in
+    document.addEventListener('hashchange', () => {
+      if (location.hash === '#/chauffeur' && window.currentUser && window.currentProfile) {
+        const nameInput = document.getElementById('chauffeurName');
+        const emailInput = document.getElementById('chauffeurEmail');
+        if (nameInput && !nameInput.value) nameInput.value = window.currentProfile.full_name || '';
+        if (emailInput && !emailInput.value) emailInput.value = window.currentUser.email || '';
+      }
+    });
+
+    let pollTimer = null;
+    function pollBookingStatus(bookingId){
+      if (!window.sb) return;
+      pollTimer = setInterval(async () => {
+        const { data } = await window.sb.from('chauffeur_bookings').select('status,confirmed_by').eq('id', bookingId).single();
+        if (data && data.status === 'confirmed') {
+          clearInterval(pollTimer);
+          document.getElementById('chauffeurSearching').classList.remove('show');
+          document.getElementById('chauffeurConfirmedText').textContent = `${data.confirmed_by} accepted your ride. Check your email for full details.`;
+          document.getElementById('chauffeurConfirmed').classList.add('show');
+        }
+      }, 4000);
+      // Stop polling after 5 minutes either way — the confirmation email is the reliable fallback.
+      setTimeout(() => clearInterval(pollTimer), 5 * 60 * 1000);
+    }
+
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+
+      if (!window.currentUser) {
+        if (window.showToast) window.showToast('Please log in to book a chauffeur.');
+        const { panel } = window.openModal(window.tpl.login());
+        if (window.wireLoginForm) window.wireLoginForm(panel);
+        return;
+      }
+
+      const fields = [
+        { fieldId: 'chauffeurNameField', inputId: 'chauffeurName', validate: v => v.length > 0 },
+        { fieldId: 'chauffeurEmailField', inputId: 'chauffeurEmail', validate: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+        { fieldId: 'chauffeurPickupField', inputId: 'chauffeurPickup', validate: v => v.length > 0 },
+        { fieldId: 'chauffeurDropoffField', inputId: 'chauffeurDropoff', validate: v => v.length > 0 },
+        { fieldId: 'chauffeurDateField', inputId: 'chauffeurDate', validate: v => v.length > 0 && new Date(v).getTime() > Date.now() },
+      ];
+      let valid = true;
+      fields.forEach(f => {
+        const wrap = document.getElementById(f.fieldId);
+        const input = document.getElementById(f.inputId);
+        const ok = f.validate(input.value.trim());
+        wrap.classList.toggle('invalid', !ok);
+        if (!ok) valid = false;
+      });
+      if (!valid) return;
+
+      const submitBtn = document.getElementById('chauffeurSubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Requesting…';
+
+      const payload = {
+        userId: window.currentUser.id,
+        customerName: document.getElementById('chauffeurName').value.trim(),
+        customerEmail: document.getElementById('chauffeurEmail').value.trim(),
+        pickupLocation: document.getElementById('chauffeurPickup').value.trim(),
+        dropoffLocation: document.getElementById('chauffeurDropoff').value.trim(),
+        pickupDateTime: new Date(dateInput.value).toISOString(),
+        passengers: document.getElementById('chauffeurPassengers').value,
+        notes: document.getElementById('chauffeurNotes').value.trim(),
+      };
+
+      try {
+        const res = await fetch('/.netlify/functions/create-booking', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          if (window.showToast) window.showToast(data.error || 'Could not create booking — try again.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Request Chauffeur';
+          return;
+        }
+        form.style.display = 'none';
+        rushNotice.classList.remove('show');
+        document.getElementById('chauffeurSearching').classList.add('show');
+        pollBookingStatus(data.bookingId);
+      } catch (err) {
+        if (window.showToast) window.showToast('Network error — check your connection and try again.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Request Chauffeur';
+      }
+    });
+  })();
 
   // Nav background on scroll
   const nav = document.getElementById('nav');
