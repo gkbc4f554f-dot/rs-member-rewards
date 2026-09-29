@@ -20,19 +20,44 @@ const RUSH_WINDOW_HOURS = 24;
 const VALID_CITIES = ["london", "lagos", "dubai"];
 
 // Authoritative copy of the Lagos zone list — must match the client's list
-// in index.html. If you add/rename a zone, update both places.
-const LAGOS_ZONES = {
-  "ikoyi": "blue",
-  "victoria-island": "blue",
-  "lekki-phase-1": "blue",
-  "ikeja-gra": "blue",
-  "ajah": "purple",
-  "yaba": "purple",
-  "magodo": "purple",
-  "surulere": "red",
-  "apapa": "red",
-  "oshodi": "red",
-};
+// in index.html (same ids, centers, radii, statuses). If you add/rename a
+// zone, update both places. The client only draws these on the map and
+// gives a live warning; this server-side copy is what actually decides
+// whether a booking is allowed, computed fresh from the submitted
+// coordinates — the client's own "pickupZone" guess is never trusted.
+const LAGOS_ZONES = [
+  { id: "ikoyi", status: "blue", center: [6.4531, 3.4352], radius: 1800 },
+  { id: "victoria-island", status: "blue", center: [6.4281, 3.4219], radius: 2200 },
+  { id: "lekki-phase-1", status: "blue", center: [6.4406, 3.4734], radius: 2000 },
+  { id: "ikeja-gra", status: "blue", center: [6.5793, 3.3556], radius: 1800 },
+  { id: "ajah", status: "purple", center: [6.4698, 3.5852], radius: 3000 },
+  { id: "yaba", status: "purple", center: [6.5147, 3.3708], radius: 1500 },
+  { id: "magodo", status: "purple", center: [6.6083, 3.3853], radius: 1800 },
+  { id: "surulere", status: "red", center: [6.4924, 3.3452], radius: 1800 },
+  { id: "apapa", status: "red", center: [6.4491, 3.3592], radius: 1800 },
+  { id: "oshodi", status: "red", center: [6.5560, 3.3087], radius: 1800 },
+];
+
+// Great-circle distance in meters — same formula as the client's
+// haversineMeters, so zone membership matches what the customer saw drawn
+// on their map.
+function haversineMeters(a, b) {
+  const R = 6371000;
+  const toRad = (d) => (d * Math.PI) / 180;
+  const dLat = toRad(b[0] - a[0]);
+  const dLng = toRad(b[1] - a[1]);
+  const lat1 = toRad(a[0]);
+  const lat2 = toRad(b[0]);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+function zoneForPoint(lat, lng) {
+  for (const zone of LAGOS_ZONES) {
+    if (haversineMeters(zone.center, [lat, lng]) <= zone.radius) return zone;
+  }
+  return null;
+}
 
 exports.handler = async (event) => {
   const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Content-Type", "Access-Control-Allow-Methods": "POST, OPTIONS" };
@@ -51,25 +76,38 @@ exports.handler = async (event) => {
   const {
     userId, customerName, customerEmail, pickupLocation, dropoffLocation,
     pickupDateTime, passengers, notes,
+    pickupLat, pickupLng, dropoffLat, dropoffLng,
   } = data;
   const city = VALID_CITIES.includes(data.city) ? data.city : "london";
 
-  if (!userId || !customerName || !customerEmail || !pickupLocation || !dropoffLocation || !pickupDateTime) {
-    return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: "Missing required fields." }) };
+  if (
+    !userId || !customerName || !customerEmail || !pickupLocation || !dropoffLocation || !pickupDateTime ||
+    typeof pickupLat !== "number" || typeof pickupLng !== "number" ||
+    typeof dropoffLat !== "number" || typeof dropoffLng !== "number"
+  ) {
+    return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: "Missing required fields — drop a pickup and drop-off pin on the map." }) };
+  }
+  if (
+    pickupLat < -90 || pickupLat > 90 || pickupLng < -180 || pickupLng > 180 ||
+    dropoffLat < -90 || dropoffLat > 90 || dropoffLng < -180 || dropoffLng > 180
+  ) {
+    return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: "Invalid pickup/drop-off location." }) };
   }
 
   // ---- Lagos pickup-zone eligibility (server-authoritative) ----
+  // Recomputed here from the submitted coordinates — the client's own
+  // "pickupZone" guess (used only for its live on-map warning) is ignored.
   let pickupZone = null;
   if (city === "lagos") {
-    pickupZone = data.pickupZone;
-    const status = pickupZone ? LAGOS_ZONES[pickupZone] : undefined;
-    if (!status) {
-      return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: "Select a valid pickup zone for Lagos." }) };
+    const zone = zoneForPoint(pickupLat, pickupLng);
+    if (!zone) {
+      return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: "Drop the pickup pin inside a highlighted zone." }) };
     }
-    if (status === "red") {
+    if (zone.status === "red") {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: "Pickup isn't available in that zone. Choose a blue or purple zone, or pick a different city." }) };
     }
-    // status === "blue" or "purple" -> allowed (purple just carries a warning client-side)
+    // "blue" or "purple" -> allowed (purple just carries a warning client-side)
+    pickupZone = zone.id;
   }
 
   // ---- rush surcharge (server-authoritative) ----
@@ -100,6 +138,8 @@ exports.handler = async (event) => {
       body: JSON.stringify({
         user_id: userId, customer_name: customerName, customer_email: customerEmail,
         pickup_location: pickupLocation, dropoff_location: dropoffLocation,
+        pickup_lat: pickupLat, pickup_lng: pickupLng,
+        dropoff_lat: dropoffLat, dropoff_lng: dropoffLng,
         pickup_datetime: pickupDate.toISOString(), passengers: passengers || 1,
         notes: notes || null, city, pickup_zone: pickupZone,
         is_rush: isRush, rush_fee: rushFee, status: "searching", confirm_token: confirmToken,
