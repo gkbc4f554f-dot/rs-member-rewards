@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fit Predictor — Vescair</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --bg:#0a0a0c; --panel:#141418; --panel-2:#1b1b20;
+    --ink:#f3f1ea; --ink-dim:#9a99a1;
+    --amber:#e8a33d; --amber-soft:#f5b654;
+    --line: rgba(243,241,234,0.09);
+    --radius:4px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased;}
+  :focus-visible{ outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 2px; }
+  .display{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:0.01em;}
+  a{color:inherit;text-decoration:none;}
+  img{display:block;max-width:100%;}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+
+  /* ===== forms (same look as the main site) ===== */
+  .form-field{ margin-bottom:14px; }
+  .form-field label{ display:block; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-dim); margin-bottom:6px; }
+  .form-field input, .form-field textarea{
+    width:100%; background: var(--panel-2); border:1px solid var(--line); border-radius:6px; padding:12px 14px;
+    color:var(--ink); font-family:inherit; font-size:14px;
+  }
+  .form-field input:focus, .form-field textarea:focus{ outline:none; border-color: var(--amber); }
+  .form-submit{ width:100%; background:var(--amber); color:#1a1204; font-weight:800; font-size:13.5px; letter-spacing:0.04em; text-transform:uppercase; padding:14px; border-radius:999px; cursor:pointer; margin-top:6px; transition: background 0.2s ease; }
+  .form-submit:hover{ background:var(--amber-soft); }
+  .profile-card{ background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:26px; }
+  .profile-card h3{ font-size:15px; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-dim); margin-bottom:18px; }
+
+  /* ===== TOAST ===== */
+  .toast{ position:fixed; left:50%; bottom:28px; transform: translateX(-50%) translateY(20px); z-index:600; background:var(--panel-2); border:1px solid var(--line); color:var(--ink); font-size:13.5px; font-weight:600; padding:14px 22px; border-radius:999px; opacity:0; pointer-events:none; transition: opacity 0.25s ease, transform 0.25s ease; display:flex; align-items:center; gap:10px; box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+  .toast .dot-ok{ width:8px; height:8px; border-radius:50%; background:var(--amber); flex-shrink:0; }
+
+  /* ===== APP SHELL (sidebar layout, same structure as the original
+     Fit Predictor project, recoloured to Vescair's amber/dark theme) ===== */
+  .app-shell{ display:grid; grid-template-columns:230px 1fr; min-height:100vh; }
+  .app-sidebar{ background:var(--panel); border-right:1px solid var(--line); padding:24px 18px; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; }
+  .side-logo{ display:flex; align-items:center; gap:8px; font-family:'Anton',sans-serif; font-size:22px; padding:8px 10px 26px; }
+  .side-logo .dot{ width:7px; height:7px; background:var(--amber); border-radius:1px; transform:rotate(45deg); }
+  .side-nav{ display:flex; flex-direction:column; gap:4px; flex:1; }
+  .side-nav a{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:8px; text-decoration:none; color:var(--ink-dim); font-size:14px; font-weight:600; transition: background .15s ease, color .15s ease; }
+  .side-nav a:hover{ background:rgba(255,255,255,0.05); color:var(--ink); }
+  .side-nav a.active{ background:rgba(232,163,61,0.14); color:var(--amber); }
+  .side-home{ margin-top:10px; padding-top:14px; border-top:1px solid var(--line); }
+  .side-home a{ display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-dim); padding:10px 12px; border-radius:8px; transition:color .15s ease, background .15s ease; }
+  .side-home a:hover{ background:rgba(255,255,255,0.05); color:var(--ink); }
+  .side-foot{ border-top:1px solid var(--line); padding-top:14px; margin-top:14px; }
+  .side-user{ display:flex; align-items:center; gap:10px; padding:8px 10px; }
+  .side-user .avatar{ width:34px; height:34px; border-radius:50%; background:var(--amber); color:#1a1204; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; font-family:'Anton',sans-serif; flex:none; }
+  .side-user .who{ overflow:hidden; }
+  .side-user .name{ font-size:13.5px; font-weight:700; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .side-user .email{ font-size:11.5px; color:var(--ink-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .side-logout{ width:100%; text-align:left; color:var(--ink-dim); font-weight:600; font-size:12.5px; padding:8px 10px; }
+  .side-logout:hover{ color:var(--ink); }
+  .app-main{ padding:40px 44px; max-width:900px; }
+  @media (max-width:900px){
+    .app-shell{ grid-template-columns:1fr; }
+    .app-sidebar{ position:static; height:auto; }
+    .side-nav{ flex-direction:row; flex-wrap:wrap; }
+    .app-main{ padding:28px 20px; }
+  }
+
+  /* ===== Fit Predictor panels (unchanged from the members-area build) ===== */
+  .fit-panel{ display:none; }
+  .fit-panel.active{ display:block; animation: fitFadeIn 0.25s ease; }
+  @keyframes fitFadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .fit-stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+  .fit-stat-card{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:20px; }
+  .fit-stat-card b{ display:block; font-family:'Anton',sans-serif; font-size:26px; color:var(--amber); }
+  .fit-stat-card span{ font-size:11.5px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.05em; }
+  @media (max-width:900px){ .fit-stat-grid{ grid-template-columns:1fr 1fr; } }
+
+  .fit-quick-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px; }
+  .fit-quick-actions button{ background:var(--panel-2); border:1px solid var(--line); color:var(--ink); font-size:12.5px; font-weight:700; padding:12px 18px; border-radius:10px; transition: border-color 0.15s ease; }
+  .fit-quick-actions button:hover{ border-color:var(--amber); }
+
+  .fit-layout{ display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
+  @media (max-width:900px){ .fit-layout{ grid-template-columns:1fr; } }
+
+  .fit-suggestion{ margin-top:18px; padding:16px 18px; border-radius:10px; font-size:13px; line-height:1.6; border:1px solid; }
+  .fit-suggestion.up{ background:rgba(90,200,120,0.1); border-color:rgba(90,200,120,0.35); color:#8fe6ac; }
+  .fit-suggestion.deload{ background:rgba(232,163,61,0.1); border-color:rgba(232,163,61,0.35); color:var(--amber-soft); }
+  .fit-suggestion.warn{ background:rgba(224,100,92,0.1); border-color:rgba(224,100,92,0.35); color:#f28b85; }
+  .fit-suggestion.neutral{ background:var(--panel-2); border-color:var(--line); color:var(--ink-dim); }
+
+  .fit-table{ width:100%; border-collapse:collapse; font-size:13px; margin-top:8px; }
+  .fit-table th{ text-align:left; padding:10px 8px; border-bottom:1px solid var(--line); color:var(--ink-dim); text-transform:uppercase; font-size:10.5px; letter-spacing:0.05em; }
+  .fit-table td{ padding:10px 8px; border-bottom:1px solid var(--line); }
+  .fit-table tr:last-child td{ border-bottom:none; }
+  .fit-empty{ color:var(--ink-dim); font-size:13px; padding:20px 0; }
+
+  .fit-pill{ display:inline-flex; align-items:center; padding:5px 12px; border-radius:999px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.03em; }
+  .fit-pill.active{ background:rgba(224,100,92,0.15); color:#f28b85; border:1px solid rgba(224,100,92,0.35); }
+  .fit-pill.recovering{ background:rgba(232,163,61,0.15); color:var(--amber); border:1px solid rgba(232,163,61,0.35); }
+  .fit-pill.resolved{ background:rgba(90,200,120,0.15); color:#7fe0a0; border:1px solid rgba(90,200,120,0.35); }
+  .fit-pill.pending{ background:rgba(255,255,255,0.08); color:var(--ink-dim); border:1px solid var(--line); }
+  .fit-pill.accepted{ background:rgba(90,200,120,0.15); color:#7fe0a0; border:1px solid rgba(90,200,120,0.35); }
+
+  .fit-history-item{ display:flex; gap:14px; align-items:flex-start; padding:14px 0; border-bottom:1px solid var(--line); }
+  .fit-history-item:last-child{ border-bottom:none; }
+  .fit-history-icon{ width:34px; height:34px; border-radius:8px; background:var(--panel-2); display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+  .fit-history-body b{ display:block; font-size:13.5px; }
+  .fit-history-body span{ font-size:12px; color:var(--ink-dim); }
+
+  .fit-select{ width:100%; background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:12px 14px; color:var(--ink); font-size:14px; font-family:inherit; }
+  .fit-row-2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .fit-row-3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  @media (max-width:520px){ .fit-row-2, .fit-row-3{ grid-template-columns:1fr; } }
+  .fit-check-row{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-dim); margin-bottom:14px; }
+
+  .app-topline{ margin-bottom:28px; }
+  .app-topline h2{ font-size:26px; margin-bottom:4px; }
+  .app-topline p{ color:var(--ink-dim); font-size:14px; }
+
+  /* ===== auth gate ===== */
+  #authGate{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:40px 20px; text-align:center; }
+  #authGate .card{ max-width:380px; }
+  #authGate .display{ font-size:22px; margin-bottom:12px; }
+  #authGate p{ color:var(--ink-dim); font-size:14px; line-height:1.6; margin-bottom:22px; }
+  #authGate .btn{ display:inline-flex; align-items:center; gap:8px; background:var(--amber); color:#1a1204; font-weight:800; font-size:13.5px; letter-spacing:0.04em; text-transform:uppercase; padding:13px 26px; border-radius:999px; }
+  #authGate .btn:hover{ background:var(--amber-soft); }
+  #loadingGate{ min-height:100vh; display:flex; align-items:center; justify-content:center; color:var(--ink-dim); font-size:13px; }
+</style>
+</head>
+<body>
+
+<div id="loadingGate">Loading…</div>
+
+<div id="authGate" style="display:none;">
+  <div class="card">
+    <h1 class="display">Members only</h1>
+    <p>Log in to your Vescair account on the main site first, then come back here to open Fit Predictor.</p>
+    <a href="index.html" class="btn">← Go to Vescair Home</a>
+  </div>
+</div>
+
+<div class="app-shell" id="appShell" style="display:none;">
+  <aside class="app-sidebar">
+    <a href="index.html" class="side-logo" aria-label="Vescair Home"><span class="dot"></span>Vescair</a>
+    <nav class="side-nav" id="fitTabs">
+      <a href="#/overview" class="fit-tab active" data-fit-tab="overview">Overview</a>
+      <a href="#/train" class="fit-tab" data-fit-tab="train">Train</a>
+      <a href="#/body" class="fit-tab" data-fit-tab="body">Body</a>
+      <a href="#/nutrition" class="fit-tab" data-fit-tab="nutrition">Nutrition</a>
+      <a href="#/injuries" class="fit-tab" data-fit-tab="injuries">Injuries</a>
+      <a href="#/friends" class="fit-tab" data-fit-tab="friends">Friends</a>
+      <a href="#/history" class="fit-tab" data-fit-tab="history">History</a>
+      <a href="#/profile" class="fit-tab" data-fit-tab="profile">Profile</a>
+    </nav>
+    <div class="side-home">
+      <a href="index.html">← Home</a>
+    </div>
+    <div class="side-foot">
+      <div class="side-user">
+        <div class="avatar" id="sideAvatar">?</div>
+        <div class="who"><div class="name" id="sideName">Member</div><div class="email" id="sideEmail"></div></div>
+      </div>
+      <button type="button" class="side-logout" id="logoutBtn">Log out</button>
+    </div>
+  </aside>
+
+  <main class="app-main">
+    <div class="app-topline">
+      <h2 class="display" id="fitOverviewGreeting">Welcome back.</h2>
+      <p>Track lifts, bodyweight, nutrition and injuries — Fit Predictor suggests your next weight or deload for you.</p>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="fit-panel active" id="fitPanel-overview">
+      <div class="fit-stat-grid" id="fitStatGrid">
+        <div class="fit-stat-card"><b id="fitStatBench">—</b><span>Best Bench e1RM</span></div>
+        <div class="fit-stat-card"><b id="fitStatSquat">—</b><span>Best Squat e1RM</span></div>
+        <div class="fit-stat-card"><b id="fitStatDeadlift">—</b><span>Best Deadlift e1RM</span></div>
+        <div class="fit-stat-card"><b id="fitStatBodyweight">—</b><span>Latest Bodyweight</span></div>
+      </div>
+      <div class="fit-quick-actions">
+        <button type="button" data-fit-goto="train">+ Log a Lift</button>
+        <button type="button" data-fit-goto="body">+ Log Bodyweight</button>
+        <button type="button" data-fit-goto="nutrition">+ Log Nutrition</button>
+        <button type="button" data-fit-goto="injuries">+ Log Injury</button>
+      </div>
+      <h3 style="font-size:15px; margin-bottom:10px;">Recent Activity</h3>
+      <div id="fitOverviewRecent"><p class="fit-empty">Nothing logged yet — start with a lift, your bodyweight, or a meal.</p></div>
+    </div>
+
+    <!-- TRAIN -->
+    <div class="fit-panel" id="fitPanel-train">
+      <div class="fit-layout">
+        <div class="profile-card">
+          <h3>Log a Lift</h3>
+          <form id="fitLiftForm" novalidate>
+            <div class="form-field">
+              <label for="fitLiftExercise">Exercise</label>
+              <select class="fit-select" id="fitLiftExercise">
+                <option>Bench Press</option>
+                <option>Squat</option>
+                <option>Deadlift</option>
+                <option>Overhead Press</option>
+                <option value="__custom">Custom…</option>
+              </select>
+            </div>
+            <div class="form-field" id="fitLiftCustomField" style="display:none;">
+              <label for="fitLiftCustomName">Custom exercise name</label>
+              <input id="fitLiftCustomName">
+            </div>
+            <div class="fit-row-3">
+              <div class="form-field">
+                <label for="fitLiftWeight">Weight</label>
+                <input id="fitLiftWeight" type="number" min="0" step="0.5" required>
+              </div>
+              <div class="form-field">
+                <label for="fitLiftUnit">Unit</label>
+                <select class="fit-select" id="fitLiftUnit"><option value="kg">kg</option><option value="lb">lb</option></select>
+              </div>
+              <div class="form-field">
+                <label for="fitLiftReps">Reps</label>
+                <input id="fitLiftReps" type="number" min="1" max="30" value="5" required>
+              </div>
+            </div>
+            <label class="fit-check-row"><input type="checkbox" id="fitLiftDeload"> This was a deliberate deload set</label>
+            <div class="form-field">
+              <label for="fitLiftNotes">Notes (optional)</label>
+              <textarea id="fitLiftNotes" rows="2"></textarea>
+            </div>
+            <button type="submit" class="form-submit">Log Lift</button>
+          </form>
+          <div id="fitLiftSuggestion"></div>
+        </div>
+        <div class="profile-card">
+          <h3 style="margin-bottom:10px;">History for</h3>
+          <select class="fit-select" id="fitTrainHistoryExercise" style="margin-bottom:14px;">
+            <option>Bench Press</option><option>Squat</option><option>Deadlift</option><option>Overhead Press</option>
+          </select>
+          <div id="fitLiftHistoryTable"><p class="fit-empty">No sessions logged for this exercise yet.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="fit-panel" id="fitPanel-body">
+      <div class="fit-layout">
+        <div class="profile-card">
+          <h3>Log Bodyweight</h3>
+          <form id="fitBodyForm" novalidate>
+            <div class="fit-row-2">
+              <div class="form-field">
+                <label for="fitBodyWeight">Bodyweight (kg)</label>
+                <input id="fitBodyWeight" type="number" min="0" step="0.1" required>
+              </div>
+              <div class="form-field">
+                <label for="fitBodyFat">Body fat % (optional)</label>
+                <input id="fitBodyFat" type="number" min="0" max="70" step="0.1">
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="fitBodyNotes">Notes (optional)</label>
+              <textarea id="fitBodyNotes" rows="2"></textarea>
+            </div>
+            <button type="submit" class="form-submit">Log Entry</button>
+          </form>
+        </div>
+        <div class="profile-card">
+          <h3>Recent Entries</h3>
+          <div id="fitBodyTable"><p class="fit-empty">No entries yet.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NUTRITION -->
+    <div class="fit-panel" id="fitPanel-nutrition">
+      <div class="fit-layout">
+        <div class="profile-card">
+          <h3>Log Nutrition</h3>
+          <div id="fitNutritionTarget" class="fit-suggestion neutral" style="display:none;"></div>
+          <form id="fitNutritionForm" novalidate>
+            <div class="fit-row-2">
+              <div class="form-field">
+                <label for="fitNutCalories">Calories</label>
+                <input id="fitNutCalories" type="number" min="0" required>
+              </div>
+              <div class="form-field">
+                <label for="fitNutProtein">Protein (g)</label>
+                <input id="fitNutProtein" type="number" min="0" step="0.1">
+              </div>
+            </div>
+            <div class="fit-row-2">
+              <div class="form-field">
+                <label for="fitNutCarbs">Carbs (g)</label>
+                <input id="fitNutCarbs" type="number" min="0" step="0.1">
+              </div>
+              <div class="form-field">
+                <label for="fitNutFat">Fat (g)</label>
+                <input id="fitNutFat" type="number" min="0" step="0.1">
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="fitNutNotes">Notes (optional)</label>
+              <textarea id="fitNutNotes" rows="2"></textarea>
+            </div>
+            <button type="submit" class="form-submit">Log Entry</button>
+          </form>
+        </div>
+        <div class="profile-card">
+          <h3>Recent Entries</h3>
+          <div id="fitNutritionTable"><p class="fit-empty">No entries yet.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INJURIES -->
+    <div class="fit-panel" id="fitPanel-injuries">
+      <div class="fit-layout">
+        <div class="profile-card">
+          <h3>Log an Injury</h3>
+          <form id="fitInjuryForm" novalidate>
+            <div class="form-field">
+              <label for="fitInjuryName">Injury</label>
+              <input id="fitInjuryName" placeholder="e.g. Left shoulder strain" required>
+            </div>
+            <div class="form-field">
+              <label for="fitInjuryStatus">Status</label>
+              <select class="fit-select" id="fitInjuryStatus">
+                <option value="active">Active</option>
+                <option value="recovering">Recovering</option>
+                <option value="resolved">Resolved</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="fitInjuryNotes">Notes (optional)</label>
+              <textarea id="fitInjuryNotes" rows="2"></textarea>
+            </div>
+            <button type="submit" class="form-submit">Log Injury</button>
+          </form>
+        </div>
+        <div class="profile-card">
+          <h3>Your Injuries</h3>
+          <div id="fitInjuryTable"><p class="fit-empty">Nothing logged — long may that continue.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FRIENDS -->
+    <div class="fit-panel" id="fitPanel-friends">
+      <div class="fit-layout">
+        <div class="profile-card">
+          <h3>Add a Friend</h3>
+          <form id="fitFriendForm" novalidate>
+            <div class="form-field">
+              <label for="fitFriendEmail">Friend's email</label>
+              <input id="fitFriendEmail" type="email" required>
+            </div>
+            <button type="submit" class="form-submit">Send Request</button>
+          </form>
+          <h3 style="margin-top:24px;">Requests For You</h3>
+          <div id="fitFriendIncoming"><p class="fit-empty">No incoming requests.</p></div>
+        </div>
+        <div class="profile-card">
+          <h3>Your Friends</h3>
+          <div id="fitFriendAccepted"><p class="fit-empty">No friends yet — add one by email.</p></div>
+          <h3 style="margin-top:24px;">Sent Requests</h3>
+          <div id="fitFriendSent"><p class="fit-empty">No pending requests.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="fit-panel" id="fitPanel-history">
+      <div class="profile-card">
+        <h3>Full Timeline</h3>
+        <div id="fitHistoryFeed"><p class="fit-empty">Nothing logged yet.</p></div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="fit-panel" id="fitPanel-profile">
+      <div class="profile-card" style="max-width:520px;">
+        <h3>Training Profile</h3>
+        <form id="fitProfileForm" novalidate>
+          <div class="form-field">
+            <label for="fitProfileGoal">Goal</label>
+            <select class="fit-select" id="fitProfileGoal">
+              <option value="general">General Fitness</option>
+              <option value="strength">Strength</option>
+              <option value="hypertrophy">Hypertrophy (Muscle Gain)</option>
+              <option value="fat_loss">Fat Loss</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="fitProfileExperience">Experience Level</label>
+            <select class="fit-select" id="fitProfileExperience">
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="fitProfileUnit">Preferred Unit</label>
+            <select class="fit-select" id="fitProfileUnit">
+              <option value="kg">Kilograms (kg)</option>
+              <option value="lb">Pounds (lb)</option>
+            </select>
+          </div>
+          <button type="submit" class="form-submit">Save Training Profile</button>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toastRoot" class="toast" role="status" aria-live="polite"><span class="dot-ok"></span><span id="toastMsg"></span></div>
+
+<script>
+(function(){
+  try {
+    if (!window.supabase) throw new Error('Supabase client library did not load.');
+
+    const SUPABASE_URL = 'https://sfmzvxjmiplxzlicuigk.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmbXp2eGptaXBseHpsaWN1aWdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMDUzODksImV4cCI6MjEwMzU4MTM4OX0.LWoo9zQ1Z80ZFK6dAvwN-rUSrbGR6MYEviA6nC_6IdU';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ---- toast ----
+    function showToast(msg){
+      const toast = document.getElementById('toastRoot');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => toast.classList.remove('show'), 3200);
+    }
+
+    // ---- unit + 1RM math ----
+    function toKg(weight, unit){ return unit === 'lb' ? weight * 0.45359237 : weight; }
+    function fromKg(weightKg, unit){ return unit === 'lb' ? weightKg / 0.45359237 : weightKg; }
+    function epley1RM(weightKg, reps){ return reps <= 1 ? weightKg : weightKg * (1 + reps / 30); }
+    function fmt(n){ return Math.round(n * 10) / 10; }
+    function fmtDate(iso){ return new Date(iso).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }); }
+
+    // ---- progressive overload / deload suggestion engine ----
+    function computeSuggestion(sessionsDesc){
+      if (sessionsDesc.length < 2) {
+        return { type:'neutral', text:'Log at least one more session of this exercise and Fit Predictor will start suggesting your next weight or deload.' };
+      }
+      const nonDeload = sessionsDesc.filter(s => !s.is_deload).slice(0, 4);
+      const deloadedRecently = sessionsDesc.slice(0, 4).some(s => s.is_deload);
+
+      if (nonDeload.length < 2) {
+        return { type:'neutral', text:'Log one more non-deload session and Fit Predictor will start suggesting your next weight.' };
+      }
+
+      const last = nonDeload[0], prev = nonDeload[1];
+      const pctChange = (last.e1rm - prev.e1rm) / prev.e1rm;
+
+      let plateau = false;
+      if (nonDeload.length >= 3) {
+        const top3 = nonDeload.slice(0, 3).map(s => s.e1rm);
+        const max = Math.max(...top3), min = Math.min(...top3);
+        plateau = (max - min) / min < 0.015;
+      }
+
+      if (pctChange >= 0.005) {
+        const nextWeightKg = toKg(last.weight, last.unit) + (last.unit === 'lb' ? 5 : 2.5);
+        const dispUnit = last.unit;
+        const nextWeight = fmt(fromKg(nextWeightKg, dispUnit));
+        return {
+          type:'up',
+          text:`Trending up (+${fmt(pctChange*100)}% e1RM). Next session try <b>${nextWeight}${dispUnit} × ${last.reps}</b>, or stay at ${fmt(last.weight)}${dispUnit} and aim for ${last.reps + 1} reps.`
+        };
+      }
+      if (plateau && !deloadedRecently) {
+        const deloadWeightKg = toKg(last.weight, last.unit) * 0.9;
+        const dispUnit = last.unit;
+        const deloadWeight = fmt(fromKg(deloadWeightKg, dispUnit));
+        return {
+          type:'deload',
+          text:`Plateaued over your last ${nonDeload.slice(0,3).length} sessions (e1RM within 1.5%). Time for a deload — try <b>${deloadWeight}${dispUnit} × ${last.reps}</b> this week, then ramp back up.`
+        };
+      }
+      if (pctChange <= -0.02) {
+        return {
+          type:'warn',
+          text:`e1RM dropped ${fmt(Math.abs(pctChange)*100)}% since your last session. That can mean fatigue, poor sleep/nutrition, or early injury — consider a lighter session or a deload before pushing again.`
+        };
+      }
+      return { type:'neutral', text:`Holding steady. Repeat ${fmt(last.weight)}${last.unit} × ${last.reps} for one more session before Fit Predictor adjusts your next target.` };
+    }
+
+    function suggestionHTML(s){
+      return `<div class="fit-suggestion ${s.type}">${s.text}</div>`;
+    }
+
+    // ---- state ----
+    let currentUser = null;
+    let currentProfile = null;
+    let fitProfileRow = null;
+
+    function uid(){ return currentUser ? currentUser.id : null; }
+
+    async function ensureFitProfile(){
+      const id = uid(); if (!id) return null;
+      let { data } = await sb.from('fit_profile').select('*').eq('user_id', id).maybeSingle();
+      if (!data) {
+        const { data: created } = await sb.from('fit_profile').insert({ user_id: id }).select().single();
+        data = created;
+      }
+      fitProfileRow = data;
+      return data;
+    }
+
+    // ---- OVERVIEW ----
+    async function loadOverview(){
+      const id = uid(); if (!id) return;
+      const name = (currentProfile && currentProfile.full_name) || (currentUser && currentUser.email) || 'there';
+      document.getElementById('fitOverviewGreeting').textContent = `Welcome back, ${name.split(' ')[0]}.`;
+
+      const [{ data: lifts }, { data: body }] = await Promise.all([
+        sb.from('fit_lifts').select('*').eq('user_id', id).order('logged_at', { ascending:false }),
+        sb.from('fit_body_metrics').select('*').eq('user_id', id).order('logged_at', { ascending:false }).limit(1),
+      ]);
+
+      const bestOf = (ex) => {
+        const rows = (lifts||[]).filter(l => l.exercise === ex);
+        if (!rows.length) return null;
+        return Math.max(...rows.map(r => r.e1rm));
+      };
+      const bench = bestOf('Bench Press'), squat = bestOf('Squat'), dead = bestOf('Deadlift');
+      document.getElementById('fitStatBench').textContent = bench ? `${fmt(bench)}kg` : '—';
+      document.getElementById('fitStatSquat').textContent = squat ? `${fmt(squat)}kg` : '—';
+      document.getElementById('fitStatDeadlift').textContent = dead ? `${fmt(dead)}kg` : '—';
+      document.getElementById('fitStatBodyweight').textContent = (body && body[0]) ? `${fmt(body[0].weight_kg)}kg` : '—';
+
+      const recentEl = document.getElementById('fitOverviewRecent');
+      const merged = (lifts||[]).slice(0,5).map(l => ({ icon:'🏋', label:`${l.exercise} — ${fmt(l.weight)}${l.unit} × ${l.reps}`, date:l.logged_at }));
+      if (!merged.length) {
+        recentEl.innerHTML = '<p class="fit-empty">Nothing logged yet — start with a lift, your bodyweight, or a meal.</p>';
+      } else {
+        recentEl.innerHTML = merged.map(m => `<div class="fit-history-item"><div class="fit-history-icon">${m.icon}</div><div class="fit-history-body"><b>${m.label}</b><span>${fmtDate(m.date)}</span></div></div>`).join('');
+      }
+    }
+
+    // ---- TRAIN ----
+    async function loadTrainHistory(exercise){
+      const id = uid(); if (!id) return;
+      const { data: lifts } = await sb.from('fit_lifts').select('*').eq('user_id', id).order('logged_at', { ascending:false });
+
+      const dropdown = document.getElementById('fitTrainHistoryExercise');
+      const known = ['Bench Press','Squat','Deadlift','Overhead Press'];
+      const extra = Array.from(new Set((lifts||[]).map(l => l.exercise))).filter(e => !known.includes(e));
+      const allOptions = known.concat(extra);
+      if (dropdown.dataset.built !== allOptions.join('|')) {
+        dropdown.innerHTML = allOptions.map(e => `<option${e===exercise?' selected':''}>${e}</option>`).join('');
+        dropdown.dataset.built = allOptions.join('|');
+      }
+      dropdown.value = exercise;
+
+      const rows = (lifts||[]).filter(l => l.exercise === exercise);
+      const tableEl = document.getElementById('fitLiftHistoryTable');
+      if (!rows.length) {
+        tableEl.innerHTML = '<p class="fit-empty">No sessions logged for this exercise yet.</p>';
+      } else {
+        tableEl.innerHTML = `<table class="fit-table"><thead><tr><th>Date</th><th>Weight</th><th>Reps</th><th>e1RM</th><th></th></tr></thead><tbody>${
+          rows.map(r => `<tr><td>${fmtDate(r.logged_at)}</td><td>${fmt(r.weight)}${r.unit}${r.is_deload ? ' <span class="fit-pill recovering" style="margin-left:4px;">Deload</span>' : ''}</td><td>${r.reps}</td><td>${fmt(r.e1rm)}kg</td><td><button type="button" class="fit-delete-btn" data-fit-delete="fit_lifts" data-fit-id="${r.id}" data-fit-reload="train" style="color:var(--ink-dim); font-size:12px;">Remove</button></td></tr>`).join('')
+        }</tbody></table>`;
+      }
+
+      document.getElementById('fitLiftSuggestion').innerHTML = suggestionHTML(computeSuggestion(rows));
+    }
+
+    // ---- BODY ----
+    async function loadBody(){
+      const id = uid(); if (!id) return;
+      const { data } = await sb.from('fit_body_metrics').select('*').eq('user_id', id).order('logged_at', { ascending:false });
+      const el = document.getElementById('fitBodyTable');
+      if (!data || !data.length) { el.innerHTML = '<p class="fit-empty">No entries yet.</p>'; return; }
+      el.innerHTML = `<table class="fit-table"><thead><tr><th>Date</th><th>Weight</th><th>Body Fat</th><th></th></tr></thead><tbody>${
+        data.map(r => `<tr><td>${fmtDate(r.logged_at)}</td><td>${fmt(r.weight_kg)}kg</td><td>${r.bodyfat_pct != null ? fmt(r.bodyfat_pct)+'%' : '—'}</td><td><button type="button" class="fit-delete-btn" data-fit-delete="fit_body_metrics" data-fit-id="${r.id}" data-fit-reload="body" style="color:var(--ink-dim); font-size:12px;">Remove</button></td></tr>`).join('')
+      }</tbody></table>`;
+    }
+
+    // ---- NUTRITION ----
+    async function loadNutrition(){
+      const id = uid(); if (!id) return;
+      await ensureFitProfile();
+      const [{ data: nut }, { data: body }] = await Promise.all([
+        sb.from('fit_nutrition_logs').select('*').eq('user_id', id).order('logged_at', { ascending:false }),
+        sb.from('fit_body_metrics').select('*').eq('user_id', id).order('logged_at', { ascending:false }).limit(1),
+      ]);
+
+      const targetEl = document.getElementById('fitNutritionTarget');
+      if (body && body[0]) {
+        const bw = body[0].weight_kg;
+        const goal = fitProfileRow ? fitProfileRow.goal : 'general';
+        const calPerKg = { fat_loss:28, hypertrophy:36, strength:34, general:32 }[goal] || 32;
+        const cals = Math.round(bw * calPerKg);
+        const protein = Math.round(bw * 2);
+        targetEl.style.display = 'block';
+        targetEl.className = 'fit-suggestion neutral';
+        targetEl.innerHTML = `Based on your latest bodyweight (${fmt(bw)}kg) and your <b>${goal.replace('_',' ')}</b> goal: roughly <b>${cals} kcal</b> and <b>${protein}g protein</b> per day is a reasonable starting target.`;
+      } else {
+        targetEl.style.display = 'block';
+        targetEl.className = 'fit-suggestion neutral';
+        targetEl.innerHTML = 'Log a bodyweight entry on the Body tab to get a personalised calorie/protein target here.';
+      }
+
+      const el = document.getElementById('fitNutritionTable');
+      if (!nut || !nut.length) { el.innerHTML = '<p class="fit-empty">No entries yet.</p>'; return; }
+      el.innerHTML = `<table class="fit-table"><thead><tr><th>Date</th><th>Cals</th><th>P/C/F</th><th></th></tr></thead><tbody>${
+        nut.map(r => `<tr><td>${fmtDate(r.logged_at)}</td><td>${r.calories ?? '—'}</td><td>${r.protein_g ?? 0}/${r.carbs_g ?? 0}/${r.fat_g ?? 0}g</td><td><button type="button" class="fit-delete-btn" data-fit-delete="fit_nutrition_logs" data-fit-id="${r.id}" data-fit-reload="nutrition" style="color:var(--ink-dim); font-size:12px;">Remove</button></td></tr>`).join('')
+      }</tbody></table>`;
+    }
+
+    // ---- INJURIES ----
+    async function loadInjuries(){
+      const id = uid(); if (!id) return;
+      const { data } = await sb.from('fit_injuries').select('*').eq('user_id', id).order('logged_at', { ascending:false });
+      const el = document.getElementById('fitInjuryTable');
+      if (!data || !data.length) { el.innerHTML = '<p class="fit-empty">Nothing logged — long may that continue.</p>'; return; }
+      el.innerHTML = data.map(r => `
+        <div class="fit-history-item">
+          <div class="fit-history-icon">🩹</div>
+          <div class="fit-history-body" style="flex:1;">
+            <b>${r.name}</b>
+            <span>${fmtDate(r.logged_at)}${r.notes ? ' — ' + r.notes : ''}</span>
+          </div>
+          <select class="fit-select" style="width:auto; padding:6px 10px; font-size:12px;" data-fit-injury-status="${r.id}">
+            <option value="active"${r.status==='active'?' selected':''}>Active</option>
+            <option value="recovering"${r.status==='recovering'?' selected':''}>Recovering</option>
+            <option value="resolved"${r.status==='resolved'?' selected':''}>Resolved</option>
+          </select>
+          <button type="button" class="fit-delete-btn" data-fit-delete="fit_injuries" data-fit-id="${r.id}" data-fit-reload="injuries" style="color:var(--ink-dim); font-size:12px; margin-left:10px;">Remove</button>
+        </div>`).join('');
+    }
+
+    // ---- FRIENDS ----
+    async function loadFriends(){
+      const id = uid(); const email = currentUser && currentUser.email;
+      if (!id || !email) return;
+      const { data } = await sb.from('fit_friends').select('*').or(`user_id.eq.${id},friend_email.eq.${email}`).order('created_at', { ascending:false });
+      const rows = data || [];
+      const incoming = rows.filter(r => r.friend_email === email && r.user_id !== id && r.status === 'pending');
+      const accepted = rows.filter(r => r.status === 'accepted');
+      const sent = rows.filter(r => r.user_id === id && r.status === 'pending');
+
+      const incomingEl = document.getElementById('fitFriendIncoming');
+      incomingEl.innerHTML = incoming.length ? incoming.map(r => `
+        <div class="fit-history-item">
+          <div class="fit-history-icon">👤</div>
+          <div class="fit-history-body" style="flex:1;"><b>Friend request</b><span>from a Vescair member</span></div>
+          <button type="button" class="form-submit" style="width:auto; margin:0; padding:8px 14px;" data-fit-friend-accept="${r.id}">Accept</button>
+        </div>`).join('') : '<p class="fit-empty">No incoming requests.</p>';
+
+      const acceptedEl = document.getElementById('fitFriendAccepted');
+      acceptedEl.innerHTML = accepted.length ? accepted.map(r => `
+        <div class="fit-history-item"><div class="fit-history-icon">✓</div><div class="fit-history-body"><b>${r.user_id === id ? r.friend_email : 'Accepted friend'}</b><span class="fit-pill accepted">Friends</span></div></div>`).join('') : '<p class="fit-empty">No friends yet — add one by email.</p>';
+
+      const sentEl = document.getElementById('fitFriendSent');
+      sentEl.innerHTML = sent.length ? sent.map(r => `
+        <div class="fit-history-item">
+          <div class="fit-history-icon">⏳</div>
+          <div class="fit-history-body" style="flex:1;"><b>${r.friend_email}</b><span class="fit-pill pending">Pending</span></div>
+          <button type="button" class="fit-delete-btn" data-fit-delete="fit_friends" data-fit-id="${r.id}" data-fit-reload="friends" style="color:var(--ink-dim); font-size:12px;">Cancel</button>
+        </div>`).join('') : '<p class="fit-empty">No pending requests.</p>';
+    }
+
+    // ---- HISTORY (unified timeline) ----
+    async function loadHistory(){
+      const id = uid(); if (!id) return;
+      const [{ data: lifts }, { data: body }, { data: nut }, { data: inj }] = await Promise.all([
+        sb.from('fit_lifts').select('*').eq('user_id', id).order('logged_at', { ascending:false }).limit(20),
+        sb.from('fit_body_metrics').select('*').eq('user_id', id).order('logged_at', { ascending:false }).limit(20),
+        sb.from('fit_nutrition_logs').select('*').eq('user_id', id).order('logged_at', { ascending:false }).limit(20),
+        sb.from('fit_injuries').select('*').eq('user_id', id).order('logged_at', { ascending:false }).limit(20),
+      ]);
+      const items = [
+        ...(lifts||[]).map(r => ({ icon:'🏋', label:`${r.exercise} — ${fmt(r.weight)}${r.unit} × ${r.reps} (e1RM ${fmt(r.e1rm)}kg)`, date:r.logged_at })),
+        ...(body||[]).map(r => ({ icon:'⚖️', label:`Bodyweight logged — ${fmt(r.weight_kg)}kg${r.bodyfat_pct!=null ? ', '+fmt(r.bodyfat_pct)+'% body fat' : ''}`, date:r.logged_at })),
+        ...(nut||[]).map(r => ({ icon:'🍽', label:`Nutrition logged — ${r.calories ?? '—'} kcal`, date:r.logged_at })),
+        ...(inj||[]).map(r => ({ icon:'🩹', label:`Injury: ${r.name} (${r.status})`, date:r.logged_at })),
+      ].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 40);
+
+      const el = document.getElementById('fitHistoryFeed');
+      el.innerHTML = items.length ? items.map(m => `<div class="fit-history-item"><div class="fit-history-icon">${m.icon}</div><div class="fit-history-body"><b>${m.label}</b><span>${fmtDate(m.date)}</span></div></div>`).join('') : '<p class="fit-empty">Nothing logged yet.</p>';
+    }
+
+    // ---- PROFILE (training profile) ----
+    async function loadFitProfile(){
+      await ensureFitProfile();
+      if (!fitProfileRow) return;
+      document.getElementById('fitProfileGoal').value = fitProfileRow.goal || 'general';
+      document.getElementById('fitProfileExperience').value = fitProfileRow.experience_level || 'beginner';
+      document.getElementById('fitProfileUnit').value = fitProfileRow.unit_pref || 'kg';
+    }
+
+    const loaders = { overview:loadOverview, train:() => loadTrainHistory(document.getElementById('fitTrainHistoryExercise').value || 'Bench Press'), body:loadBody, nutrition:loadNutrition, injuries:loadInjuries, friends:loadFriends, history:loadHistory, profile:loadFitProfile };
+
+    function setFitTab(name){
+      document.querySelectorAll('.fit-tab').forEach(t => t.classList.toggle('active', t.dataset.fitTab === name));
+      document.querySelectorAll('.fit-panel').forEach(p => p.classList.toggle('active', p.id === 'fitPanel-' + name));
+      if (loaders[name]) loaders[name]();
+      if (location.hash !== '#/' + name) location.hash = '#/' + name;
+    }
+
+    document.getElementById('fitTabs').addEventListener('click', (e) => {
+      const btn = e.target.closest('.fit-tab'); if (!btn) return;
+      e.preventDefault();
+      setFitTab(btn.dataset.fitTab);
+    });
+    document.querySelectorAll('[data-fit-goto]').forEach(btn => {
+      btn.addEventListener('click', () => setFitTab(btn.dataset.fitGoto));
+    });
+
+    const VALID_TABS = ['overview','train','body','nutrition','injuries','friends','history','profile'];
+    window.addEventListener('hashchange', () => {
+      const name = (location.hash || '').replace('#/', '');
+      if (VALID_TABS.includes(name)) setFitTab(name);
+    });
+
+    // ---- exercise custom-field toggle ----
+    const liftExSel = document.getElementById('fitLiftExercise');
+    liftExSel.addEventListener('change', () => {
+      document.getElementById('fitLiftCustomField').style.display = liftExSel.value === '__custom' ? 'block' : 'none';
+    });
+
+    // ---- history exercise dropdown change ----
+    document.getElementById('fitTrainHistoryExercise').addEventListener('change', (e) => loadTrainHistory(e.target.value));
+
+    // ---- form submits ----
+    document.getElementById('fitLiftForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = uid(); if (!id) return;
+      const sel = document.getElementById('fitLiftExercise');
+      const exercise = sel.value === '__custom' ? (document.getElementById('fitLiftCustomName').value.trim() || 'Custom Lift') : sel.value;
+      const weight = parseFloat(document.getElementById('fitLiftWeight').value);
+      const unit = document.getElementById('fitLiftUnit').value;
+      const reps = parseInt(document.getElementById('fitLiftReps').value, 10);
+      const isDeload = document.getElementById('fitLiftDeload').checked;
+      const notes = document.getElementById('fitLiftNotes').value.trim();
+      if (!weight || !reps) { showToast('Enter a weight and reps.'); return; }
+      const e1rm = epley1RM(toKg(weight, unit), reps);
+      const { error } = await sb.from('fit_lifts').insert({ user_id:id, exercise, weight, unit, reps, e1rm, is_deload:isDeload, notes: notes || null });
+      if (error) { showToast('Could not log lift — try again.'); return; }
+      showToast('Lift logged.');
+      e.target.reset();
+      document.getElementById('fitLiftCustomField').style.display = 'none';
+      loadTrainHistory(exercise);
+    });
+
+    document.getElementById('fitBodyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = uid(); if (!id) return;
+      const weight_kg = parseFloat(document.getElementById('fitBodyWeight').value);
+      const bodyfatVal = document.getElementById('fitBodyFat').value;
+      const bodyfat_pct = bodyfatVal ? parseFloat(bodyfatVal) : null;
+      const notes = document.getElementById('fitBodyNotes').value.trim();
+      if (!weight_kg) { showToast('Enter a bodyweight.'); return; }
+      const { error } = await sb.from('fit_body_metrics').insert({ user_id:id, weight_kg, bodyfat_pct, notes: notes || null });
+      if (error) { showToast('Could not log entry — try again.'); return; }
+      showToast('Bodyweight logged.');
+      e.target.reset();
+      loadBody();
+    });
+
+    document.getElementById('fitNutritionForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = uid(); if (!id) return;
+      const calories = parseInt(document.getElementById('fitNutCalories').value, 10) || null;
+      const protein_g = parseFloat(document.getElementById('fitNutProtein').value) || null;
+      const carbs_g = parseFloat(document.getElementById('fitNutCarbs').value) || null;
+      const fat_g = parseFloat(document.getElementById('fitNutFat').value) || null;
+      const notes = document.getElementById('fitNutNotes').value.trim();
+      if (!calories) { showToast('Enter calories.'); return; }
+      const { error } = await sb.from('fit_nutrition_logs').insert({ user_id:id, calories, protein_g, carbs_g, fat_g, notes: notes || null });
+      if (error) { showToast('Could not log entry — try again.'); return; }
+      showToast('Nutrition logged.');
+      e.target.reset();
+      loadNutrition();
+    });
+
+    document.getElementById('fitInjuryForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = uid(); if (!id) return;
+      const name = document.getElementById('fitInjuryName').value.trim();
+      const status = document.getElementById('fitInjuryStatus').value;
+      const notes = document.getElementById('fitInjuryNotes').value.trim();
+      if (!name) { showToast('Enter what the injury is.'); return; }
+      const { error } = await sb.from('fit_injuries').insert({ user_id:id, name, status, notes: notes || null });
+      if (error) { showToast('Could not log injury — try again.'); return; }
+      showToast('Injury logged.');
+      e.target.reset();
+      loadInjuries();
+    });
+
+    document.getElementById('fitFriendForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = uid(); if (!id) return;
+      const email = document.getElementById('fitFriendEmail').value.trim().toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Enter a valid email address.'); return; }
+      if (email === (currentUser.email || '').toLowerCase()) { showToast("That's your own email."); return; }
+      const { error } = await sb.from('fit_friends').insert({ user_id:id, friend_email:email, status:'pending' });
+      if (error) { showToast('Could not send request — try again.'); return; }
+      showToast('Friend request sent.');
+      e.target.reset();
+      loadFriends();
+    });
+
+    document.getElementById('fitProfileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = uid(); if (!id) return;
+      const goal = document.getElementById('fitProfileGoal').value;
+      const experience_level = document.getElementById('fitProfileExperience').value;
+      const unit_pref = document.getElementById('fitProfileUnit').value;
+      const { error } = await sb.from('fit_profile').update({ goal, experience_level, unit_pref, updated_at: new Date().toISOString() }).eq('user_id', id);
+      if (error) { showToast('Could not save — try again.'); return; }
+      fitProfileRow = { ...fitProfileRow, goal, experience_level, unit_pref };
+      showToast('Training profile saved.');
+    });
+
+    // ---- delegated: delete rows, accept friend requests, update injury status ----
+    document.addEventListener('click', async (e) => {
+      const delBtn = e.target.closest('[data-fit-delete]');
+      if (delBtn) {
+        const table = delBtn.dataset.fitDelete, id = delBtn.dataset.fitId, reload = delBtn.dataset.fitReload;
+        await sb.from(table).delete().eq('id', id);
+        if (reload === 'train') loadTrainHistory(document.getElementById('fitTrainHistoryExercise').value);
+        else if (loaders[reload]) loaders[reload]();
+        return;
+      }
+      const acceptBtn = e.target.closest('[data-fit-friend-accept]');
+      if (acceptBtn) {
+        await sb.from('fit_friends').update({ status:'accepted' }).eq('id', acceptBtn.dataset.fitFriendAccept);
+        showToast('Friend request accepted.');
+        loadFriends();
+      }
+    });
+    document.addEventListener('change', async (e) => {
+      const sel = e.target.closest('[data-fit-injury-status]');
+      if (sel) {
+        await sb.from('fit_injuries').update({ status: sel.value }).eq('id', sel.dataset.fitInjuryStatus);
+        showToast('Injury status updated.');
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      location.href = 'index.html';
+    });
+
+    // ---- boot: check session (shared with index.html via the same
+    // Supabase project's localStorage token — log in on the main site
+    // first, then this page picks the session up automatically) ----
+    async function boot(){
+      const { data: { session } } = await sb.auth.getSession();
+      document.getElementById('loadingGate').style.display = 'none';
+
+      if (!session) {
+        document.getElementById('authGate').style.display = 'flex';
+        return;
+      }
+      currentUser = session.user;
+
+      const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+      currentProfile = profile;
+
+      document.getElementById('appShell').style.display = 'grid';
+      const name = (currentProfile && currentProfile.full_name) || currentUser.email || 'Member';
+      document.getElementById('sideName').textContent = name;
+      document.getElementById('sideEmail').textContent = currentUser.email || '';
+      document.getElementById('sideAvatar').textContent = name.trim().charAt(0).toUpperCase();
+
+      await ensureFitProfile();
+
+      const startTab = VALID_TABS.includes((location.hash||'').replace('#/','')) ? (location.hash||'').replace('#/','') : 'overview';
+      setFitTab(startTab);
+    }
+
+    sb.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') location.href = 'index.html';
+    });
+
+    boot();
+
+  } catch (err) {
+    console.error('Fit Predictor page did not initialize:', err);
+    document.getElementById('loadingGate').textContent = 'Something went wrong loading Fit Predictor — please refresh, or head back to the Vescair home page.';
+  }
+})();
+</script>
+</body>
+</html>
