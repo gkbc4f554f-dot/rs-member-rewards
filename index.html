@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RS — Member Rewards</title>
+<title>Vescair — Member Rewards</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -429,13 +429,88 @@
     .hero-actions{ flex-direction:column; align-items:stretch; }
     .grid-4, .grid-3{ grid-template-columns:1fr 1fr; }
   }
+
+  /* ===== FIT PREDICTOR — homepage teaser ===== */
+  .fit-teaser-banner{ margin:0 5vw; background:var(--panel); border:1px solid var(--line); border-radius:16px; display:grid; grid-template-columns:1.3fr 1fr; align-items:stretch; overflow:hidden; }
+  .fit-teaser-copy{ padding:46px 44px; display:flex; flex-direction:column; align-items:flex-start; gap:14px; }
+  .fit-teaser-copy h2{ font-size:38px; }
+  .fit-teaser-copy p{ color:var(--ink-dim); font-size:14.5px; line-height:1.7; max-width:520px; }
+  .fit-teaser-art{ background: radial-gradient(circle at 75% 25%, rgba(232,163,61,0.22), transparent 60%), repeating-linear-gradient(45deg, rgba(255,255,255,0.035) 0 7px, transparent 7px 14px), linear-gradient(135deg, hsl(20,38%,14%), hsl(10,45%,8%)); min-height:220px; }
+  @media (max-width:900px){ .fit-teaser-banner{ grid-template-columns:1fr; } .fit-teaser-art{ min-height:140px; } }
+
+  /* ===== FIT PREDICTOR — app shell ===== */
+  .fit-shell{ padding:118px 5vw 90px; }
+  .fit-topbar{ display:flex; align-items:center; gap:22px; flex-wrap:wrap; margin-bottom:28px; padding-bottom:18px; border-bottom:1px solid var(--line); }
+  .fit-home-btn{ display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-dim); padding:8px 14px; border:1px solid var(--line); border-radius:999px; transition: color 0.15s ease, border-color 0.15s ease; }
+  .fit-home-btn:hover{ color:var(--ink); border-color:rgba(243,241,234,0.35); }
+  .fit-tabs{ display:flex; gap:6px; flex-wrap:wrap; }
+  .fit-tab{ font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-dim); padding:9px 16px; border-radius:999px; transition: background 0.15s ease, color 0.15s ease; }
+  .fit-tab:hover{ color:var(--ink); }
+  .fit-tab.active{ background:var(--amber); color:#1a1204; }
+  .fit-panel{ display:none; }
+  .fit-panel.active{ display:block; animation: fitFadeIn 0.25s ease; }
+  @keyframes fitFadeIn{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
+
+  .fit-stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+  .fit-stat-card{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:20px; }
+  .fit-stat-card b{ display:block; font-family:'Anton',sans-serif; font-size:26px; color:var(--amber); }
+  .fit-stat-card span{ font-size:11.5px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.05em; }
+  @media (max-width:900px){ .fit-stat-grid{ grid-template-columns:1fr 1fr; } }
+
+  .fit-quick-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px; }
+  .fit-quick-actions button{ background:var(--panel-2); border:1px solid var(--line); color:var(--ink); font-size:12.5px; font-weight:700; padding:12px 18px; border-radius:10px; transition: border-color 0.15s ease; }
+  .fit-quick-actions button:hover{ border-color:var(--amber); }
+
+  .fit-layout{ display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
+  @media (max-width:900px){ .fit-layout{ grid-template-columns:1fr; } }
+
+  .fit-suggestion{ margin-top:18px; padding:16px 18px; border-radius:10px; font-size:13px; line-height:1.6; border:1px solid; }
+  .fit-suggestion.up{ background:rgba(90,200,120,0.1); border-color:rgba(90,200,120,0.35); color:#8fe6ac; }
+  .fit-suggestion.deload{ background:rgba(232,163,61,0.1); border-color:rgba(232,163,61,0.35); color:var(--amber-soft); }
+  .fit-suggestion.warn{ background:rgba(224,100,92,0.1); border-color:rgba(224,100,92,0.35); color:#f28b85; }
+  .fit-suggestion.neutral{ background:var(--panel-2); border-color:var(--line); color:var(--ink-dim); }
+
+  .fit-table{ width:100%; border-collapse:collapse; font-size:13px; margin-top:8px; }
+  .fit-table th{ text-align:left; padding:10px 8px; border-bottom:1px solid var(--line); color:var(--ink-dim); text-transform:uppercase; font-size:10.5px; letter-spacing:0.05em; }
+  .fit-table td{ padding:10px 8px; border-bottom:1px solid var(--line); }
+  .fit-table tr:last-child td{ border-bottom:none; }
+  .fit-empty{ color:var(--ink-dim); font-size:13px; padding:20px 0; }
+
+  .fit-pill{ display:inline-flex; align-items:center; padding:5px 12px; border-radius:999px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.03em; }
+  .fit-pill.active{ background:rgba(224,100,92,0.15); color:#f28b85; border:1px solid rgba(224,100,92,0.35); }
+  .fit-pill.recovering{ background:rgba(232,163,61,0.15); color:var(--amber); border:1px solid rgba(232,163,61,0.35); }
+  .fit-pill.resolved{ background:rgba(90,200,120,0.15); color:#7fe0a0; border:1px solid rgba(90,200,120,0.35); }
+  .fit-pill.pending{ background:rgba(255,255,255,0.08); color:var(--ink-dim); border:1px solid var(--line); }
+  .fit-pill.accepted{ background:rgba(90,200,120,0.15); color:#7fe0a0; border:1px solid rgba(90,200,120,0.35); }
+
+  .fit-history-item{ display:flex; gap:14px; align-items:flex-start; padding:14px 0; border-bottom:1px solid var(--line); }
+  .fit-history-item:last-child{ border-bottom:none; }
+  .fit-history-icon{ width:34px; height:34px; border-radius:8px; background:var(--panel-2); display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+  .fit-history-body b{ display:block; font-size:13.5px; }
+  .fit-history-body span{ font-size:12px; color:var(--ink-dim); }
+
+  .fit-select{ width:100%; background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:12px 14px; color:var(--ink); font-size:14px; font-family:inherit; }
+  .fit-row-2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .fit-row-3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  @media (max-width:520px){ .fit-row-2, .fit-row-3{ grid-template-columns:1fr; } }
+  .fit-check-row{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-dim); margin-bottom:14px; }
+
+  /* ===== Lagos zone map ===== */
+  #lagosZoneMap{ display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:6px; }
+  .zone-tile{ cursor:pointer; border-radius:8px; padding:14px 8px; text-align:center; font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.02em; border:2px solid transparent; transition: transform 0.12s ease, border-color 0.15s ease; line-height:1.3; }
+  .zone-tile:hover{ transform:translateY(-2px); }
+  .zone-tile.selected{ border-color:var(--ink); }
+  .zone-tile.blue{ background:rgba(90,150,224,0.22); color:#a9cdf2; }
+  .zone-tile.purple{ background:rgba(178,110,224,0.22); color:#dcb8f5; }
+  .zone-tile.red{ background:rgba(224,100,92,0.22); color:#f5b0aa; }
+  @media (max-width:520px){ #lagosZoneMap{ grid-template-columns:repeat(2,1fr); } }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
 <nav class="nav" id="nav">
-  <a href="#/home" class="logo" aria-label="RS Home"><span class="dot"></span>RS</a>
+  <a href="#/home" class="logo" aria-label="Vescair Home"><span class="dot"></span>Vescair</a>
   <div class="nav-links">
     <a href="#/home" data-page="home">Home</a>
     <a href="#/games" data-page="games">Experiences</a>
@@ -443,6 +518,7 @@
     <a href="#/videos" data-page="videos">Videos</a>
     <a href="#/store" data-page="store">Store</a>
     <a href="#/chauffeur" data-page="chauffeur">Chauffeur</a>
+    <a href="#/fit" data-page="fit">Fit</a>
     <a href="#/support" data-page="support">Support</a>
   </div>
   <div class="nav-right">
@@ -474,10 +550,10 @@
     <div class="hero-content">
       <div class="hero-eyebrow">Member Rewards · Season 04</div>
       <h1 class="hero-title display">Live it.<br>Earn it.<br><span>Own it.</span></h1>
-      <p class="hero-sub">RS is a members-only rewards experience. Every campaign is funded by our advertising partners — and the payout goes straight back to the community in giveaways, credits, and drops you can't get anywhere else.</p>
+      <p class="hero-sub">Vescair is a members-only rewards experience. Every campaign is funded by our advertising partners — and the payout goes straight back to the community in giveaways, credits, and drops you can't get anywhere else.</p>
       <div class="hero-actions">
         <button class="btn-primary" data-open="join">Become a Member</button>
-        <button class="btn-ghost" data-open="video" data-video-title="RS Season 04 Reel"><span class="play">▶</span> Watch the Reel</button>
+        <button class="btn-ghost" data-open="video" data-video-title="Vescair Season 04 Reel"><span class="play">▶</span> Watch the Reel</button>
       </div>
     </div>
     <div class="hero-controls" id="heroControls">
@@ -491,7 +567,7 @@
   <div style="padding: 40px 0 0;">
     <a href="#/chauffeur" class="chauffeur-banner" style="text-decoration:none; color:inherit; cursor:pointer;">
       <div class="chauffeur-banner-text">
-        <b>Need a ride? Book an RS Chauffeur.</b>
+        <b>Need a ride? Book a Vescair Chauffeur.</b>
         <span>Members only — book 24h ahead free, or get a driver same-day for a flat rush fee.</span>
       </div>
       <span class="link-arrow">Book Now →</span>
@@ -508,7 +584,7 @@
         <div class="card-bg" style="background-image:url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22800%22%20height%3D%221000%22%20viewBox%3D%220%200%20800%201000%22%3E%0A%3Cdefs%3E%0A%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22hsl%28150%2C38%25%2C16%25%29%22/%3E%0A%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22hsl%28190%2C45%25%2C10%25%29%22/%3E%0A%3C/linearGradient%3E%0A%3Cpattern%20id%3D%22p%22%20width%3D%2214%22%20height%3D%2214%22%20patternTransform%3D%22rotate%2845%29%22%20patternUnits%3D%22userSpaceOnUse%22%3E%0A%3Cline%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%2214%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.045%29%22%20stroke-width%3D%227%22/%3E%0A%3C/pattern%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%22800%22%20height%3D%221000%22%20fill%3D%22url%28%23g%29%22/%3E%0A%3Crect%20width%3D%22800%22%20height%3D%221000%22%20fill%3D%22url%28%23p%29%22/%3E%0A%3Ccircle%20cx%3D%22656.0%22%20cy%3D%22180.0%22%20r%3D%22224.00000000000003%22%20fill%3D%22rgba%28232%2C163%2C61%2C0.10%29%22/%3E%0A%3Ctext%20x%3D%2224%22%20y%3D%22976%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2236%22%20fill%3D%22rgba%28243%2C241%2C234%2C0.55%29%22%20font-weight%3D%22700%22%20letter-spacing%3D%221%22%3ERSPLUS%3C/text%3E%0A%3C/svg%3E')"></div>
         <div class="card-base">
           <span class="card-tag">Membership</span>
-          <div class="card-title display">RS Plus</div>
+          <div class="card-title display">Vescair Plus</div>
           <div class="card-line">Priority access to every giveaway.</div>
           <button class="card-cta" data-open="join">Learn More</button>
         </div>
@@ -517,7 +593,7 @@
             <div class="card-hover-stat"><b>2.4x</b><span>Entry Odds</span></div>
             <div class="card-hover-stat"><b>48hr</b><span>Early Access</span></div>
           </div>
-          <div class="card-hover-title display">RS Plus</div>
+          <div class="card-hover-title display">Vescair Plus</div>
           <div class="card-hover-desc">Boosted odds on every giveaway, early access to drops 48 hours before the public, and a monthly bonus credit deposit.</div>
           <button class="card-hover-btn" data-open="join" tabindex="-1">See what's included</button>
         </div>
@@ -607,7 +683,7 @@
       <div class="feature-main">
         <div class="video-ph" data-label="Story video placeholder" style="height:340px;"></div>
         <div class="feature-caption">
-          <span class="feature-tag">RS Member Rewards</span>
+          <span class="feature-tag">Vescair Member Rewards</span>
           <div class="feature-title display" style="font-size:26px;">The Rooftop Giveaway — Full Reveal</div>
           <div class="feature-date">August 27, 2026</div>
         </div>
@@ -633,7 +709,7 @@
           <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%0A%3Cdefs%3E%0A%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22hsl%2868%2C38%25%2C16%25%29%22/%3E%0A%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22hsl%28108%2C45%25%2C10%25%29%22/%3E%0A%3C/linearGradient%3E%0A%3Cpattern%20id%3D%22p%22%20width%3D%2214%22%20height%3D%2214%22%20patternTransform%3D%22rotate%2845%29%22%20patternUnits%3D%22userSpaceOnUse%22%3E%0A%3Cline%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%2214%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.045%29%22%20stroke-width%3D%227%22/%3E%0A%3C/pattern%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22url%28%23g%29%22/%3E%0A%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22url%28%23p%29%22/%3E%0A%3Ccircle%20cx%3D%22164.0%22%20cy%3D%2236.0%22%20r%3D%2256.00000000000001%22%20fill%3D%22rgba%28232%2C163%2C61%2C0.10%29%22/%3E%0A%3Ctext%20x%3D%2224%22%20y%3D%22176%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2211%22%20fill%3D%22rgba%28243%2C241%2C234%2C0.55%29%22%20font-weight%3D%22700%22%20letter-spacing%3D%221%22%3EGIVEAWAY1%3C/text%3E%0A%3C/svg%3E" alt="">
           <div>
             <span class="feature-item-tag">Giveaway</span>
-            <div class="feature-item-title">How Boosted Odds Work for RS Plus</div>
+            <div class="feature-item-title">How Boosted Odds Work for Vescair Plus</div>
             <div class="feature-item-date">August 13, 2026</div>
           </div>
         </div>
@@ -652,18 +728,18 @@
   <section class="spotlight" id="spotlight-plus">
     <div class="video-ph spotlight-media" data-label="Spotlight video placeholder"></div>
     <div class="spotlight-fade"></div>
-    <div class="spotlight-crumb"><a href="#/games">Experiences</a> / <span>RS Plus</span></div>
+    <div class="spotlight-crumb"><a href="#/games">Experiences</a> / <span>Vescair Plus</span></div>
     <div class="spotlight-content">
       <div class="spotlight-lockup">
         <div class="spotlight-lockup-top display">Go</div>
         <div class="spotlight-lockup-bottom display">Plus</div>
       </div>
       <div class="spotlight-info">
-        <div class="spotlight-crumb-inline"><a href="#/games">Experiences</a> / <span>RS Plus</span></div>
+        <div class="spotlight-crumb-inline"><a href="#/games">Experiences</a> / <span>Vescair Plus</span></div>
         <p>Boosted odds on every giveaway, early access to every drop 48 hours before anyone else, and a monthly bonus credit deposit — free, funded entirely by our advertising partners.</p>
         <div class="spotlight-actions">
-          <button class="btn-ghost" data-open="video" data-video-title="RS Plus — Overview"><span class="play">▶</span> Watch Overview</button>
-          <button class="btn-primary" style="background:transparent;border:1px solid rgba(243,241,234,0.35);color:var(--ink);" data-open="join">Join RS Plus</button>
+          <button class="btn-ghost" data-open="video" data-video-title="Vescair Plus — Overview"><span class="play">▶</span> Watch Overview</button>
+          <button class="btn-primary" style="background:transparent;border:1px solid rgba(243,241,234,0.35);color:var(--ink);" data-open="join">Join Vescair Plus</button>
         </div>
         <div class="spotlight-platforms">
           <span>Web</span><span>iOS</span><span>Android</span><span>In-Store</span>
@@ -685,11 +761,23 @@
     </div>
   </section>
 
+  <section id="fit-teaser" style="padding-top:0;">
+    <div class="fit-teaser-banner">
+      <div class="fit-teaser-copy">
+        <span class="feature-tag">Members Only · New</span>
+        <h2 class="display">Fit Predictor</h2>
+        <p>Log lifts and get real progressive-overload and deload guidance, track bodyweight and nutrition, log injuries, add friends, and see your whole training history in one place — built into your Vescair account.</p>
+        <button class="btn-primary" style="border:none;" id="fitTeaserCta">Explore Fit Predictor →</button>
+      </div>
+      <div class="fit-teaser-art" aria-hidden="true"></div>
+    </div>
+  </section>
+
   <section id="newsletter" style="padding-top:0;">
     <div class="newsletter">
       <div>
-        <h2 class="display">RS<br>Dispatch</h2>
-        <p>Sign up for the newsletter to get first word on new drops, giveaway windows, and credit bonus events — straight from the RS team.</p>
+        <h2 class="display">Vescair<br>Dispatch</h2>
+        <p>Sign up for the newsletter to get first word on new drops, giveaway windows, and credit bonus events — straight from the Vescair team.</p>
         <form id="newsletterForm" novalidate>
           <div class="form-field" id="newsletterField" style="max-width:360px;">
             <label for="newsletterEmail" class="sr-only">Email address</label>
@@ -702,7 +790,7 @@
       </div>
       <div class="promo-strip">
         <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221200%22%20height%3D%22500%22%20viewBox%3D%220%200%201200%20500%22%3E%0A%3Cdefs%3E%0A%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22hsl%28350%2C38%25%2C16%25%29%22/%3E%0A%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22hsl%2830%2C45%25%2C10%25%29%22/%3E%0A%3C/linearGradient%3E%0A%3Cpattern%20id%3D%22p%22%20width%3D%2214%22%20height%3D%2214%22%20patternTransform%3D%22rotate%2845%29%22%20patternUnits%3D%22userSpaceOnUse%22%3E%0A%3Cline%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%2214%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.045%29%22%20stroke-width%3D%227%22/%3E%0A%3C/pattern%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%221200%22%20height%3D%22500%22%20fill%3D%22url%28%23g%29%22/%3E%0A%3Crect%20width%3D%221200%22%20height%3D%22500%22%20fill%3D%22url%28%23p%29%22/%3E%0A%3Ccircle%20cx%3D%22983.9999999999999%22%20cy%3D%2290.0%22%20r%3D%22140.0%22%20fill%3D%22rgba%28232%2C163%2C61%2C0.10%29%22/%3E%0A%3Ctext%20x%3D%2224%22%20y%3D%22476%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2222%22%20fill%3D%22rgba%28243%2C241%2C234%2C0.55%29%22%20font-weight%3D%22700%22%20letter-spacing%3D%221%22%3ERSRADIO%3C/text%3E%0A%3C/svg%3E" alt="">
-        <div class="promo-chip">RS RADIO · Season 04</div>
+        <div class="promo-chip">VESCAIR RADIO · Season 04</div>
       </div>
     </div>
   </section>
@@ -732,7 +820,7 @@
       </div>
       <div class="faq-item">
         <button class="faq-q">Do I have to verify my PU Prime account to sign up?</button>
-        <div class="faq-a"><p>No — creating an RS account is instant and free. Verification only matters once you want to actually be eligible to win, and it's a one-time step.</p></div>
+        <div class="faq-a"><p>No — creating a Vescair account is instant and free. Verification only matters once you want to actually be eligible to win, and it's a one-time step.</p></div>
       </div>
     </div>
   </section>
@@ -740,7 +828,7 @@
   <section class="support-hero">
     <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221400%22%20height%3D%22700%22%20viewBox%3D%220%200%201400%20700%22%3E%0A%3Cdefs%3E%0A%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22hsl%2815%2C38%25%2C16%25%29%22/%3E%0A%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22hsl%2855%2C45%25%2C10%25%29%22/%3E%0A%3C/linearGradient%3E%0A%3Cpattern%20id%3D%22p%22%20width%3D%2214%22%20height%3D%2214%22%20patternTransform%3D%22rotate%2845%29%22%20patternUnits%3D%22userSpaceOnUse%22%3E%0A%3Cline%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%2214%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.045%29%22%20stroke-width%3D%227%22/%3E%0A%3C/pattern%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%221400%22%20height%3D%22700%22%20fill%3D%22url%28%23g%29%22/%3E%0A%3Crect%20width%3D%221400%22%20height%3D%22700%22%20fill%3D%22url%28%23p%29%22/%3E%0A%3Ccircle%20cx%3D%221148.0%22%20cy%3D%22126.0%22%20r%3D%22196.00000000000003%22%20fill%3D%22rgba%28232%2C163%2C61%2C0.10%29%22/%3E%0A%3Ctext%20x%3D%2224%22%20y%3D%22676%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2231%22%20fill%3D%22rgba%28243%2C241%2C234%2C0.55%29%22%20font-weight%3D%22700%22%20letter-spacing%3D%221%22%3ESUPPORT1%3C/text%3E%0A%3C/svg%3E" alt="">
     <div class="support-hero-content">
-      <div class="logo"><span class="dot"></span>RS Support</div>
+      <div class="logo"><span class="dot"></span>Vescair Support</div>
       <p>Get help with your account, browse common questions, check giveaway status, and more.</p>
       <button class="btn-primary" style="display:inline-block; border:none;" data-open="support">Get Support</button>
     </div>
@@ -759,11 +847,11 @@
         <button data-open="legal" data-legal-title="Corporate">Corporate</button><button data-open="legal" data-legal-title="Privacy">Privacy</button><button data-open="legal" data-legal-title="Cookie Settings">Cookie Settings</button><button data-open="legal" data-legal-title="Terms">Terms</button>
       </div>
       <div class="footer-socials">
-        <button aria-label="RS on Instagram" data-open="social" data-platform="Instagram">IG</button><button aria-label="RS on X" data-open="social" data-platform="X">X</button><button aria-label="RS on YouTube" data-open="social" data-platform="YouTube">YT</button><button aria-label="RS on TikTok" data-open="social" data-platform="TikTok">TT</button><button aria-label="RS on Discord" data-open="social" data-platform="Discord">DC</button>
+        <button aria-label="Vescair on Instagram" data-open="social" data-platform="Instagram">IG</button><button aria-label="Vescair on X" data-open="social" data-platform="X">X</button><button aria-label="Vescair on YouTube" data-open="social" data-platform="YouTube">YT</button><button aria-label="Vescair on TikTok" data-open="social" data-platform="TikTok">TT</button><button aria-label="Vescair on Discord" data-open="social" data-platform="Discord">DC</button>
       </div>
     </div>
     <div class="footer-bottom" style="border-top:none; padding-top:14px;">
-      <span>RS Member Rewards</span>
+      <span>Vescair Member Rewards</span>
       <span>© 2026 · Placeholder content for design review only</span>
     </div>
   </footer>
@@ -774,7 +862,7 @@
 <div class="page" id="page-games">
   <div class="inner-hero">
     <h1 class="display">All Experiences</h1>
-    <p>Every giveaway, membership perk, and community event RS has ever run — active and archived.</p>
+    <p>Every giveaway, membership perk, and community event Vescair has ever run — active and archived.</p>
   </div>
   <div class="grid-4" id="gamesGrid"></div>
 </div>
@@ -783,7 +871,7 @@
 <div class="page" id="page-newswire">
   <div class="inner-hero">
     <h1 class="display">Newswire</h1>
-    <p>Announcements, drop recaps, and community updates from the RS team.</p>
+    <p>Announcements, drop recaps, and community updates from the Vescair team.</p>
   </div>
   <div class="grid-3" id="newsGrid"></div>
 </div>
@@ -792,7 +880,7 @@
 <div class="page" id="page-videos">
   <div class="inner-hero">
     <h1 class="display">Videos</h1>
-    <p>Trailers, drop reveals, and behind-the-scenes from every RS campaign.</p>
+    <p>Trailers, drop reveals, and behind-the-scenes from every Vescair campaign.</p>
   </div>
   <div class="grid-3" id="videosGrid"></div>
 </div>
@@ -868,7 +956,7 @@
   <section class="support-hero" style="min-height:100vh; padding-top:140px;">
     <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221400%22%20height%3D%22700%22%20viewBox%3D%220%200%201400%20700%22%3E%0A%3Cdefs%3E%0A%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22hsl%28216%2C38%25%2C16%25%29%22/%3E%0A%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22hsl%28256%2C45%25%2C10%25%29%22/%3E%0A%3C/linearGradient%3E%0A%3Cpattern%20id%3D%22p%22%20width%3D%2214%22%20height%3D%2214%22%20patternTransform%3D%22rotate%2845%29%22%20patternUnits%3D%22userSpaceOnUse%22%3E%0A%3Cline%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%2214%22%20stroke%3D%22rgba%28255%2C255%2C255%2C0.045%29%22%20stroke-width%3D%227%22/%3E%0A%3C/pattern%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%221400%22%20height%3D%22700%22%20fill%3D%22url%28%23g%29%22/%3E%0A%3Crect%20width%3D%221400%22%20height%3D%22700%22%20fill%3D%22url%28%23p%29%22/%3E%0A%3Ccircle%20cx%3D%221148.0%22%20cy%3D%22126.0%22%20r%3D%22196.00000000000003%22%20fill%3D%22rgba%28232%2C163%2C61%2C0.10%29%22/%3E%0A%3Ctext%20x%3D%2224%22%20y%3D%22676%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2231%22%20fill%3D%22rgba%28243%2C241%2C234%2C0.55%29%22%20font-weight%3D%22700%22%20letter-spacing%3D%221%22%3ESUPPORT2%3C/text%3E%0A%3C/svg%3E" alt="">
     <div class="support-hero-content">
-      <div class="logo"><span class="dot"></span>RS Support</div>
+      <div class="logo"><span class="dot"></span>Vescair Support</div>
       <p>Get help with issues, browse common solutions, check giveaway/order status, and more.</p>
       <button class="btn-primary" style="display:inline-block; border:none;" data-open="support">Get Support</button>
     </div>
@@ -944,14 +1032,22 @@
 <!-- ===================== CHAUFFEUR ===================== -->
 <div class="page" id="page-chauffeur">
   <div class="chauffeur-hero">
-    <h1 class="display">Book an RS Chauffeur</h1>
-    <p>Members-only chauffeur service. Book 24 hours ahead for free, or request same-day for a flat £200 rush fee. First available driver confirms your ride.</p>
+    <h1 class="display">Book a Vescair Chauffeur</h1>
+    <p>Members-only chauffeur service in London, Lagos, and Dubai. Book 24 hours ahead for free, or request same-day for a flat £200 rush fee. First available driver confirms your ride.</p>
   </div>
   <div class="chauffeur-layout">
     <div class="profile-card">
       <h3>Ride Details</h3>
       <div class="rush-notice" id="rushNotice"></div>
       <form id="chauffeurForm" novalidate>
+        <div class="form-field" id="chauffeurCityField">
+          <label for="chauffeurCity">City</label>
+          <select class="fit-select" id="chauffeurCity">
+            <option value="london">London, UK</option>
+            <option value="lagos">Lagos, Nigeria</option>
+            <option value="dubai">Dubai, UAE</option>
+          </select>
+        </div>
         <div class="form-field" id="chauffeurNameField">
           <label for="chauffeurName">Full Name</label>
           <input id="chauffeurName" required>
@@ -962,9 +1058,19 @@
           <input id="chauffeurEmail" type="email" required>
           <div class="form-error">Enter a valid email address.</div>
         </div>
+
+        <div id="lagosZoneWrap" style="display:none;">
+          <div class="form-field">
+            <label>Pickup Zone</label>
+            <p style="font-size:12px; color:var(--ink-dim); margin:-4px 0 10px;">Tap your pickup area on the map. <span style="color:#7fb4e8;">Blue</span> = pickup available. <span style="color:#c99ae8;">Purple</span> = available, limited coverage. <span style="color:#f28b85;">Red</span> = not currently available.</p>
+          </div>
+          <div id="lagosZoneMap"></div>
+          <div class="fit-suggestion neutral" id="lagosZoneNotice" style="display:none; margin-top:12px;"></div>
+        </div>
+
         <div class="form-field" id="chauffeurPickupField">
           <label for="chauffeurPickup">Pickup Location</label>
-          <input id="chauffeurPickup" required>
+          <input id="chauffeurPickup" placeholder="Exact address or landmark" required>
           <div class="form-error">Enter a pickup location.</div>
         </div>
         <div class="form-field" id="chauffeurDropoffField">
@@ -1023,6 +1129,269 @@
   </div>
 </div>
 
+<!-- ===================== FIT PREDICTOR ===================== -->
+<div class="page" id="page-fit">
+  <div class="fit-shell">
+    <div class="fit-topbar">
+      <a href="#/home" class="fit-home-btn">← Home</a>
+      <div class="fit-tabs" id="fitTabs">
+        <button type="button" class="fit-tab active" data-fit-tab="overview">Overview</button>
+        <button type="button" class="fit-tab" data-fit-tab="train">Train</button>
+        <button type="button" class="fit-tab" data-fit-tab="body">Body</button>
+        <button type="button" class="fit-tab" data-fit-tab="nutrition">Nutrition</button>
+        <button type="button" class="fit-tab" data-fit-tab="injuries">Injuries</button>
+        <button type="button" class="fit-tab" data-fit-tab="friends">Friends</button>
+        <button type="button" class="fit-tab" data-fit-tab="history">History</button>
+        <button type="button" class="fit-tab" data-fit-tab="profile">Profile</button>
+      </div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="fit-panel active" id="fitPanel-overview">
+      <h2 class="display" style="font-size:28px; margin-bottom:4px;" id="fitOverviewGreeting">Welcome back.</h2>
+      <p style="color:var(--ink-dim); font-size:13.5px; margin-bottom:24px;">Here's where your training stands right now.</p>
+      <div class="fit-stat-grid" id="fitStatGrid">
+        <div class="fit-stat-card"><b id="fitStatBench">—</b><span>Best Bench e1RM</span></div>
+        <div class="fit-stat-card"><b id="fitStatSquat">—</b><span>Best Squat e1RM</span></div>
+        <div class="fit-stat-card"><b id="fitStatDeadlift">—</b><span>Best Deadlift e1RM</span></div>
+        <div class="fit-stat-card"><b id="fitStatBodyweight">—</b><span>Latest Bodyweight</span></div>
+      </div>
+      <div class="fit-quick-actions">
+        <button type="button" data-fit-goto="train">+ Log a Lift</button>
+        <button type="button" data-fit-goto="body">+ Log Bodyweight</button>
+        <button type="button" data-fit-goto="nutrition">+ Log Nutrition</button>
+        <button type="button" data-fit-goto="injuries">+ Log Injury</button>
+      </div>
+      <h3 style="font-size:15px; margin-bottom:10px;">Recent Activity</h3>
+      <div id="fitOverviewRecent"><p class="fit-empty">Nothing logged yet — start with a lift, your bodyweight, or a meal.</p></div>
+    </div>
+
+    <!-- TRAIN -->
+    <div class="fit-panel" id="fitPanel-train">
+      <div class="fit-layout">
+        <div class="profile-card">
+          <h3>Log a Lift</h3>
+          <form id="fitLiftForm" novalidate>
+            <div class="form-field">
+              <label for="fitLiftExercise">Exercise</label>
+              <select class="fit-select" id="fitLiftExercise">
+                <option>Bench Press</option>
+                <option>Squat</option>
+                <option>Deadlift</option>
+                <option>Overhead Press</option>
+                <option value="__custom">Custom…</option>
+              </select>
+            </div>
+            <div class="form-field" id="fitLiftCustomField" style="display:none;">
+              <label for="fitLiftCustomName">Custom exercise name</label>
+              <input id="fitLiftCustomName">
+            </div>
+            <div class="fit-row-3">
+              <div class="form-field">
+                <label for="fitLiftWeight">Weight</label>
+                <input id="fitLiftWeight" type="number" min="0" step="0.5" required>
+              </div>
+              <div class="form-field">
+                <label for="fitLiftUnit">Unit</label>
+                <select class="fit-select" id="fitLiftUnit"><option value="kg">kg</option><option value="lb">lb</option></select>
+              </div>
+              <div class="form-field">
+                <label for="fitLiftReps">Reps</label>
+                <input id="fitLiftReps" type="number" min="1" max="30" value="5" required>
+              </div>
+            </div>
+            <label class="fit-check-row"><input type="checkbox" id="fitLiftDeload"> This was a deliberate deload set</label>
+            <div class="form-field">
+              <label for="fitLiftNotes">Notes (optional)</label>
+              <textarea id="fitLiftNotes" rows="2"></textarea>
+            </div>
+            <button type="submit" class="form-submit">Log Lift</button>
+          </form>
+          <div id="fitLiftSuggestion"></div>
+        </div>
+        <div class="profile-card">
+          <div class="section-head" style="padding:0; margin-bottom:10px;">
+            <h3 style="margin:0;">History for</h3>
+          </div>
+          <select class="fit-select" id="fitTrainHistoryExercise" style="margin-bottom:14px;">
+            <option>Bench Press</option><option>Squat</option><option>Deadlift</option><option>Overhead Press</option>
+          </select>
+          <div id="fitLiftHistoryTable"><p class="fit-empty">No sessions logged for this exercise yet.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="fit-panel" id="fitPanel-body">
+      <div class="fit-layout">
+        <div class="profile-card">
+          <h3>Log Bodyweight</h3>
+          <form id="fitBodyForm" novalidate>
+            <div class="fit-row-2">
+              <div class="form-field">
+                <label for="fitBodyWeight">Bodyweight (kg)</label>
+                <input id="fitBodyWeight" type="number" min="0" step="0.1" required>
+              </div>
+              <div class="form-field">
+                <label for="fitBodyFat">Body fat % (optional)</label>
+                <input id="fitBodyFat" type="number" min="0" max="70" step="0.1">
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="fitBodyNotes">Notes (optional)</label>
+              <textarea id="fitBodyNotes" rows="2"></textarea>
+            </div>
+            <button type="submit" class="form-submit">Log Entry</button>
+          </form>
+        </div>
+        <div class="profile-card">
+          <h3>Recent Entries</h3>
+          <div id="fitBodyTable"><p class="fit-empty">No entries yet.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NUTRITION -->
+    <div class="fit-panel" id="fitPanel-nutrition">
+      <div class="fit-layout">
+        <div class="profile-card">
+          <h3>Log Nutrition</h3>
+          <div id="fitNutritionTarget" class="fit-suggestion neutral" style="display:none;"></div>
+          <form id="fitNutritionForm" novalidate>
+            <div class="fit-row-2">
+              <div class="form-field">
+                <label for="fitNutCalories">Calories</label>
+                <input id="fitNutCalories" type="number" min="0" required>
+              </div>
+              <div class="form-field">
+                <label for="fitNutProtein">Protein (g)</label>
+                <input id="fitNutProtein" type="number" min="0" step="0.1">
+              </div>
+            </div>
+            <div class="fit-row-2">
+              <div class="form-field">
+                <label for="fitNutCarbs">Carbs (g)</label>
+                <input id="fitNutCarbs" type="number" min="0" step="0.1">
+              </div>
+              <div class="form-field">
+                <label for="fitNutFat">Fat (g)</label>
+                <input id="fitNutFat" type="number" min="0" step="0.1">
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="fitNutNotes">Notes (optional)</label>
+              <textarea id="fitNutNotes" rows="2"></textarea>
+            </div>
+            <button type="submit" class="form-submit">Log Entry</button>
+          </form>
+        </div>
+        <div class="profile-card">
+          <h3>Recent Entries</h3>
+          <div id="fitNutritionTable"><p class="fit-empty">No entries yet.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INJURIES -->
+    <div class="fit-panel" id="fitPanel-injuries">
+      <div class="fit-layout">
+        <div class="profile-card">
+          <h3>Log an Injury</h3>
+          <form id="fitInjuryForm" novalidate>
+            <div class="form-field">
+              <label for="fitInjuryName">Injury</label>
+              <input id="fitInjuryName" placeholder="e.g. Left shoulder strain" required>
+            </div>
+            <div class="form-field">
+              <label for="fitInjuryStatus">Status</label>
+              <select class="fit-select" id="fitInjuryStatus">
+                <option value="active">Active</option>
+                <option value="recovering">Recovering</option>
+                <option value="resolved">Resolved</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="fitInjuryNotes">Notes (optional)</label>
+              <textarea id="fitInjuryNotes" rows="2"></textarea>
+            </div>
+            <button type="submit" class="form-submit">Log Injury</button>
+          </form>
+        </div>
+        <div class="profile-card">
+          <h3>Your Injuries</h3>
+          <div id="fitInjuryTable"><p class="fit-empty">Nothing logged — long may that continue.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FRIENDS -->
+    <div class="fit-panel" id="fitPanel-friends">
+      <div class="fit-layout">
+        <div class="profile-card">
+          <h3>Add a Friend</h3>
+          <form id="fitFriendForm" novalidate>
+            <div class="form-field">
+              <label for="fitFriendEmail">Friend's email</label>
+              <input id="fitFriendEmail" type="email" required>
+            </div>
+            <button type="submit" class="form-submit">Send Request</button>
+          </form>
+          <h3 style="margin-top:24px;">Requests For You</h3>
+          <div id="fitFriendIncoming"><p class="fit-empty">No incoming requests.</p></div>
+        </div>
+        <div class="profile-card">
+          <h3>Your Friends</h3>
+          <div id="fitFriendAccepted"><p class="fit-empty">No friends yet — add one by email.</p></div>
+          <h3 style="margin-top:24px;">Sent Requests</h3>
+          <div id="fitFriendSent"><p class="fit-empty">No pending requests.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="fit-panel" id="fitPanel-history">
+      <div class="profile-card">
+        <h3>Full Timeline</h3>
+        <div id="fitHistoryFeed"><p class="fit-empty">Nothing logged yet.</p></div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="fit-panel" id="fitPanel-profile">
+      <div class="profile-card" style="max-width:520px;">
+        <h3>Training Profile</h3>
+        <form id="fitProfileForm" novalidate>
+          <div class="form-field">
+            <label for="fitProfileGoal">Goal</label>
+            <select class="fit-select" id="fitProfileGoal">
+              <option value="general">General Fitness</option>
+              <option value="strength">Strength</option>
+              <option value="hypertrophy">Hypertrophy (Muscle Gain)</option>
+              <option value="fat_loss">Fat Loss</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="fitProfileExperience">Experience Level</label>
+            <select class="fit-select" id="fitProfileExperience">
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="fitProfileUnit">Preferred Unit</label>
+            <select class="fit-select" id="fitProfileUnit">
+              <option value="kg">Kilograms (kg)</option>
+              <option value="lb">Pounds (lb)</option>
+            </select>
+          </div>
+          <button type="submit" class="form-submit">Save Training Profile</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ===================== TERMS ===================== -->
 <div class="page" id="page-terms">
   <div class="inner-hero">
@@ -1031,7 +1400,7 @@
   </div>
   <div style="padding: 0 5vw 90px; max-width:720px;">
     <h3 style="font-size:18px; margin-bottom:10px;">Eligibility</h3>
-    <p style="color:var(--ink-dim); font-size:14px; line-height:1.7; margin-bottom:24px;">You must be 18 years or older to enter any RS giveaway. Entry requires a verified PU Prime trading account. Per PU Prime's own stated regional restrictions, residents of the United States, China, India, the Philippines, Singapore, North Korea, Cuba, Iran, and FATF-blacklisted jurisdictions are not eligible to participate.</p>
+    <p style="color:var(--ink-dim); font-size:14px; line-height:1.7; margin-bottom:24px;">You must be 18 years or older to enter any Vescair giveaway. Entry requires a verified PU Prime trading account. Per PU Prime's own stated regional restrictions, residents of the United States, China, India, the Philippines, Singapore, North Korea, Cuba, Iran, and FATF-blacklisted jurisdictions are not eligible to participate.</p>
     <h3 style="font-size:18px; margin-bottom:10px;">How Winners Are Selected</h3>
     <p style="color:var(--ink-dim); font-size:14px; line-height:1.7; margin-bottom:24px;">Placeholder — describe your actual random-selection process here once finalized.</p>
     <h3 style="font-size:18px; margin-bottom:10px;">Payouts</h3>
@@ -1057,11 +1426,11 @@
   document.getElementById('posterRow').innerHTML = posterImgs.map((src,i) => `<button class="poster" data-open="poster" data-i="${i}"><img src="${src}" alt=""></button>`).join('');
 
   const items = [
-    {tag:"Membership", title:"RS Plus", desc:"Boosted odds and early access to every drop.", img:posterImgs[0], cta:"Join RS Plus", action:"join"},
+    {tag:"Membership", title:"Vescair Plus", desc:"Boosted odds and early access to every drop.", img:posterImgs[0], cta:"Join Vescair Plus", action:"join"},
     {tag:"Giveaway", title:"The Rooftop Giveaway", desc:"$18,000 in prizes, live this Friday.", img:posterImgs[6], cta:"Enter Giveaway", action:"giveaway"},
     {tag:"Community", title:"Member Tag Studio", desc:"Design a custom profile plate, free.", img:posterImgs[1], cta:"Design a Tag", action:"tag"},
     {tag:"Store", title:"Season 04 Drop", desc:"New apparel, earn credits on every order.", img:posterImgs[2], cta:"Shop the Drop", action:"store"},
-    {tag:"Event", title:"RS Radio Live", desc:"Monthly member-only listening session.", img:posterImgs[4], cta:"RSVP", action:"join"},
+    {tag:"Event", title:"Vescair Radio Live", desc:"Monthly member-only listening session.", img:posterImgs[4], cta:"RSVP", action:"join"},
     {tag:"Giveaway", title:"Weekend Flash Drop", desc:"48-hour credit multiplier event.", img:posterImgs[5], cta:"Enter Giveaway", action:"giveaway"},
     {tag:"Community", title:"Referral Bonus", desc:"Invite a friend, both earn 200 credits.", img:posterImgs[3], cta:"Get Referral Link", action:"join"},
     {tag:"Store", title:"Accessories Restock", desc:"Limited run, members get first access.", img:posterImgs[7], cta:"Shop Now", action:"store"}
@@ -1315,7 +1684,7 @@
     const tpl = {
       join: () => `
         <div class="modal-eyebrow">Membership · Free</div>
-        <h3 class="modal-title">Create your RS account</h3>
+        <h3 class="modal-title">Create your Vescair account</h3>
         <div class="modal-body">Just an email and password to start. You can verify your PU Prime account any time after — no rush.</div>
         <form id="joinForm" novalidate>
           <div class="form-field" id="joinNameField">
@@ -1346,11 +1715,11 @@
           <button type="submit" class="form-submit">Create Account</button>
           <p style="text-align:center; font-size:12.5px; color:var(--ink-dim); margin-top:16px;">Already have an account? <button type="button" data-open="login" style="background:none;border:none;color:var(--amber);font-weight:700;cursor:pointer;padding:0;">Log in</button></p>
         </form>
-        <div class="form-success" id="joinSuccess"><div class="check">✓</div><h4>You're in.</h4><p>Welcome to RS.</p></div>
+        <div class="form-success" id="joinSuccess"><div class="check">✓</div><h4>You're in.</h4><p>Welcome to Vescair.</p></div>
       `,
       login: () => `
         <div class="modal-eyebrow">Welcome Back</div>
-        <h3 class="modal-title">Log in to RS</h3>
+        <h3 class="modal-title">Log in to Vescair</h3>
         <form id="loginForm" novalidate>
           <div class="form-field" id="loginEmailField">
             <label for="loginEmail">Email</label>
@@ -1382,9 +1751,9 @@
         <button type="button" class="form-submit" id="cartCheckoutBtn">Proceed to Checkout</button>
       `,
       "newsletter-popup": () => `
-        <div class="modal-eyebrow">Welcome to RS</div>
+        <div class="modal-eyebrow">Welcome to Vescair</div>
         <h3 class="modal-title">Get £10 off every piece of apparel — for life.</h3>
-        <div class="modal-body">Sign up for the RS newsletter and every apparel item in the store is £10 cheaper, permanently, for as long as you're a member. First word on drops and giveaways too.</div>
+        <div class="modal-body">Sign up for the Vescair newsletter and every apparel item in the store is £10 cheaper, permanently, for as long as you're a member. First word on drops and giveaways too.</div>
         <form id="newsletterPopupForm" novalidate>
           <div class="form-field" id="newsletterPopupEmailField">
             <label for="newsletterPopupEmail" class="sr-only">Email</label>
@@ -1399,10 +1768,10 @@
       tag: () => `
         <div class="modal-eyebrow">Customize</div>
         <h3 class="modal-title">Design your Member Tag</h3>
-        <div class="tag-preview" id="tagPreview" style="background:hsl(30,70%,22%); color:#fff;">RS</div>
+        <div class="tag-preview" id="tagPreview" style="background:hsl(30,70%,22%); color:#fff;">VES</div>
         <div class="form-field" id="tagInitialsField">
           <label for="tagInitials">Initials (max 3)</label>
-          <input id="tagInitials" maxlength="3" value="RS">
+          <input id="tagInitials" maxlength="3" value="VES">
         </div>
         <div class="swatch-row" id="swatchRow">
           <button type="button" class="swatch selected" style="background:hsl(30,70%,30%)" data-hue="30" aria-label="Amber"></button>
@@ -1440,7 +1809,7 @@
           <div><b>$18K</b><span>Prize Pool</span></div>
           <div><b><span data-countdown="days">3</span>d <span data-countdown="hours">00</span>h <span data-countdown="mins">00</span>m</b><span>Left to Enter</span></div>
         </div>
-        <div class="modal-body">Funded entirely by this season's ad partners. No purchase required — members get 2x entries automatically, RS Plus members get 2.4x. Entry requires a verified PU Prime account so we can confirm winners and pay out prizes safely.</div>
+        <div class="modal-body">Funded entirely by this season's ad partners. No purchase required — members get 2x entries automatically, Vescair Plus members get 2.4x. Entry requires a verified PU Prime account so we can confirm winners and pay out prizes safely.</div>
         <button type="button" class="form-submit" data-open="join">Enter Free</button>
       `,
       support: () => `
@@ -1467,7 +1836,7 @@
       `,
       account: () => `
         <div class="modal-eyebrow">Account</div>
-        <h3 class="modal-title">Sign in to RS</h3>
+        <h3 class="modal-title">Sign in to Vescair</h3>
         <form id="accountForm" novalidate>
           <div class="form-field" id="acctEmailField"><label for="acctEmail">Email</label><input id="acctEmail" type="email" required><div class="form-error">Enter a valid email address.</div></div>
           <div class="form-field" id="acctPassField"><label for="acctPass">Password</label><input id="acctPass" type="password" required><div class="form-error">Enter your password.</div></div>
@@ -1478,7 +1847,7 @@
       `,
       search: () => `
         <div class="modal-eyebrow">Search</div>
-        <h3 class="modal-title">Search RS</h3>
+        <h3 class="modal-title">Search Vescair</h3>
         <div class="form-field" style="margin-bottom:0;">
           <label for="searchInput" class="sr-only">Search</label>
           <input id="searchInput" placeholder="Search experiences, store, videos…" autocomplete="off">
@@ -1574,7 +1943,7 @@
 
             form.style.display = 'none';
             panel.querySelector('#joinSuccess').classList.add('show');
-            showToast('Account created — welcome to RS.');
+            showToast('Account created — welcome to Vescair.');
             setTimeout(async () => { closeAnyModal(); await refreshAuthUI(true); }, 1000);
           } catch (err) {
             showToast('Network error — check your connection and try again.');
@@ -1632,7 +2001,7 @@
         const { panel } = openModal(tpl.tag());
         const preview = panel.querySelector('#tagPreview');
         const initials = panel.querySelector('#tagInitials');
-        initials.addEventListener('input', () => { preview.textContent = (initials.value || 'RS').toUpperCase().slice(0, 3); });
+        initials.addEventListener('input', () => { preview.textContent = (initials.value || 'VES').toUpperCase().slice(0, 3); });
         panel.querySelectorAll('.swatch').forEach(sw => {
           sw.addEventListener('click', () => {
             panel.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
@@ -1650,7 +2019,7 @@
       }
       else if (type === 'video') {
         e.preventDefault();
-        openModal(tpl.video(trigger.dataset.videoTitle || 'RS Video'));
+        openModal(tpl.video(trigger.dataset.videoTitle || 'Vescair Video'));
       }
       else if (type === 'progress') { e.preventDefault(); openModal(tpl.progress()); }
       else if (type === 'giveaway') { e.preventDefault(); openModal(tpl.giveaway()); }
@@ -1661,11 +2030,11 @@
           { fieldId: 'supportNameField', inputId: 'supportName', validate: notEmpty },
           { fieldId: 'supportEmailField', inputId: 'supportEmail', validate: isEmail },
           { fieldId: 'supportMsgField', inputId: 'supportMsg', validate: v => v.length > 4 }
-        ], () => { panel.querySelector('#supportSuccess').classList.add('show'); showToast('Message sent to RS support.'); });
+        ], () => { panel.querySelector('#supportSuccess').classList.add('show'); showToast('Message sent to Vescair support.'); });
       }
       else if (type === 'careers') { e.preventDefault(); openModal(tpl.careers()); }
       else if (type === 'legal') { e.preventDefault(); openModal(tpl.legal(trigger.dataset.legalTitle || 'Legal')); }
-      else if (type === 'social') { e.preventDefault(); showToast(`This would open RS on ${trigger.dataset.platform}.`); }
+      else if (type === 'social') { e.preventDefault(); showToast(`This would open Vescair on ${trigger.dataset.platform}.`); }
       else if (type === 'account') {
         e.preventDefault();
         if (window.currentUser) {
@@ -1741,7 +2110,7 @@
         newsletterForm.querySelector('.form-field').style.display = 'none';
         newsletterForm.querySelector('button[type="submit"]').style.display = 'none';
         document.getElementById('newsletterSuccess').style.display = 'block';
-        showToast("Subscribed — welcome to RS Dispatch.");
+        showToast("Subscribed — welcome to Vescair Dispatch.");
       });
     }
   })();
@@ -1936,6 +2305,444 @@
     // Nav still shows "Join Free" as a harmless fallback; rest of the site is unaffected.
   }
 
+  // ===== Fit Predictor =====
+  (function(){
+    try {
+      if (!window.sb) throw new Error('Supabase not available — Fit Predictor needs it.');
+      const sb = window.sb;
+
+      // ---- unit + 1RM math ----
+      function toKg(weight, unit){ return unit === 'lb' ? weight * 0.45359237 : weight; }
+      function fromKg(weightKg, unit){ return unit === 'lb' ? weightKg / 0.45359237 : weightKg; }
+      function epley1RM(weightKg, reps){ return reps <= 1 ? weightKg : weightKg * (1 + reps / 30); }
+      function fmt(n){ return Math.round(n * 10) / 10; }
+      function fmtDate(iso){ return new Date(iso).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }); }
+
+      // ---- progressive overload / deload suggestion engine ----
+      function computeSuggestion(sessionsDesc){
+        // sessionsDesc: most-recent-first array of {weight, unit, reps, e1rm(kg), is_deload, logged_at}
+        if (sessionsDesc.length < 2) {
+          return { type:'neutral', text:'Log at least one more session of this exercise and Fit Predictor will start suggesting your next weight or deload.' };
+        }
+        const nonDeload = sessionsDesc.filter(s => !s.is_deload).slice(0, 4);
+        const deloadedRecently = sessionsDesc.slice(0, 4).some(s => s.is_deload);
+
+        if (nonDeload.length < 2) {
+          return { type:'neutral', text:'Log one more non-deload session and Fit Predictor will start suggesting your next weight.' };
+        }
+
+        const last = nonDeload[0], prev = nonDeload[1];
+        const pctChange = (last.e1rm - prev.e1rm) / prev.e1rm;
+
+        // plateau check across up to the last 3 non-deload sessions
+        let plateau = false;
+        if (nonDeload.length >= 3) {
+          const top3 = nonDeload.slice(0, 3).map(s => s.e1rm);
+          const max = Math.max(...top3), min = Math.min(...top3);
+          plateau = (max - min) / min < 0.015;
+        }
+
+        if (pctChange >= 0.005) {
+          const nextWeightKg = toKg(last.weight, last.unit) + (last.unit === 'lb' ? 5 : 2.5);
+          const dispUnit = last.unit;
+          const nextWeight = fmt(fromKg(nextWeightKg, dispUnit));
+          return {
+            type:'up',
+            text:`Trending up (+${fmt(pctChange*100)}% e1RM). Next session try <b>${nextWeight}${dispUnit} × ${last.reps}</b>, or stay at ${fmt(last.weight)}${dispUnit} and aim for ${last.reps + 1} reps.`
+          };
+        }
+        if (plateau && !deloadedRecently) {
+          const deloadWeightKg = toKg(last.weight, last.unit) * 0.9;
+          const dispUnit = last.unit;
+          const deloadWeight = fmt(fromKg(deloadWeightKg, dispUnit));
+          return {
+            type:'deload',
+            text:`Plateaued over your last ${nonDeload.slice(0,3).length} sessions (e1RM within 1.5%). Time for a deload — try <b>${deloadWeight}${dispUnit} × ${last.reps}</b> this week, then ramp back up.`
+          };
+        }
+        if (pctChange <= -0.02) {
+          return {
+            type:'warn',
+            text:`e1RM dropped ${fmt(Math.abs(pctChange)*100)}% since your last session. That can mean fatigue, poor sleep/nutrition, or early injury — consider a lighter session or a deload before pushing again.`
+          };
+        }
+        return { type:'neutral', text:`Holding steady. Repeat ${fmt(last.weight)}${last.unit} × ${last.reps} for one more session before Fit Predictor adjusts your next target.` };
+      }
+
+      function suggestionHTML(s){
+        return `<div class="fit-suggestion ${s.type}">${s.text}</div>`;
+      }
+
+      // ---- state ----
+      let fitProfileRow = null;
+      let fitActiveTab = 'overview';
+
+      function uid(){ return window.currentUser ? window.currentUser.id : null; }
+
+      async function ensureFitProfile(){
+        const id = uid(); if (!id) return null;
+        let { data } = await sb.from('fit_profile').select('*').eq('user_id', id).maybeSingle();
+        if (!data) {
+          const { data: created } = await sb.from('fit_profile').insert({ user_id: id }).select().single();
+          data = created;
+        }
+        fitProfileRow = data;
+        return data;
+      }
+
+      // ---- OVERVIEW ----
+      async function loadOverview(){
+        const id = uid(); if (!id) return;
+        const name = (window.currentProfile && window.currentProfile.full_name) || (window.currentUser && window.currentUser.email) || 'there';
+        document.getElementById('fitOverviewGreeting').textContent = `Welcome back, ${name.split(' ')[0]}.`;
+
+        const [{ data: lifts }, { data: body }] = await Promise.all([
+          sb.from('fit_lifts').select('*').eq('user_id', id).order('logged_at', { ascending:false }),
+          sb.from('fit_body_metrics').select('*').eq('user_id', id).order('logged_at', { ascending:false }).limit(1),
+        ]);
+
+        const bestOf = (ex) => {
+          const rows = (lifts||[]).filter(l => l.exercise === ex);
+          if (!rows.length) return null;
+          return Math.max(...rows.map(r => r.e1rm));
+        };
+        const bench = bestOf('Bench Press'), squat = bestOf('Squat'), dead = bestOf('Deadlift');
+        document.getElementById('fitStatBench').textContent = bench ? `${fmt(bench)}kg` : '—';
+        document.getElementById('fitStatSquat').textContent = squat ? `${fmt(squat)}kg` : '—';
+        document.getElementById('fitStatDeadlift').textContent = dead ? `${fmt(dead)}kg` : '—';
+        document.getElementById('fitStatBodyweight').textContent = (body && body[0]) ? `${fmt(body[0].weight_kg)}kg` : '—';
+
+        const recentEl = document.getElementById('fitOverviewRecent');
+        const merged = (lifts||[]).slice(0,5).map(l => ({ icon:'🏋', label:`${l.exercise} — ${fmt(l.weight)}${l.unit} × ${l.reps}`, date:l.logged_at }));
+        if (!merged.length) {
+          recentEl.innerHTML = '<p class="fit-empty">Nothing logged yet — start with a lift, your bodyweight, or a meal.</p>';
+        } else {
+          recentEl.innerHTML = merged.map(m => `<div class="fit-history-item"><div class="fit-history-icon">${m.icon}</div><div class="fit-history-body"><b>${m.label}</b><span>${fmtDate(m.date)}</span></div></div>`).join('');
+        }
+      }
+
+      // ---- TRAIN ----
+      async function loadTrainHistory(exercise){
+        const id = uid(); if (!id) return;
+        const { data: lifts } = await sb.from('fit_lifts').select('*').eq('user_id', id).order('logged_at', { ascending:false });
+
+        // keep the history dropdown populated with every exercise the user has actually logged
+        const dropdown = document.getElementById('fitTrainHistoryExercise');
+        const known = ['Bench Press','Squat','Deadlift','Overhead Press'];
+        const extra = Array.from(new Set((lifts||[]).map(l => l.exercise))).filter(e => !known.includes(e));
+        const allOptions = known.concat(extra);
+        if (dropdown.dataset.built !== allOptions.join('|')) {
+          dropdown.innerHTML = allOptions.map(e => `<option${e===exercise?' selected':''}>${e}</option>`).join('');
+          dropdown.dataset.built = allOptions.join('|');
+        }
+        dropdown.value = exercise;
+
+        const rows = (lifts||[]).filter(l => l.exercise === exercise);
+        const tableEl = document.getElementById('fitLiftHistoryTable');
+        if (!rows.length) {
+          tableEl.innerHTML = '<p class="fit-empty">No sessions logged for this exercise yet.</p>';
+        } else {
+          tableEl.innerHTML = `<table class="fit-table"><thead><tr><th>Date</th><th>Weight</th><th>Reps</th><th>e1RM</th><th></th></tr></thead><tbody>${
+            rows.map(r => `<tr><td>${fmtDate(r.logged_at)}</td><td>${fmt(r.weight)}${r.unit}${r.is_deload ? ' <span class="fit-pill recovering" style="margin-left:4px;">Deload</span>' : ''}</td><td>${r.reps}</td><td>${fmt(r.e1rm)}kg</td><td><button type="button" class="fit-delete-btn" data-fit-delete="fit_lifts" data-fit-id="${r.id}" data-fit-reload="train" style="color:var(--ink-dim); font-size:12px;">Remove</button></td></tr>`).join('')
+          }</tbody></table>`;
+        }
+
+        document.getElementById('fitLiftSuggestion').innerHTML = suggestionHTML(computeSuggestion(rows));
+      }
+
+      // ---- BODY ----
+      async function loadBody(){
+        const id = uid(); if (!id) return;
+        const { data } = await sb.from('fit_body_metrics').select('*').eq('user_id', id).order('logged_at', { ascending:false });
+        const el = document.getElementById('fitBodyTable');
+        if (!data || !data.length) { el.innerHTML = '<p class="fit-empty">No entries yet.</p>'; return; }
+        el.innerHTML = `<table class="fit-table"><thead><tr><th>Date</th><th>Weight</th><th>Body Fat</th><th></th></tr></thead><tbody>${
+          data.map(r => `<tr><td>${fmtDate(r.logged_at)}</td><td>${fmt(r.weight_kg)}kg</td><td>${r.bodyfat_pct != null ? fmt(r.bodyfat_pct)+'%' : '—'}</td><td><button type="button" class="fit-delete-btn" data-fit-delete="fit_body_metrics" data-fit-id="${r.id}" data-fit-reload="body" style="color:var(--ink-dim); font-size:12px;">Remove</button></td></tr>`).join('')
+        }</tbody></table>`;
+      }
+
+      // ---- NUTRITION ----
+      async function loadNutrition(){
+        const id = uid(); if (!id) return;
+        await ensureFitProfile();
+        const [{ data: nut }, { data: body }] = await Promise.all([
+          sb.from('fit_nutrition_logs').select('*').eq('user_id', id).order('logged_at', { ascending:false }),
+          sb.from('fit_body_metrics').select('*').eq('user_id', id).order('logged_at', { ascending:false }).limit(1),
+        ]);
+
+        const targetEl = document.getElementById('fitNutritionTarget');
+        if (body && body[0]) {
+          const bw = body[0].weight_kg;
+          const goal = fitProfileRow ? fitProfileRow.goal : 'general';
+          const calPerKg = { fat_loss:28, hypertrophy:36, strength:34, general:32 }[goal] || 32;
+          const cals = Math.round(bw * calPerKg);
+          const protein = Math.round(bw * 2);
+          targetEl.style.display = 'block';
+          targetEl.className = 'fit-suggestion neutral';
+          targetEl.innerHTML = `Based on your latest bodyweight (${fmt(bw)}kg) and your <b>${goal.replace('_',' ')}</b> goal: roughly <b>${cals} kcal</b> and <b>${protein}g protein</b> per day is a reasonable starting target.`;
+        } else {
+          targetEl.style.display = 'block';
+          targetEl.className = 'fit-suggestion neutral';
+          targetEl.innerHTML = 'Log a bodyweight entry on the Body tab to get a personalised calorie/protein target here.';
+        }
+
+        const el = document.getElementById('fitNutritionTable');
+        if (!nut || !nut.length) { el.innerHTML = '<p class="fit-empty">No entries yet.</p>'; return; }
+        el.innerHTML = `<table class="fit-table"><thead><tr><th>Date</th><th>Cals</th><th>P/C/F</th><th></th></tr></thead><tbody>${
+          nut.map(r => `<tr><td>${fmtDate(r.logged_at)}</td><td>${r.calories ?? '—'}</td><td>${r.protein_g ?? 0}/${r.carbs_g ?? 0}/${r.fat_g ?? 0}g</td><td><button type="button" class="fit-delete-btn" data-fit-delete="fit_nutrition_logs" data-fit-id="${r.id}" data-fit-reload="nutrition" style="color:var(--ink-dim); font-size:12px;">Remove</button></td></tr>`).join('')
+        }</tbody></table>`;
+      }
+
+      // ---- INJURIES ----
+      async function loadInjuries(){
+        const id = uid(); if (!id) return;
+        const { data } = await sb.from('fit_injuries').select('*').eq('user_id', id).order('logged_at', { ascending:false });
+        const el = document.getElementById('fitInjuryTable');
+        if (!data || !data.length) { el.innerHTML = '<p class="fit-empty">Nothing logged — long may that continue.</p>'; return; }
+        el.innerHTML = data.map(r => `
+          <div class="fit-history-item">
+            <div class="fit-history-icon">🩹</div>
+            <div class="fit-history-body" style="flex:1;">
+              <b>${r.name}</b>
+              <span>${fmtDate(r.logged_at)}${r.notes ? ' — ' + r.notes : ''}</span>
+            </div>
+            <select class="fit-select" style="width:auto; padding:6px 10px; font-size:12px;" data-fit-injury-status="${r.id}">
+              <option value="active"${r.status==='active'?' selected':''}>Active</option>
+              <option value="recovering"${r.status==='recovering'?' selected':''}>Recovering</option>
+              <option value="resolved"${r.status==='resolved'?' selected':''}>Resolved</option>
+            </select>
+            <button type="button" class="fit-delete-btn" data-fit-delete="fit_injuries" data-fit-id="${r.id}" data-fit-reload="injuries" style="color:var(--ink-dim); font-size:12px; margin-left:10px;">Remove</button>
+          </div>`).join('');
+      }
+
+      // ---- FRIENDS ----
+      async function loadFriends(){
+        const id = uid(); const email = window.currentUser && window.currentUser.email;
+        if (!id || !email) return;
+        const { data } = await sb.from('fit_friends').select('*').or(`user_id.eq.${id},friend_email.eq.${email}`).order('created_at', { ascending:false });
+        const rows = data || [];
+        const incoming = rows.filter(r => r.friend_email === email && r.user_id !== id && r.status === 'pending');
+        const accepted = rows.filter(r => r.status === 'accepted');
+        const sent = rows.filter(r => r.user_id === id && r.status === 'pending');
+
+        const incomingEl = document.getElementById('fitFriendIncoming');
+        incomingEl.innerHTML = incoming.length ? incoming.map(r => `
+          <div class="fit-history-item">
+            <div class="fit-history-icon">👤</div>
+            <div class="fit-history-body" style="flex:1;"><b>${r.friend_email === email ? '' : ''}Friend request</b><span>from a Vescair member</span></div>
+            <button type="button" class="form-submit" style="width:auto; margin:0; padding:8px 14px;" data-fit-friend-accept="${r.id}">Accept</button>
+          </div>`).join('') : '<p class="fit-empty">No incoming requests.</p>';
+
+        const acceptedEl = document.getElementById('fitFriendAccepted');
+        acceptedEl.innerHTML = accepted.length ? accepted.map(r => `
+          <div class="fit-history-item"><div class="fit-history-icon">✓</div><div class="fit-history-body"><b>${r.user_id === id ? r.friend_email : 'Accepted friend'}</b><span class="fit-pill accepted">Friends</span></div></div>`).join('') : '<p class="fit-empty">No friends yet — add one by email.</p>';
+
+        const sentEl = document.getElementById('fitFriendSent');
+        sentEl.innerHTML = sent.length ? sent.map(r => `
+          <div class="fit-history-item">
+            <div class="fit-history-icon">⏳</div>
+            <div class="fit-history-body" style="flex:1;"><b>${r.friend_email}</b><span class="fit-pill pending">Pending</span></div>
+            <button type="button" class="fit-delete-btn" data-fit-delete="fit_friends" data-fit-id="${r.id}" data-fit-reload="friends" style="color:var(--ink-dim); font-size:12px;">Cancel</button>
+          </div>`).join('') : '<p class="fit-empty">No pending requests.</p>';
+      }
+
+      // ---- HISTORY (unified timeline) ----
+      async function loadHistory(){
+        const id = uid(); if (!id) return;
+        const [{ data: lifts }, { data: body }, { data: nut }, { data: inj }] = await Promise.all([
+          sb.from('fit_lifts').select('*').eq('user_id', id).order('logged_at', { ascending:false }).limit(20),
+          sb.from('fit_body_metrics').select('*').eq('user_id', id).order('logged_at', { ascending:false }).limit(20),
+          sb.from('fit_nutrition_logs').select('*').eq('user_id', id).order('logged_at', { ascending:false }).limit(20),
+          sb.from('fit_injuries').select('*').eq('user_id', id).order('logged_at', { ascending:false }).limit(20),
+        ]);
+        const items = [
+          ...(lifts||[]).map(r => ({ icon:'🏋', label:`${r.exercise} — ${fmt(r.weight)}${r.unit} × ${r.reps} (e1RM ${fmt(r.e1rm)}kg)`, date:r.logged_at })),
+          ...(body||[]).map(r => ({ icon:'⚖️', label:`Bodyweight logged — ${fmt(r.weight_kg)}kg${r.bodyfat_pct!=null ? ', '+fmt(r.bodyfat_pct)+'% body fat' : ''}`, date:r.logged_at })),
+          ...(nut||[]).map(r => ({ icon:'🍽', label:`Nutrition logged — ${r.calories ?? '—'} kcal`, date:r.logged_at })),
+          ...(inj||[]).map(r => ({ icon:'🩹', label:`Injury: ${r.name} (${r.status})`, date:r.logged_at })),
+        ].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 40);
+
+        const el = document.getElementById('fitHistoryFeed');
+        el.innerHTML = items.length ? items.map(m => `<div class="fit-history-item"><div class="fit-history-icon">${m.icon}</div><div class="fit-history-body"><b>${m.label}</b><span>${fmtDate(m.date)}</span></div></div>`).join('') : '<p class="fit-empty">Nothing logged yet.</p>';
+      }
+
+      // ---- PROFILE (training profile) ----
+      async function loadFitProfile(){
+        await ensureFitProfile();
+        if (!fitProfileRow) return;
+        document.getElementById('fitProfileGoal').value = fitProfileRow.goal || 'general';
+        document.getElementById('fitProfileExperience').value = fitProfileRow.experience_level || 'beginner';
+        document.getElementById('fitProfileUnit').value = fitProfileRow.unit_pref || 'kg';
+      }
+
+      const loaders = { overview:loadOverview, train:() => loadTrainHistory(document.getElementById('fitTrainHistoryExercise').value || 'Bench Press'), body:loadBody, nutrition:loadNutrition, injuries:loadInjuries, friends:loadFriends, history:loadHistory, profile:loadFitProfile };
+
+      function setFitTab(name){
+        fitActiveTab = name;
+        document.querySelectorAll('.fit-tab').forEach(t => t.classList.toggle('active', t.dataset.fitTab === name));
+        document.querySelectorAll('.fit-panel').forEach(p => p.classList.toggle('active', p.id === 'fitPanel-' + name));
+        if (loaders[name]) loaders[name]();
+      }
+      window.setFitTab = setFitTab;
+
+      document.getElementById('fitTabs').addEventListener('click', (e) => {
+        const btn = e.target.closest('.fit-tab'); if (!btn) return;
+        setFitTab(btn.dataset.fitTab);
+      });
+      document.querySelectorAll('[data-fit-goto]').forEach(btn => {
+        btn.addEventListener('click', () => setFitTab(btn.dataset.fitGoto));
+      });
+
+      window.renderFitPage = async function renderFitPage(){
+        if (!window.currentUser) {
+          location.hash = '#/home';
+          const { panel } = window.openModal(window.tpl.login());
+          window.wireLoginForm(panel);
+          window.showToast('Log in to open Fit Predictor.');
+          return;
+        }
+        await ensureFitProfile();
+        setFitTab('overview');
+      };
+
+      document.getElementById('fitTeaserCta').addEventListener('click', () => {
+        if (window.currentUser) { location.hash = '#/fit'; }
+        else { const { panel } = window.openModal(window.tpl.join()); }
+      });
+
+      window.addEventListener('hashchange', () => { if (location.hash === '#/fit') window.renderFitPage(); });
+      if (location.hash === '#/fit') window.renderFitPage();
+
+      // ---- exercise custom-field toggle ----
+      const liftExSel = document.getElementById('fitLiftExercise');
+      liftExSel.addEventListener('change', () => {
+        document.getElementById('fitLiftCustomField').style.display = liftExSel.value === '__custom' ? 'block' : 'none';
+      });
+
+      // ---- history exercise dropdown change ----
+      document.getElementById('fitTrainHistoryExercise').addEventListener('change', (e) => loadTrainHistory(e.target.value));
+
+      // ---- form submits ----
+      document.getElementById('fitLiftForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = uid(); if (!id) return;
+        const sel = document.getElementById('fitLiftExercise');
+        const exercise = sel.value === '__custom' ? (document.getElementById('fitLiftCustomName').value.trim() || 'Custom Lift') : sel.value;
+        const weight = parseFloat(document.getElementById('fitLiftWeight').value);
+        const unit = document.getElementById('fitLiftUnit').value;
+        const reps = parseInt(document.getElementById('fitLiftReps').value, 10);
+        const isDeload = document.getElementById('fitLiftDeload').checked;
+        const notes = document.getElementById('fitLiftNotes').value.trim();
+        if (!weight || !reps) { window.showToast('Enter a weight and reps.'); return; }
+        const e1rm = epley1RM(toKg(weight, unit), reps);
+        const { error } = await sb.from('fit_lifts').insert({ user_id:id, exercise, weight, unit, reps, e1rm, is_deload:isDeload, notes: notes || null });
+        if (error) { window.showToast('Could not log lift — try again.'); return; }
+        window.showToast('Lift logged.');
+        e.target.reset();
+        document.getElementById('fitLiftCustomField').style.display = 'none';
+        loadTrainHistory(exercise);
+      });
+
+      document.getElementById('fitBodyForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = uid(); if (!id) return;
+        const weight_kg = parseFloat(document.getElementById('fitBodyWeight').value);
+        const bodyfatVal = document.getElementById('fitBodyFat').value;
+        const bodyfat_pct = bodyfatVal ? parseFloat(bodyfatVal) : null;
+        const notes = document.getElementById('fitBodyNotes').value.trim();
+        if (!weight_kg) { window.showToast('Enter a bodyweight.'); return; }
+        const { error } = await sb.from('fit_body_metrics').insert({ user_id:id, weight_kg, bodyfat_pct, notes: notes || null });
+        if (error) { window.showToast('Could not log entry — try again.'); return; }
+        window.showToast('Bodyweight logged.');
+        e.target.reset();
+        loadBody();
+      });
+
+      document.getElementById('fitNutritionForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = uid(); if (!id) return;
+        const calories = parseInt(document.getElementById('fitNutCalories').value, 10) || null;
+        const protein_g = parseFloat(document.getElementById('fitNutProtein').value) || null;
+        const carbs_g = parseFloat(document.getElementById('fitNutCarbs').value) || null;
+        const fat_g = parseFloat(document.getElementById('fitNutFat').value) || null;
+        const notes = document.getElementById('fitNutNotes').value.trim();
+        if (!calories) { window.showToast('Enter calories.'); return; }
+        const { error } = await sb.from('fit_nutrition_logs').insert({ user_id:id, calories, protein_g, carbs_g, fat_g, notes: notes || null });
+        if (error) { window.showToast('Could not log entry — try again.'); return; }
+        window.showToast('Nutrition logged.');
+        e.target.reset();
+        loadNutrition();
+      });
+
+      document.getElementById('fitInjuryForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = uid(); if (!id) return;
+        const name = document.getElementById('fitInjuryName').value.trim();
+        const status = document.getElementById('fitInjuryStatus').value;
+        const notes = document.getElementById('fitInjuryNotes').value.trim();
+        if (!name) { window.showToast('Enter what the injury is.'); return; }
+        const { error } = await sb.from('fit_injuries').insert({ user_id:id, name, status, notes: notes || null });
+        if (error) { window.showToast('Could not log injury — try again.'); return; }
+        window.showToast('Injury logged.');
+        e.target.reset();
+        loadInjuries();
+      });
+
+      document.getElementById('fitFriendForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = uid(); if (!id) return;
+        const email = document.getElementById('fitFriendEmail').value.trim().toLowerCase();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { window.showToast('Enter a valid email address.'); return; }
+        if (email === (window.currentUser.email || '').toLowerCase()) { window.showToast("That's your own email."); return; }
+        const { error } = await sb.from('fit_friends').insert({ user_id:id, friend_email:email, status:'pending' });
+        if (error) { window.showToast('Could not send request — try again.'); return; }
+        window.showToast('Friend request sent.');
+        e.target.reset();
+        loadFriends();
+      });
+
+      document.getElementById('fitProfileForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = uid(); if (!id) return;
+        const goal = document.getElementById('fitProfileGoal').value;
+        const experience_level = document.getElementById('fitProfileExperience').value;
+        const unit_pref = document.getElementById('fitProfileUnit').value;
+        const { error } = await sb.from('fit_profile').update({ goal, experience_level, unit_pref, updated_at: new Date().toISOString() }).eq('user_id', id);
+        if (error) { window.showToast('Could not save — try again.'); return; }
+        fitProfileRow = { ...fitProfileRow, goal, experience_level, unit_pref };
+        window.showToast('Training profile saved.');
+      });
+
+      // ---- delegated: delete rows, accept friend requests, update injury status ----
+      document.addEventListener('click', async (e) => {
+        const delBtn = e.target.closest('[data-fit-delete]');
+        if (delBtn) {
+          const table = delBtn.dataset.fitDelete, id = delBtn.dataset.fitId, reload = delBtn.dataset.fitReload;
+          await sb.from(table).delete().eq('id', id);
+          if (reload === 'train') loadTrainHistory(document.getElementById('fitTrainHistoryExercise').value);
+          else if (loaders[reload]) loaders[reload]();
+          return;
+        }
+        const acceptBtn = e.target.closest('[data-fit-friend-accept]');
+        if (acceptBtn) {
+          await sb.from('fit_friends').update({ status:'accepted' }).eq('id', acceptBtn.dataset.fitFriendAccept);
+          window.showToast('Friend request accepted.');
+          loadFriends();
+        }
+      });
+      document.addEventListener('change', async (e) => {
+        const sel = e.target.closest('[data-fit-injury-status]');
+        if (sel) {
+          await sb.from('fit_injuries').update({ status: sel.value }).eq('id', sel.dataset.fitInjuryStatus);
+          window.showToast('Injury status updated.');
+        }
+      });
+
+    } catch (err) {
+      console.error('Fit Predictor did not initialize:', err);
+    }
+  })();
+
   // ===== Countdown timer =====
   (function countdown(){
     const target = new Date('2026-09-05T20:00:00Z').getTime();
@@ -2037,14 +2844,14 @@
   // Store: products, cart (localStorage), checkout, discount, order email
   // ===================================================================
   const RS_PRODUCTS = [
-    { id: 'p1', name: 'RS Track Jacket', category: 'Apparel', price: 68, sizes: ['S','M','L','XL'], seed: 'trackjacket' },
-    { id: 'p2', name: 'RS Track Pants', category: 'Apparel', price: 58, sizes: ['S','M','L','XL'], seed: 'trackpants' },
-    { id: 'p3', name: 'RS Pullover Hoodie', category: 'Apparel', price: 64, sizes: ['S','M','L','XL'], seed: 'pulloverhoodie' },
-    { id: 'p4', name: 'RS Zip Hoodie', category: 'Apparel', price: 68, sizes: ['S','M','L','XL'], seed: 'ziphoodie' },
-    { id: 'p5', name: 'RS Crew Tee', category: 'Apparel', price: 34, sizes: ['S','M','L','XL'], seed: 'crewtee' },
-    { id: 'p6', name: 'RS Quarter-Zip', category: 'Apparel', price: 58, sizes: ['S','M','L','XL'], seed: 'quarterzip' },
-    { id: 'p7', name: 'RS Snapback Cap', category: 'Accessories', price: 28, sizes: ['One Size'], seed: 'snapback' },
-    { id: 'p8', name: 'RS Bucket Hat', category: 'Accessories', price: 26, sizes: ['One Size'], seed: 'buckethat' },
+    { id: 'p1', name: 'Vescair Track Jacket', category: 'Apparel', price: 68, sizes: ['S','M','L','XL'], seed: 'trackjacket' },
+    { id: 'p2', name: 'Vescair Track Pants', category: 'Apparel', price: 58, sizes: ['S','M','L','XL'], seed: 'trackpants' },
+    { id: 'p3', name: 'Vescair Pullover Hoodie', category: 'Apparel', price: 64, sizes: ['S','M','L','XL'], seed: 'pulloverhoodie' },
+    { id: 'p4', name: 'Vescair Zip Hoodie', category: 'Apparel', price: 68, sizes: ['S','M','L','XL'], seed: 'ziphoodie' },
+    { id: 'p5', name: 'Vescair Crew Tee', category: 'Apparel', price: 34, sizes: ['S','M','L','XL'], seed: 'crewtee' },
+    { id: 'p6', name: 'Vescair Quarter-Zip', category: 'Apparel', price: 58, sizes: ['S','M','L','XL'], seed: 'quarterzip' },
+    { id: 'p7', name: 'Vescair Snapback Cap', category: 'Accessories', price: 28, sizes: ['One Size'], seed: 'snapback' },
+    { id: 'p8', name: 'Vescair Bucket Hat', category: 'Accessories', price: 26, sizes: ['One Size'], seed: 'buckethat' },
   ];
   window.RS_PRODUCTS = RS_PRODUCTS;
 
@@ -2296,6 +3103,60 @@
     const form = document.getElementById('chauffeurForm');
     if (!form) return;
 
+    // ---- Lagos pickup zones ----
+    // Illustrative zone list — blue = pickup allowed, purple = allowed with a
+    // limited-coverage warning, red = not currently allowed. The server has
+    // its own copy of this exact list and re-checks it independently; this
+    // client copy only drives the map UI and instant feedback.
+    const LAGOS_ZONES = [
+      { id:'ikoyi', name:'Ikoyi', status:'blue' },
+      { id:'victoria-island', name:'Victoria Island', status:'blue' },
+      { id:'lekki-phase-1', name:'Lekki Phase 1', status:'blue' },
+      { id:'ikeja-gra', name:'Ikeja GRA', status:'blue' },
+      { id:'ajah', name:'Lekki / Ajah', status:'purple' },
+      { id:'yaba', name:'Yaba', status:'purple' },
+      { id:'magodo', name:'Magodo', status:'purple' },
+      { id:'surulere', name:'Surulere', status:'red' },
+      { id:'apapa', name:'Apapa', status:'red' },
+      { id:'oshodi', name:'Oshodi', status:'red' },
+    ];
+    let selectedZone = null;
+
+    const citySelect = document.getElementById('chauffeurCity');
+    const lagosWrap = document.getElementById('lagosZoneWrap');
+    const zoneMapEl = document.getElementById('lagosZoneMap');
+    const zoneNoticeEl = document.getElementById('lagosZoneNotice');
+
+    zoneMapEl.innerHTML = LAGOS_ZONES.map(z => `<div class="zone-tile ${z.status}" data-zone="${z.id}">${z.name}</div>`).join('');
+
+    function renderZoneNotice(){
+      if (!selectedZone) { zoneNoticeEl.style.display = 'none'; return; }
+      zoneNoticeEl.style.display = 'block';
+      if (selectedZone.status === 'red') {
+        zoneNoticeEl.className = 'fit-suggestion warn';
+        zoneNoticeEl.innerHTML = `Pickup isn't currently available in <b>${selectedZone.name}</b>. Please choose a blue or purple zone, or pick a different city.`;
+      } else if (selectedZone.status === 'purple') {
+        zoneNoticeEl.className = 'fit-suggestion deload';
+        zoneNoticeEl.innerHTML = `Pickup is allowed in <b>${selectedZone.name}</b>, but driver coverage is limited here — expect a longer wait than usual.`;
+      } else {
+        zoneNoticeEl.className = 'fit-suggestion up';
+        zoneNoticeEl.innerHTML = `<b>${selectedZone.name}</b> is a fully covered pickup zone.`;
+      }
+    }
+
+    zoneMapEl.addEventListener('click', (e) => {
+      const tile = e.target.closest('.zone-tile'); if (!tile) return;
+      selectedZone = LAGOS_ZONES.find(z => z.id === tile.dataset.zone) || null;
+      zoneMapEl.querySelectorAll('.zone-tile').forEach(t => t.classList.toggle('selected', t === tile));
+      renderZoneNotice();
+    });
+
+    citySelect.addEventListener('change', () => {
+      const isLagos = citySelect.value === 'lagos';
+      lagosWrap.style.display = isLagos ? 'block' : 'none';
+      if (!isLagos) { selectedZone = null; zoneNoticeEl.style.display = 'none'; zoneMapEl.querySelectorAll('.zone-tile').forEach(t => t.classList.remove('selected')); }
+    });
+
     const dateInput = document.getElementById('chauffeurDate');
     const rushNotice = document.getElementById('rushNotice');
     const RUSH_HOURS = 24;
@@ -2365,6 +3226,18 @@
         wrap.classList.toggle('invalid', !ok);
         if (!ok) valid = false;
       });
+
+      const city = citySelect.value;
+      if (city === 'lagos') {
+        if (!selectedZone) {
+          if (window.showToast) window.showToast('Select your pickup zone on the map.');
+          valid = false;
+        } else if (selectedZone.status === 'red') {
+          renderZoneNotice();
+          if (window.showToast) window.showToast('Pickup is not available in that zone — choose a blue or purple zone.');
+          valid = false;
+        }
+      }
       if (!valid) return;
 
       const submitBtn = document.getElementById('chauffeurSubmitBtn');
@@ -2373,6 +3246,8 @@
 
       const payload = {
         userId: window.currentUser.id,
+        city,
+        pickupZone: city === 'lagos' && selectedZone ? selectedZone.id : null,
         customerName: document.getElementById('chauffeurName').value.trim(),
         customerEmail: document.getElementById('chauffeurEmail').value.trim(),
         pickupLocation: document.getElementById('chauffeurPickup').value.trim(),
