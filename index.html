@@ -7,6 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://basemaps.cartocdn.com">
+<link rel="preconnect" href="https://a.basemaps.cartocdn.com">
+<link rel="preconnect" href="https://b.basemaps.cartocdn.com">
+<link rel="preconnect" href="https://nominatim.openstreetmap.org">
 <style>
   :root{
     --bg:#0a0a0c; --panel:#141418; --panel-2:#1b1b20;
@@ -515,7 +519,11 @@
   .map-result-item{ padding:10px 14px; font-size:12.5px; cursor:pointer; border-bottom:1px solid var(--line); }
   .map-result-item:last-child{ border-bottom:none; }
   .map-result-item:hover{ background:rgba(232,163,61,0.1); color:var(--amber); }
-  #chauffeurMap{ width:100%; height:320px; border-radius:10px; margin-top:10px; border:1px solid var(--line); background:var(--panel-2); }
+  .map-container{ position:relative; margin-top:10px; }
+  #chauffeurMap{ width:100%; height:320px; border-radius:10px; border:1px solid var(--line); background:var(--panel-2); transition: height 0.25s ease; }
+  .map-container.expanded #chauffeurMap{ height:min(72vh, 680px); }
+  .map-expand-btn{ position:absolute; top:12px; right:12px; z-index:1000; background:rgba(20,20,24,0.85); backdrop-filter:blur(6px); border:1px solid var(--line); color:var(--ink); font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; padding:8px 13px; border-radius:8px; transition: border-color 0.15s ease, color 0.15s ease; }
+  .map-expand-btn:hover{ border-color:var(--amber); color:var(--amber); }
   .leaflet-popup-content-wrapper, .leaflet-popup-tip{ background:var(--panel); color:var(--ink); }
   .zone-label-marker{ background:none; border:none; }
   .zone-label-marker span{ background:rgba(10,10,12,0.75); color:#fff; font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:999px; white-space:nowrap; }
@@ -1091,7 +1099,10 @@
           </div>
           <input id="chauffeurMapSearch" placeholder="Search an address, postcode, or road…" autocomplete="off">
           <div id="chauffeurMapSearchResults" class="map-search-results"></div>
-          <div id="chauffeurMap"></div>
+          <div class="map-container" id="chauffeurMapContainer">
+            <div id="chauffeurMap"></div>
+            <button type="button" class="map-expand-btn" id="mapExpandBtn" aria-label="Expand map">⤢ Expand</button>
+          </div>
           <div class="fit-suggestion neutral" id="lagosZoneNotice" style="display:none; margin-top:10px;"></div>
           <p style="font-size:12px; color:var(--ink-dim); margin-top:8px;">Tap the map to drop a pin, or search above. Toggle pickup/drop-off with the buttons.</p>
         </div>
@@ -3301,13 +3312,45 @@
     // keep working — only the map picker itself degrades.
     try {
       if (!window.L) throw new Error('Leaflet did not load.');
-      map = L.map('chauffeurMap', { zoomControl:true }).setView(CITIES.london.center, CITIES.london.zoom);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors', maxZoom:19,
+      map = L.map('chauffeurMap', { zoomControl:true, preferCanvas:true }).setView(CITIES.london.center, CITIES.london.zoom);
+      // CartoDB's dark basemap: same free/no-key OSM data underneath, but a
+      // faster CDN than the stock OSM tile servers and dark by default, so
+      // it matches the site instead of flashing bright white while it loads.
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd', maxZoom:19,
       }).addTo(map);
       pickupIcon = L.divIcon({ className:'', html:'<div style="width:16px;height:16px;border-radius:50%;background:#e8a33d;border:3px solid #1a1204;"></div>', iconSize:[16,16] });
       dropoffIcon = L.divIcon({ className:'', html:'<div style="width:16px;height:16px;border-radius:2px;background:#f3f1ea;border:3px solid #0a0a0c;"></div>', iconSize:[16,16] });
       map.on('click', (e) => placePin(e.latlng));
+
+      // Leaflet measures its container once, at creation time — if the
+      // container was 0×0 or partially hidden then (e.g. this page wasn't
+      // visible yet, or a transition was still running), tiles only ever
+      // load for that stale size and you get the "half-rendered" map you
+      // saw. A ResizeObserver catches every real size change (becoming
+      // visible, the expand button, a window resize) and re-measures
+      // automatically, so this fixes itself instead of needing a guessed
+      // timeout after every possible cause.
+      const mapContainerEl = document.getElementById('chauffeurMapContainer');
+      if (window.ResizeObserver && mapContainerEl) {
+        const ro = new ResizeObserver(() => map.invalidateSize());
+        ro.observe(mapContainerEl);
+      }
+
+      // Expand/collapse toggle — makes the map noticeably bigger to work
+      // with, without leaving the booking form.
+      const expandBtn = document.getElementById('mapExpandBtn');
+      if (expandBtn && mapContainerEl) {
+        expandBtn.addEventListener('click', () => {
+          const expanded = mapContainerEl.classList.toggle('expanded');
+          expandBtn.textContent = expanded ? '⤡ Collapse' : '⤢ Expand';
+          // ResizeObserver above already calls invalidateSize once the
+          // height transition settles, but nudge it once immediately too
+          // so panning/zooming feels responsive right away.
+          map.invalidateSize();
+        });
+      }
     } catch (err) {
       console.error('Chauffeur map did not initialize (booking form still works):', err);
       const mapEl = document.getElementById('chauffeurMap');
