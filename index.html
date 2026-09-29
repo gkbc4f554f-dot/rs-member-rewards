@@ -504,8 +504,28 @@
   .zone-tile.purple{ background:rgba(178,110,224,0.22); color:#dcb8f5; }
   .zone-tile.red{ background:rgba(224,100,92,0.22); color:#f5b0aa; }
   @media (max-width:520px){ #lagosZoneMap{ grid-template-columns:repeat(2,1fr); } }
+
+  /* ===== Real chauffeur map ===== */
+  .map-pin-toggle{ display:flex; gap:8px; margin-bottom:10px; }
+  .map-pin-btn{ flex:1; background:var(--panel-2); border:1px solid var(--line); color:var(--ink-dim); font-size:12.5px; font-weight:700; padding:10px; border-radius:8px; transition: border-color 0.15s ease, color 0.15s ease; }
+  .map-pin-btn.active{ border-color:var(--amber); color:var(--amber); }
+  #chauffeurMapSearch{ width:100%; background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:12px 14px; color:var(--ink); font-size:14px; font-family:inherit; margin-bottom:2px; }
+  .map-search-results{ position:relative; z-index:5; }
+  .map-search-results:not(:empty){ background:var(--panel-2); border:1px solid var(--line); border-radius:8px; margin-top:4px; max-height:180px; overflow-y:auto; }
+  .map-result-item{ padding:10px 14px; font-size:12.5px; cursor:pointer; border-bottom:1px solid var(--line); }
+  .map-result-item:last-child{ border-bottom:none; }
+  .map-result-item:hover{ background:rgba(232,163,61,0.1); color:var(--amber); }
+  #chauffeurMap{ width:100%; height:320px; border-radius:10px; margin-top:10px; border:1px solid var(--line); background:var(--panel-2); }
+  .leaflet-popup-content-wrapper, .leaflet-popup-tip{ background:var(--panel); color:var(--ink); }
+  .zone-label-marker{ background:none; border:none; }
+  .zone-label-marker span{ background:rgba(10,10,12,0.75); color:#fff; font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:999px; white-space:nowrap; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/themes/dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
 </head>
 <body>
 
@@ -518,7 +538,7 @@
     <a href="#/videos" data-page="videos">Videos</a>
     <a href="#/store" data-page="store">Store</a>
     <a href="#/chauffeur" data-page="chauffeur">Chauffeur</a>
-    <a href="#/fit" data-page="fit">Fit</a>
+    <a href="fit.html">Fit</a>
     <a href="#/support" data-page="support">Support</a>
   </div>
   <div class="nav-right">
@@ -1059,28 +1079,35 @@
           <div class="form-error">Enter a valid email address.</div>
         </div>
 
-        <div id="lagosZoneWrap" style="display:none;">
-          <div class="form-field">
-            <label>Pickup Zone</label>
-            <p style="font-size:12px; color:var(--ink-dim); margin:-4px 0 10px;">Tap your pickup area on the map. <span style="color:#7fb4e8;">Blue</span> = pickup available. <span style="color:#c99ae8;">Purple</span> = available, limited coverage. <span style="color:#f28b85;">Red</span> = not currently available.</p>
-          </div>
-          <div id="lagosZoneMap"></div>
-          <div class="fit-suggestion neutral" id="lagosZoneNotice" style="display:none; margin-top:12px;"></div>
+        <div class="form-field" id="lagosZoneLegendField" style="display:none;">
+          <p style="font-size:12px; color:var(--ink-dim); margin:0;"><span style="color:#7fb4e8;">● Blue</span> = pickup available &nbsp; <span style="color:#c99ae8;">● Purple</span> = available, limited coverage &nbsp; <span style="color:#f28b85;">● Red</span> = not currently available</p>
         </div>
 
+        <div class="form-field">
+          <label>Pickup / Drop-off</label>
+          <div class="map-pin-toggle">
+            <button type="button" class="map-pin-btn active" id="mapModePickup" data-mode="pickup">📍 Set Pickup</button>
+            <button type="button" class="map-pin-btn" id="mapModeDropoff" data-mode="dropoff">🏁 Set Drop-off</button>
+          </div>
+          <input id="chauffeurMapSearch" placeholder="Search an address, postcode, or road…" autocomplete="off">
+          <div id="chauffeurMapSearchResults" class="map-search-results"></div>
+          <div id="chauffeurMap"></div>
+          <div class="fit-suggestion neutral" id="lagosZoneNotice" style="display:none; margin-top:10px;"></div>
+          <p style="font-size:12px; color:var(--ink-dim); margin-top:8px;">Tap the map to drop a pin, or search above. Toggle pickup/drop-off with the buttons.</p>
+        </div>
         <div class="form-field" id="chauffeurPickupField">
-          <label for="chauffeurPickup">Pickup Location</label>
-          <input id="chauffeurPickup" placeholder="Exact address or landmark" required>
-          <div class="form-error">Enter a pickup location.</div>
+          <label>Pickup Location</label>
+          <input id="chauffeurPickup" readonly placeholder="Tap the map or search above">
+          <div class="form-error">Set a pickup location on the map.</div>
         </div>
         <div class="form-field" id="chauffeurDropoffField">
-          <label for="chauffeurDropoff">Drop-off Location</label>
-          <input id="chauffeurDropoff" required>
-          <div class="form-error">Enter a drop-off location.</div>
+          <label>Drop-off Location</label>
+          <input id="chauffeurDropoff" readonly placeholder="Tap the map or search above">
+          <div class="form-error">Set a drop-off location on the map.</div>
         </div>
         <div class="form-field" id="chauffeurDateField">
           <label for="chauffeurDate">Pickup Date & Time</label>
-          <input id="chauffeurDate" type="datetime-local" required>
+          <input id="chauffeurDate" placeholder="Choose a date and time" required>
           <div class="form-error">Choose a valid future date and time.</div>
         </div>
         <div class="form-field" id="chauffeurPassengersField">
@@ -2606,7 +2633,7 @@
       };
 
       document.getElementById('fitTeaserCta').addEventListener('click', () => {
-        if (window.currentUser) { location.hash = '#/fit'; }
+        if (window.currentUser) { location.href = 'fit.html'; }
         else { const { panel } = window.openModal(window.tpl.join()); }
       });
 
@@ -3103,59 +3130,189 @@
     const form = document.getElementById('chauffeurForm');
     if (!form) return;
 
-    // ---- Lagos pickup zones ----
-    // Illustrative zone list — blue = pickup allowed, purple = allowed with a
-    // limited-coverage warning, red = not currently allowed. The server has
-    // its own copy of this exact list and re-checks it independently; this
-    // client copy only drives the map UI and instant feedback.
+    // ---- cities ----
+    const CITIES = {
+      london: { name:'London', center:[51.5074, -0.1278], zoom:11 },
+      lagos:  { name:'Lagos',  center:[6.5244, 3.3792],  zoom:11 },
+      dubai:  { name:'Dubai',  center:[25.2048, 55.2708], zoom:11 },
+    };
+
+    // ---- Lagos pickup zones (illustrative, approximate real coordinates) ----
+    // blue = pickup allowed, purple = allowed with a limited-coverage warning,
+    // red = not currently allowed. The server has its own copy of this exact
+    // list and re-checks the dropped pin's coordinates independently.
     const LAGOS_ZONES = [
-      { id:'ikoyi', name:'Ikoyi', status:'blue' },
-      { id:'victoria-island', name:'Victoria Island', status:'blue' },
-      { id:'lekki-phase-1', name:'Lekki Phase 1', status:'blue' },
-      { id:'ikeja-gra', name:'Ikeja GRA', status:'blue' },
-      { id:'ajah', name:'Lekki / Ajah', status:'purple' },
-      { id:'yaba', name:'Yaba', status:'purple' },
-      { id:'magodo', name:'Magodo', status:'purple' },
-      { id:'surulere', name:'Surulere', status:'red' },
-      { id:'apapa', name:'Apapa', status:'red' },
-      { id:'oshodi', name:'Oshodi', status:'red' },
+      { id:'ikoyi', name:'Ikoyi', status:'blue', center:[6.4531,3.4352], radius:1800 },
+      { id:'victoria-island', name:'Victoria Island', status:'blue', center:[6.4281,3.4219], radius:2200 },
+      { id:'lekki-phase-1', name:'Lekki Phase 1', status:'blue', center:[6.4406,3.4734], radius:2000 },
+      { id:'ikeja-gra', name:'Ikeja GRA', status:'blue', center:[6.5793,3.3556], radius:1800 },
+      { id:'ajah', name:'Lekki / Ajah', status:'purple', center:[6.4698,3.5852], radius:3000 },
+      { id:'yaba', name:'Yaba', status:'purple', center:[6.5147,3.3708], radius:1500 },
+      { id:'magodo', name:'Magodo', status:'purple', center:[6.6083,3.3853], radius:1800 },
+      { id:'surulere', name:'Surulere', status:'red', center:[6.4924,3.3452], radius:1800 },
+      { id:'apapa', name:'Apapa', status:'red', center:[6.4491,3.3592], radius:1800 },
+      { id:'oshodi', name:'Oshodi', status:'red', center:[6.5560,3.3087], radius:1800 },
     ];
-    let selectedZone = null;
+    const ZONE_COLOR = { blue:'#5a96e0', purple:'#b26ee0', red:'#e0645c' };
+
+    function haversineMeters(a, b){
+      const R = 6371000, toRad = d => d * Math.PI / 180;
+      const dLat = toRad(b[0]-a[0]), dLon = toRad(b[1]-a[1]);
+      const s = Math.sin(dLat/2)**2 + Math.cos(toRad(a[0]))*Math.cos(toRad(b[0]))*Math.sin(dLon/2)**2;
+      return 2 * R * Math.asin(Math.sqrt(s));
+    }
+    function zoneForPoint(latlng){
+      for (const z of LAGOS_ZONES) {
+        if (haversineMeters([latlng.lat, latlng.lng], z.center) <= z.radius) return z;
+      }
+      return null;
+    }
 
     const citySelect = document.getElementById('chauffeurCity');
-    const lagosWrap = document.getElementById('lagosZoneWrap');
-    const zoneMapEl = document.getElementById('lagosZoneMap');
+    const legendField = document.getElementById('lagosZoneLegendField');
     const zoneNoticeEl = document.getElementById('lagosZoneNotice');
+    const pickupInput = document.getElementById('chauffeurPickup');
+    const dropoffInput = document.getElementById('chauffeurDropoff');
+    const searchInput = document.getElementById('chauffeurMapSearch');
+    const searchResultsEl = document.getElementById('chauffeurMapSearchResults');
+    const modeBtns = { pickup: document.getElementById('mapModePickup'), dropoff: document.getElementById('mapModeDropoff') };
 
-    zoneMapEl.innerHTML = LAGOS_ZONES.map(z => `<div class="zone-tile ${z.status}" data-zone="${z.id}">${z.name}</div>`).join('');
+    let activeMode = 'pickup';
+    let pickupCoord = null, dropoffCoord = null, pickupZoneId = null;
+    let zoneLayers = [];
+    let map = null, pickupMarker = null, dropoffMarker = null, pickupIcon = null, dropoffIcon = null;
 
-    function renderZoneNotice(){
-      if (!selectedZone) { zoneNoticeEl.style.display = 'none'; return; }
-      zoneNoticeEl.style.display = 'block';
-      if (selectedZone.status === 'red') {
+    function renderZoneNotice(zone){
+      if (!zone) {
+        zoneNoticeEl.style.display = 'block';
         zoneNoticeEl.className = 'fit-suggestion warn';
-        zoneNoticeEl.innerHTML = `Pickup isn't currently available in <b>${selectedZone.name}</b>. Please choose a blue or purple zone, or pick a different city.`;
-      } else if (selectedZone.status === 'purple') {
+        zoneNoticeEl.innerHTML = `That pickup point isn't inside a covered zone. Please drop the pickup pin inside a highlighted area.`;
+        return;
+      }
+      zoneNoticeEl.style.display = 'block';
+      if (zone.status === 'red') {
+        zoneNoticeEl.className = 'fit-suggestion warn';
+        zoneNoticeEl.innerHTML = `Pickup isn't currently available in <b>${zone.name}</b>. Please choose a blue or purple zone.`;
+      } else if (zone.status === 'purple') {
         zoneNoticeEl.className = 'fit-suggestion deload';
-        zoneNoticeEl.innerHTML = `Pickup is allowed in <b>${selectedZone.name}</b>, but driver coverage is limited here — expect a longer wait than usual.`;
+        zoneNoticeEl.innerHTML = `Pickup is allowed in <b>${zone.name}</b>, but driver coverage is limited here — expect a longer wait than usual.`;
       } else {
         zoneNoticeEl.className = 'fit-suggestion up';
-        zoneNoticeEl.innerHTML = `<b>${selectedZone.name}</b> is a fully covered pickup zone.`;
+        zoneNoticeEl.innerHTML = `<b>${zone.name}</b> is a fully covered pickup zone.`;
       }
     }
 
-    zoneMapEl.addEventListener('click', (e) => {
-      const tile = e.target.closest('.zone-tile'); if (!tile) return;
-      selectedZone = LAGOS_ZONES.find(z => z.id === tile.dataset.zone) || null;
-      zoneMapEl.querySelectorAll('.zone-tile').forEach(t => t.classList.toggle('selected', t === tile));
-      renderZoneNotice();
+    function clearZoneLayers(){ if (!map) return; zoneLayers.forEach(l => map.removeLayer(l)); zoneLayers = []; }
+
+    function drawLagosZones(){
+      if (!map) return;
+      clearZoneLayers();
+      LAGOS_ZONES.forEach(z => {
+        const circle = L.circle(z.center, { radius:z.radius, color:ZONE_COLOR[z.status], fillColor:ZONE_COLOR[z.status], fillOpacity:0.22, weight:2 }).addTo(map);
+        const label = L.marker(z.center, { icon: L.divIcon({ className:'zone-label-marker', html:`<span>${z.name}</span>`, iconSize:[0,0] }) }).addTo(map);
+        zoneLayers.push(circle, label);
+      });
+    }
+
+    async function reverseGeocode(latlng){
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latlng.lat}&lon=${latlng.lng}`);
+        const data = await res.json();
+        return (data && data.display_name) || `${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`;
+      } catch { return `${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`; }
+    }
+
+    async function placePin(latlng){
+      if (!map) return;
+      const label = await reverseGeocode(latlng);
+      if (activeMode === 'pickup') {
+        pickupCoord = { lat: latlng.lat, lng: latlng.lng, address: label };
+        pickupInput.value = label;
+        if (pickupMarker) map.removeLayer(pickupMarker);
+        pickupMarker = L.marker(latlng, { icon: pickupIcon, draggable:true }).addTo(map).bindPopup('Pickup').openPopup();
+        pickupMarker.on('dragend', (e) => placePinFromMarker('pickup', e.target.getLatLng()));
+        if (citySelect.value === 'lagos') {
+          const zone = zoneForPoint(latlng);
+          pickupZoneId = zone ? zone.id : null;
+          renderZoneNotice(zone);
+        }
+      } else {
+        dropoffCoord = { lat: latlng.lat, lng: latlng.lng, address: label };
+        dropoffInput.value = label;
+        if (dropoffMarker) map.removeLayer(dropoffMarker);
+        dropoffMarker = L.marker(latlng, { icon: dropoffIcon, draggable:true }).addTo(map).bindPopup('Drop-off').openPopup();
+        dropoffMarker.on('dragend', (e) => placePinFromMarker('dropoff', e.target.getLatLng()));
+      }
+      document.getElementById(activeMode === 'pickup' ? 'chauffeurPickupField' : 'chauffeurDropoffField').classList.remove('invalid');
+    }
+    function placePinFromMarker(mode, latlng){ const prev = activeMode; activeMode = mode; placePin(latlng); activeMode = prev; }
+
+    Object.entries(modeBtns).forEach(([mode, btn]) => {
+      btn.addEventListener('click', () => {
+        activeMode = mode;
+        Object.entries(modeBtns).forEach(([m, b]) => b.classList.toggle('active', m === mode));
+      });
+    });
+
+    let searchTimer = null;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      const q = searchInput.value.trim();
+      if (q.length < 3) { searchResultsEl.innerHTML = ''; return; }
+      searchTimer = setTimeout(async () => {
+        try {
+          const cityName = CITIES[citySelect.value].name;
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&q=${encodeURIComponent(q + ', ' + cityName)}`);
+          const results = await res.json();
+          searchResultsEl.innerHTML = results.map((r,i) => `<div class="map-result-item" data-i="${i}">${r.display_name}</div>`).join('') || '';
+          searchResultsEl.dataset.results = JSON.stringify(results);
+        } catch { /* Nominatim unreachable — user can still tap the map directly */ }
+      }, 500);
+    });
+    searchResultsEl.addEventListener('click', (e) => {
+      const item = e.target.closest('.map-result-item'); if (!item) return;
+      const results = JSON.parse(searchResultsEl.dataset.results || '[]');
+      const r = results[+item.dataset.i]; if (!r) return;
+      const latlng = L.latLng(+r.lat, +r.lon);
+      if (map) map.setView(latlng, 15);
+      placePin(latlng);
+      searchInput.value = '';
+      searchResultsEl.innerHTML = '';
     });
 
     citySelect.addEventListener('change', () => {
-      const isLagos = citySelect.value === 'lagos';
-      lagosWrap.style.display = isLagos ? 'block' : 'none';
-      if (!isLagos) { selectedZone = null; zoneNoticeEl.style.display = 'none'; zoneMapEl.querySelectorAll('.zone-tile').forEach(t => t.classList.remove('selected')); }
+      const city = citySelect.value;
+      const isLagos = city === 'lagos';
+      legendField.style.display = isLagos ? 'block' : 'none';
+      if (isLagos) drawLagosZones(); else clearZoneLayers();
+      if (!isLagos) { zoneNoticeEl.style.display = 'none'; pickupZoneId = null; }
+      if (map) {
+        map.setView(CITIES[city].center, CITIES[city].zoom);
+        // Reset pins on city change — a pin dropped in the old city is meaningless in the new one.
+        if (pickupMarker) { map.removeLayer(pickupMarker); pickupMarker = null; }
+        if (dropoffMarker) { map.removeLayer(dropoffMarker); dropoffMarker = null; }
+      }
+      pickupCoord = null; dropoffCoord = null;
+      pickupInput.value = ''; dropoffInput.value = '';
     });
+
+    // Map setup is isolated in its own try/catch: if the map CDN is blocked
+    // or slow, the rest of the booking form (name/email/date/submit) must
+    // keep working — only the map picker itself degrades.
+    try {
+      if (!window.L) throw new Error('Leaflet did not load.');
+      map = L.map('chauffeurMap', { zoomControl:true }).setView(CITIES.london.center, CITIES.london.zoom);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors', maxZoom:19,
+      }).addTo(map);
+      pickupIcon = L.divIcon({ className:'', html:'<div style="width:16px;height:16px;border-radius:50%;background:#e8a33d;border:3px solid #1a1204;"></div>', iconSize:[16,16] });
+      dropoffIcon = L.divIcon({ className:'', html:'<div style="width:16px;height:16px;border-radius:2px;background:#f3f1ea;border:3px solid #0a0a0c;"></div>', iconSize:[16,16] });
+      map.on('click', (e) => placePin(e.latlng));
+    } catch (err) {
+      console.error('Chauffeur map did not initialize (booking form still works):', err);
+      const mapEl = document.getElementById('chauffeurMap');
+      if (mapEl) mapEl.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--ink-dim); font-size:13px; text-align:center; padding:20px;">Map couldn\'t load — please refresh, or contact support to book by phone.</div>';
+    }
 
     const dateInput = document.getElementById('chauffeurDate');
     const rushNotice = document.getElementById('rushNotice');
@@ -3173,17 +3330,37 @@
         rushNotice.classList.remove('show');
       }
     }
-    dateInput.addEventListener('input', checkRush);
+    // Same isolation principle as the map above: if the calendar library
+    // fails to load, the date field just falls back to being a plain text
+    // input — the rest of the form (submit handler, prefill, rush check)
+    // must keep working regardless.
+    try {
+      if (!window.flatpickr) throw new Error('Flatpickr did not load.');
+      flatpickr(dateInput, {
+        enableTime: true, dateFormat: 'Y-m-d\\TH:i', altInput: true, altFormat: 'j F Y \\a\\t H:i',
+        minDate: 'today', minuteIncrement: 15, theme: 'dark',
+        onChange: checkRush,
+      });
+    } catch (err) {
+      console.error('Chauffeur date picker did not initialize (form still works):', err);
+      dateInput.type = 'datetime-local';
+      dateInput.addEventListener('change', checkRush);
+    }
 
-    // Pre-fill from account if logged in
+    // Pre-fill from account if logged in, and fix the map's size once its
+    // container is actually visible (Leaflet measures 0x0 while display:none).
     document.addEventListener('hashchange', () => {
-      if (location.hash === '#/chauffeur' && window.currentUser && window.currentProfile) {
-        const nameInput = document.getElementById('chauffeurName');
-        const emailInput = document.getElementById('chauffeurEmail');
-        if (nameInput && !nameInput.value) nameInput.value = window.currentProfile.full_name || '';
-        if (emailInput && !emailInput.value) emailInput.value = window.currentUser.email || '';
+      if (location.hash === '#/chauffeur') {
+        if (map) setTimeout(() => map.invalidateSize(), 50);
+        if (window.currentUser && window.currentProfile) {
+          const nameInput = document.getElementById('chauffeurName');
+          const emailInput = document.getElementById('chauffeurEmail');
+          if (nameInput && !nameInput.value) nameInput.value = window.currentProfile.full_name || '';
+          if (emailInput && !emailInput.value) emailInput.value = window.currentUser.email || '';
+        }
       }
     });
+    if (location.hash === '#/chauffeur' && map) setTimeout(() => map.invalidateSize(), 50);
 
     let pollTimer = null;
     function pollBookingStatus(bookingId){
@@ -3214,8 +3391,6 @@
       const fields = [
         { fieldId: 'chauffeurNameField', inputId: 'chauffeurName', validate: v => v.length > 0 },
         { fieldId: 'chauffeurEmailField', inputId: 'chauffeurEmail', validate: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
-        { fieldId: 'chauffeurPickupField', inputId: 'chauffeurPickup', validate: v => v.length > 0 },
-        { fieldId: 'chauffeurDropoffField', inputId: 'chauffeurDropoff', validate: v => v.length > 0 },
         { fieldId: 'chauffeurDateField', inputId: 'chauffeurDate', validate: v => v.length > 0 && new Date(v).getTime() > Date.now() },
       ];
       let valid = true;
@@ -3227,13 +3402,21 @@
         if (!ok) valid = false;
       });
 
+      document.getElementById('chauffeurPickupField').classList.toggle('invalid', !pickupCoord);
+      document.getElementById('chauffeurDropoffField').classList.toggle('invalid', !dropoffCoord);
+      if (!pickupCoord || !dropoffCoord) {
+        if (window.showToast) window.showToast('Drop a pickup and drop-off pin on the map.');
+        valid = false;
+      }
+
       const city = citySelect.value;
-      if (city === 'lagos') {
-        if (!selectedZone) {
-          if (window.showToast) window.showToast('Select your pickup zone on the map.');
+      if (city === 'lagos' && pickupCoord) {
+        const zone = zoneForPoint(L.latLng(pickupCoord.lat, pickupCoord.lng));
+        renderZoneNotice(zone);
+        if (!zone) {
+          if (window.showToast) window.showToast('Drop the pickup pin inside a highlighted zone.');
           valid = false;
-        } else if (selectedZone.status === 'red') {
-          renderZoneNotice();
+        } else if (zone.status === 'red') {
           if (window.showToast) window.showToast('Pickup is not available in that zone — choose a blue or purple zone.');
           valid = false;
         }
@@ -3246,8 +3429,10 @@
 
       const payload = {
         userId: window.currentUser.id,
+        pickupLat: pickupCoord.lat, pickupLng: pickupCoord.lng,
+        dropoffLat: dropoffCoord.lat, dropoffLng: dropoffCoord.lng,
         city,
-        pickupZone: city === 'lagos' && selectedZone ? selectedZone.id : null,
+        pickupZone: city === 'lagos' ? pickupZoneId : null,
         customerName: document.getElementById('chauffeurName').value.trim(),
         customerEmail: document.getElementById('chauffeurEmail').value.trim(),
         pickupLocation: document.getElementById('chauffeurPickup').value.trim(),
