@@ -1,9 +1,14 @@
 // netlify/functions/_lib/airtable.js
 // Shared by several functions — keeps Airtable as a synced mirror of Supabase,
 // keyed by email, so the user can view/manage entrants as a real spreadsheet.
+// Also used to pull the driver roster for chauffeur bookings.
+
+function tableUrl(tableName) {
+  return `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${encodeURIComponent(tableName)}`;
+}
 
 function airtableUrl() {
-  return `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${encodeURIComponent(process.env.AIRTABLE_TABLE_NAME || "Signups")}`;
+  return tableUrl(process.env.AIRTABLE_TABLE_NAME || "Signups");
 }
 
 async function findRecordByEmail(email) {
@@ -43,4 +48,19 @@ async function upsertAirtableRecord(email, fields) {
   }
 }
 
-module.exports = { findRecordByEmail, upsertAirtableRecord };
+// Driver roster lives in its own Airtable table (default name "Drivers"),
+// with at minimum "Name" and "Email" columns. Add more drivers by adding
+// rows there directly — no code change needed.
+async function getDrivers() {
+  const tableName = process.env.AIRTABLE_DRIVERS_TABLE || "Drivers";
+  const res = await fetch(tableUrl(tableName), {
+    headers: { Authorization: `Bearer ${process.env.AIRTABLE_TOKEN}` },
+  });
+  if (!res.ok) throw new Error("Airtable drivers fetch failed: " + (await res.text()));
+  const data = await res.json();
+  return (data.records || [])
+    .map(r => ({ name: r.fields.Name, email: r.fields.Email, city: r.fields.City || null }))
+    .filter(d => d.name && d.email);
+}
+
+module.exports = { findRecordByEmail, upsertAirtableRecord, getDrivers };
