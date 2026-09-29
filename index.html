@@ -7,9 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="preconnect" href="https://basemaps.cartocdn.com">
-<link rel="preconnect" href="https://a.basemaps.cartocdn.com">
-<link rel="preconnect" href="https://b.basemaps.cartocdn.com">
+<link rel="preconnect" href="https://a.tile.openstreetmap.org">
+<link rel="preconnect" href="https://b.tile.openstreetmap.org">
+<link rel="preconnect" href="https://c.tile.openstreetmap.org">
 <link rel="preconnect" href="https://nominatim.openstreetmap.org">
 <style>
   :root{
@@ -524,6 +524,10 @@
   .map-container.expanded #chauffeurMap{ height:min(72vh, 680px); }
   .map-expand-btn{ position:absolute; top:12px; right:12px; z-index:1000; background:rgba(20,20,24,0.85); backdrop-filter:blur(6px); border:1px solid var(--line); color:var(--ink); font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; padding:8px 13px; border-radius:8px; transition: border-color 0.15s ease, color 0.15s ease; }
   .map-expand-btn:hover{ border-color:var(--amber); color:var(--amber); }
+  /* Standard OpenStreetMap tiles are bright/white by default — invert +
+     hue-rotate turns them into a passable dark map so it matches the rest
+     of the site, without needing a paid/key-gated dark tile provider. */
+  .leaflet-tile-pane{ filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.9) saturate(0.7); }
   .leaflet-popup-content-wrapper, .leaflet-popup-tip{ background:var(--panel); color:var(--ink); }
   .zone-label-marker{ background:none; border:none; }
   .zone-label-marker span{ background:rgba(10,10,12,0.75); color:#fff; font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:999px; white-space:nowrap; }
@@ -3313,12 +3317,11 @@
     try {
       if (!window.L) throw new Error('Leaflet did not load.');
       map = L.map('chauffeurMap', { zoomControl:true, preferCanvas:true }).setView(CITIES.london.center, CITIES.london.zoom);
-      // CartoDB's dark basemap: same free/no-key OSM data underneath, but a
-      // faster CDN than the stock OSM tile servers and dark by default, so
-      // it matches the site instead of flashing bright white while it loads.
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: 'abcd', maxZoom:19,
+      // Standard OpenStreetMap tiles — free, no API key required. (CartoDB's
+      // dark basemap turned out to need a key now, so we're not using it.)
+      // The CSS below dims/tints these to sit better against the dark page.
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors', maxZoom:19,
       }).addTo(map);
       pickupIcon = L.divIcon({ className:'', html:'<div style="width:16px;height:16px;border-radius:50%;background:#e8a33d;border:3px solid #1a1204;"></div>', iconSize:[16,16] });
       dropoffIcon = L.divIcon({ className:'', html:'<div style="width:16px;height:16px;border-radius:2px;background:#f3f1ea;border:3px solid #0a0a0c;"></div>', iconSize:[16,16] });
