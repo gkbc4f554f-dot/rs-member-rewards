@@ -264,7 +264,7 @@
   .chauffeur-hero{ padding: 150px 5vw 40px; }
   .chauffeur-hero h1{ font-size: clamp(32px,5vw,48px); margin-bottom:14px; }
   .chauffeur-hero p{ color:var(--ink-dim); max-width:560px; font-size:15px; line-height:1.6; }
-  .chauffeur-layout{ display:grid; grid-template-columns:1fr 1fr; gap:24px; padding:0 5vw 90px; align-items:start; }
+  .chauffeur-layout{ display:grid; grid-template-columns:1fr 1fr; gap:24px; padding:0 5vw 40px; align-items:start; }
   .rush-notice{ display:none; font-size:12.5px; color:var(--amber); background:rgba(232,163,61,0.1); border:1px solid rgba(232,163,61,0.3); padding:12px 14px; border-radius:8px; margin-bottom:14px; }
   .rush-notice.show{ display:block; }
   .searching-state{ display:none; text-align:center; padding:40px 10px; }
@@ -537,6 +537,19 @@
 
   /* price comparison */
   .chauffeur-side{ display:flex; flex-direction:column; gap:24px; }
+  .chauffeur-side{ align-self:stretch; }
+  .ride-summary{ position:sticky; top:90px; }
+  .rs-list{ margin:0; display:grid; gap:10px; }
+  .rs-list div{ display:flex; justify-content:space-between; gap:16px; font-size:13.5px; border-bottom:1px solid var(--line); padding-bottom:8px; }
+  .rs-list dt{ color:var(--ink-dim); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; flex-shrink:0; }
+  .rs-list dd{ margin:0; text-align:right; word-break:break-word; }
+  .rs-list dd.empty{ color:var(--ink-dim); opacity:0.6; }
+  .rs-rush{ margin-top:12px; font-size:13px; color:var(--amber); font-weight:700; }
+  .chauffeur-faq{ max-width:1100px; margin:0 auto; padding:0 5vw 90px; }
+  .chauffeur-faq h3{ margin-bottom:14px; }
+  .chauffeur-faq details{ background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 18px; margin-bottom:10px; }
+  .chauffeur-faq summary{ cursor:pointer; font-weight:700; font-size:14px; }
+  .chauffeur-faq details p{ margin:10px 0 0; font-size:13.5px; color:var(--ink-dim); line-height:1.6; }
   .price-compare{ }
   .price-compare .pc-head{ display:flex; flex-wrap:wrap; gap:18px; align-items:flex-end; justify-content:space-between; margin-bottom:10px; }
   .price-compare .pc-stat b{ display:block; font-family:'Anton',sans-serif; font-size:30px; color:var(--amber); }
@@ -1208,6 +1221,9 @@
       </div>
     </div>
     <div class="chauffeur-side">
+    <div class="profile-card car-card" id="carCard" style="padding:0; overflow:hidden;">
+      <img src="car-hero.jpg" alt="A Vescair chauffeur car" style="width:100%; display:block; aspect-ratio:16/10; object-fit:cover;" onerror="this.closest('.car-card').style.display='none'">
+    </div>
     <div class="profile-card">
       <h3>How It Works</h3>
       <div class="steps" style="display:flex; flex-direction:column; gap:16px;">
@@ -1234,7 +1250,20 @@
       <svg id="pcChart" viewBox="0 0 520 260" role="img" aria-label="Line chart: the Vescair price stays below the market price"></svg>
       <div class="pc-legend"><span><i style="background:#e8a33d;"></i>Vescair</span><span><i style="background:#9a99a1;"></i>Market price</span></div>
     </div>
+    <div class="profile-card ride-summary" id="rideSummary">
+      <h3>Your ride</h3>
+      <p style="font-size:12.5px; color:var(--ink-dim); margin:0 0 12px;">Fills in as you complete the form.</p>
+      <dl class="rs-list" id="rsList"></dl>
+      <div class="rs-rush" id="rsRush" style="display:none;"></div>
     </div>
+    </div>
+  </div>
+  <div class="chauffeur-faq">
+    <h3>Good to know</h3>
+    <details><summary>How does the same-day fee work?</summary><p>Book at least 24 hours ahead and there is no extra charge. If your pickup is less than 24 hours away, a flat £200 rush fee applies, shown before you submit.</p></details>
+    <details><summary>When is my ride confirmed?</summary><p>Your request goes to available drivers in your city. You get an email the moment a driver accepts, and the booking shows as confirmed on the site.</p></details>
+    <details><summary>Where do you operate?</summary><p>London, Lagos and Dubai. London and Dubai are covered across the map. In Lagos, pickups are available in the blue and purple zones; the red areas are not currently covered.</p></details>
+    <details><summary>Can I choose the car, mood and temperature?</summary><p>Yes. Pick a brand and model, a mood for the ride, and a cabin temperature. Your driver is asked to match them.</p></details>
   </div>
 </div>
 
@@ -3494,7 +3523,7 @@
         list.querySelectorAll('.combo-item').forEach((el, i) => { el.textContent = items[i]; });
       }
       function open(){ loadVehicles().then(() => { render(); combo.classList.add('open'); }); }
-      function pick(v){ input.value = v; combo.classList.remove('open'); if (onPick) onPick(v); }
+      function pick(v){ if (typeof v !== 'string') return; input.value = v; combo.classList.remove('open'); if (onPick) onPick(v); }
       input.addEventListener('focus', open);
       input.addEventListener('click', open);
       input.addEventListener('input', () => { render(); combo.classList.add('open'); if (onPick) onPick(input.value, true); });
@@ -3503,10 +3532,11 @@
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
           e.preventDefault();
           if (!combo.classList.contains('open')) { open(); return; }
-          active = (active + (e.key === 'ArrowDown' ? 1 : -1) + els.length) % (els.length || 1);
+          if (!els.length) return;
+          active = (active + (e.key === 'ArrowDown' ? 1 : -1) + els.length) % els.length;
           els.forEach((el, i) => el.classList.toggle('active', i === active));
           if (els[active]) els[active].scrollIntoView({ block:'nearest' });
-        } else if (e.key === 'Enter' && combo.classList.contains('open') && active >= 0) {
+        } else if (e.key === 'Enter' && combo.classList.contains('open') && active >= 0 && items[active]) {
           e.preventDefault(); pick(items[active]);
         } else if (e.key === 'Escape') { combo.classList.remove('open'); }
       });
@@ -3637,6 +3667,43 @@
       dateInput.type = 'datetime-local';
       dateInput.addEventListener('change', checkRush);
     }
+
+    // ---- live "Your ride" summary ----
+    (function(){
+      const list = document.getElementById('rsList'), rush = document.getElementById('rsRush');
+      if (!list) return;
+      const val = id => (document.getElementById(id) || {}).value || '';
+      const rows = [
+        ['City', () => { const s = document.getElementById('chauffeurCity'); return s ? s.options[s.selectedIndex].textContent : ''; }],
+        ['Pickup', () => val('chauffeurPickup')],
+        ['Drop-off', () => val('chauffeurDropoff')],
+        ['When', () => { const v = val('chauffeurDate'); if (!v) return ''; const d = new Date(v); return isNaN(d) ? '' : d.toLocaleString('en-GB', { weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }); }],
+        ['Passengers', () => val('chauffeurPassengers')],
+        ['Car', () => [val('vehicleBrand'), val('vehicleModel')].filter(Boolean).join(' ')],
+        ['Mood', () => { const s = document.getElementById('chauffeurMood'); return s && s.value ? s.value : ''; }],
+        ['Cabin', () => val('chauffeurTemp') ? val('chauffeurTemp') + ' °C' : ''],
+      ];
+      let last = '';
+      function render(){
+        const vals = rows.map(r => r[1]());
+        const sig = vals.join('|');
+        if (sig === last) return; last = sig;
+        list.innerHTML = '';
+        rows.forEach((r, i) => {
+          const wrap = document.createElement('div');
+          const dt = document.createElement('dt'); dt.textContent = r[0];
+          const dd = document.createElement('dd');
+          dd.textContent = vals[i] || '—'; if (!vals[i]) dd.className = 'empty';
+          wrap.appendChild(dt); wrap.appendChild(dd); list.appendChild(wrap);
+        });
+        const v = val('chauffeurDate');
+        const hrs = v ? (new Date(v).getTime() - Date.now()) / 3600000 : null;
+        if (hrs !== null && hrs >= 0 && hrs < RUSH_HOURS) { rush.style.display = 'block'; rush.textContent = 'Same-day rush fee: £' + RUSH_FEE; }
+        else rush.style.display = 'none';
+      }
+      render();
+      setInterval(render, 400);
+    })();
 
     // Pre-fill from account if logged in, and fix the map's size once its
     // container is actually visible (Leaflet measures 0x0 while display:none).
