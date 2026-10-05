@@ -92,6 +92,8 @@ exports.handler = async (event) => {
     mood ? `<b>Mood:</b> ${esc(mood)}` : "",
     temperature !== null ? `<b>Cabin temperature:</b> ${temperature}°C` : "",
   ].filter(Boolean).map(l => `<br>${l}`).join("");
+  // Passengers are capped at 5 (re-checked here, never trusting the browser).
+  const paxCount = Math.min(5, Math.max(1, parseInt(passengers, 10) || 1));
   const city = VALID_CITIES.includes(data.city) ? data.city : "london";
 
   if (
@@ -154,7 +156,7 @@ exports.handler = async (event) => {
         pickup_location: pickupLocation, dropoff_location: dropoffLocation,
         pickup_lat: pickupLat, pickup_lng: pickupLng,
         dropoff_lat: dropoffLat, dropoff_lng: dropoffLng,
-        pickup_datetime: pickupDate.toISOString(), passengers: passengers || 1,
+        pickup_datetime: pickupDate.toISOString(), passengers: paxCount,
         notes: notes || null, city, pickup_zone: pickupZone,
         mood, temperature, vehicle_brand: vehicleBrand, vehicle_model: vehicleModel,
         is_rush: isRush, rush_fee: rushFee, status: "searching", confirm_token: confirmToken,
@@ -192,7 +194,7 @@ exports.handler = async (event) => {
                 <p><b>Pickup:</b> ${pickupLocation}${pickupZone ? ` (zone: ${pickupZone})` : ""}<br>
                 <b>Drop-off:</b> ${dropoffLocation}<br>
                 <b>When:</b> ${pickupDate.toUTCString()}<br>
-                <b>Passengers:</b> ${passengers || 1}${prefLines}${isRush ? `<br><b>Rush fee applies:</b> £${RUSH_SURCHARGE}` : ""}</p>
+                <b>Passengers:</b> ${paxCount}${prefLines}${isRush ? `<br><b>Rush fee applies:</b> £${RUSH_SURCHARGE}` : ""}</p>
                 <p><a href="${confirmUrl}" style="background:#e8a33d; color:#1a1204; font-weight:800; padding:12px 22px; border-radius:999px; text-decoration:none; display:inline-block;">Accept this ride</a></p>
                 <p style="color:#888; font-size:13px;">First driver to accept gets it — this link stops working once someone else confirms.</p>
               </div>`,
