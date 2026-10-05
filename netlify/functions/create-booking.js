@@ -78,6 +78,20 @@ exports.handler = async (event) => {
     pickupDateTime, passengers, notes,
     pickupLat, pickupLng, dropoffLat, dropoffLng,
   } = data;
+  // New preference fields: trimmed, length-capped, and HTML-escaped before
+  // they are ever put in an email.
+  const clean = (v, n) => (typeof v === "string" ? v.trim().slice(0, n) : "") || null;
+  const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+  const mood = clean(data.mood, 40);
+  const vehicleBrand = clean(data.vehicleBrand, 60);
+  const vehicleModel = clean(data.vehicleModel, 80);
+  const tempNum = Number(data.temperature);
+  const temperature = Number.isFinite(tempNum) && tempNum >= 10 && tempNum <= 30 ? tempNum : null;
+  const prefLines = [
+    vehicleBrand || vehicleModel ? `<b>Car wanted:</b> ${esc([vehicleBrand, vehicleModel].filter(Boolean).join(" "))}` : "",
+    mood ? `<b>Mood:</b> ${esc(mood)}` : "",
+    temperature !== null ? `<b>Cabin temperature:</b> ${temperature}°C` : "",
+  ].filter(Boolean).map(l => `<br>${l}`).join("");
   const city = VALID_CITIES.includes(data.city) ? data.city : "london";
 
   if (
@@ -142,6 +156,7 @@ exports.handler = async (event) => {
         dropoff_lat: dropoffLat, dropoff_lng: dropoffLng,
         pickup_datetime: pickupDate.toISOString(), passengers: passengers || 1,
         notes: notes || null, city, pickup_zone: pickupZone,
+        mood, temperature, vehicle_brand: vehicleBrand, vehicle_model: vehicleModel,
         is_rush: isRush, rush_fee: rushFee, status: "searching", confirm_token: confirmToken,
       }),
     });
@@ -177,7 +192,7 @@ exports.handler = async (event) => {
                 <p><b>Pickup:</b> ${pickupLocation}${pickupZone ? ` (zone: ${pickupZone})` : ""}<br>
                 <b>Drop-off:</b> ${dropoffLocation}<br>
                 <b>When:</b> ${pickupDate.toUTCString()}<br>
-                <b>Passengers:</b> ${passengers || 1}${isRush ? `<br><b>Rush fee applies:</b> £${RUSH_SURCHARGE}` : ""}</p>
+                <b>Passengers:</b> ${passengers || 1}${prefLines}${isRush ? `<br><b>Rush fee applies:</b> £${RUSH_SURCHARGE}` : ""}</p>
                 <p><a href="${confirmUrl}" style="background:#e8a33d; color:#1a1204; font-weight:800; padding:12px 22px; border-radius:999px; text-decoration:none; display:inline-block;">Accept this ride</a></p>
                 <p style="color:#888; font-size:13px;">First driver to accept gets it — this link stops working once someone else confirms.</p>
               </div>`,
