@@ -539,6 +539,20 @@
   .chauffeur-side{ display:flex; flex-direction:column; gap:24px; }
   .chauffeur-side{ align-self:stretch; }
   .ride-summary{ position:sticky; top:90px; }
+  .stepper{ display:flex; align-items:stretch; gap:8px; }
+  .stepper input{ text-align:center; font-weight:700; -moz-appearance:textfield; appearance:textfield; }
+  .stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+  .stepper-btn{ width:52px; flex-shrink:0; background:var(--panel-2); border:1px solid var(--line); border-radius:8px; color:var(--ink); font-size:20px; font-weight:700; font-family:inherit; cursor:pointer; transition:border-color 0.15s ease, color 0.15s ease, background 0.15s ease; }
+  .stepper-btn:hover:not(:disabled){ border-color:var(--amber); color:var(--amber); background:rgba(232,163,61,0.08); }
+  .stepper-btn:disabled{ opacity:0.35; cursor:not-allowed; }
+  .cov-row{ display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--line); }
+  .cov-row:last-child{ border-bottom:none; padding-bottom:0; }
+  .cov-row i{ width:10px; height:10px; border-radius:50%; margin-top:5px; flex-shrink:0; }
+  .cov-row b{ display:block; font-size:14px; }
+  .cov-row span{ display:block; font-size:12.5px; color:var(--ink-dim); line-height:1.5; margin-top:2px; }
+  .inc-list{ margin:10px 0 0; padding:0; list-style:none; display:grid; gap:10px; }
+  .inc-list li{ position:relative; padding-left:22px; font-size:13.5px; line-height:1.5; }
+  .inc-list li::before{ content:"✓"; position:absolute; left:0; color:var(--amber); font-weight:800; }
   .rs-list{ margin:0; display:grid; gap:10px; }
   .rs-list div{ display:flex; justify-content:space-between; gap:16px; font-size:13.5px; border-bottom:1px solid var(--line); padding-bottom:8px; }
   .rs-list dt{ color:var(--ink-dim); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; flex-shrink:0; }
@@ -1166,7 +1180,13 @@
         </div>
         <div class="form-field" id="chauffeurPassengersField">
           <label for="chauffeurPassengers">Passengers</label>
-          <input id="chauffeurPassengers" type="number" min="1" max="8" value="1">
+          <div class="stepper">
+            <button type="button" class="stepper-btn" id="paxMinus" aria-label="Fewer passengers">−</button>
+            <input id="chauffeurPassengers" type="number" min="1" max="5" value="1" inputmode="numeric">
+            <button type="button" class="stepper-btn" id="paxPlus" aria-label="More passengers">+</button>
+          </div>
+          <p style="font-size:12px; color:var(--ink-dim); margin:6px 0 0;">Up to 5 passengers per ride.</p>
+          <div class="form-error">Up to 5 passengers per ride.</div>
         </div>
         <div class="form-field" id="chauffeurMoodField">
           <label for="chauffeurMood">Mood</label>
@@ -1249,6 +1269,21 @@
       <p style="font-size:13px; color:var(--ink-dim); margin:0 0 10px;">Cost of a chauffeur hour, compared. Ours is cheaper every hour.</p>
       <svg id="pcChart" viewBox="0 0 520 260" role="img" aria-label="Line chart: the Vescair price stays below the market price"></svg>
       <div class="pc-legend"><span><i style="background:#e8a33d;"></i>Vescair</span><span><i style="background:#9a99a1;"></i>Market price</span></div>
+    </div>
+    <div class="profile-card" id="coverageCard">
+      <h3>Where we cover</h3>
+      <div class="cov-row"><i style="background:#5a96e0;"></i><div><b>London</b><span>Covered across the city</span></div></div>
+      <div class="cov-row"><i style="background:#5a96e0;"></i><div><b>Dubai</b><span>Covered across the city</span></div></div>
+      <div class="cov-row"><i style="background:#b26ee0;"></i><div><b>Lagos</b><span>Blue: Ikoyi, Victoria Island, Lekki Phase 1, Ikeja GRA. Purple (longer wait): Lekki / Ajah, Yaba, Magodo. Other areas are not currently covered.</span></div></div>
+    </div>
+    <div class="profile-card" id="includedCard">
+      <h3>What's included</h3>
+      <ul class="inc-list">
+        <li>Choose your car, the mood of the ride and the cabin temperature</li>
+        <li>An email the moment a driver accepts, with the details</li>
+        <li>Free with 24 hours' notice; a flat £200 for same-day rides</li>
+        <li>A members-only service in London, Lagos and Dubai</li>
+      </ul>
     </div>
     <div class="profile-card ride-summary" id="rideSummary">
       <h3>Your ride</h3>
@@ -3668,6 +3703,20 @@
       dateInput.addEventListener('change', checkRush);
     }
 
+    // Passengers: 1 to 5 only (clamped as soon as the field changes)
+    (function(){
+      const pax = document.getElementById('chauffeurPassengers'); if (!pax) return;
+      const clamp = () => { if (pax.value === '') return; let n = parseInt(pax.value, 10); if (isNaN(n)) n = 1; pax.value = Math.min(5, Math.max(1, n)); };
+      const minus = document.getElementById('paxMinus'), plus = document.getElementById('paxPlus');
+      const refresh = () => { const n = parseInt(pax.value, 10) || 1; minus.disabled = n <= 1; plus.disabled = n >= 5; };
+      const bump = d => { pax.value = Math.min(5, Math.max(1, (parseInt(pax.value, 10) || 1) + d)); refresh(); };
+      minus.addEventListener('click', () => bump(-1));
+      plus.addEventListener('click', () => bump(1));
+      pax.addEventListener('input', () => { clamp(); refresh(); });
+      refresh();
+      pax.addEventListener('blur', () => { if (pax.value === '') pax.value = 1; clamp(); });
+    })();
+
     // ---- live "Your ride" summary ----
     (function(){
       const list = document.getElementById('rsList'), rush = document.getElementById('rsRush');
@@ -3796,7 +3845,7 @@
         pickupLocation: document.getElementById('chauffeurPickup').value.trim(),
         dropoffLocation: document.getElementById('chauffeurDropoff').value.trim(),
         pickupDateTime: new Date(dateInput.value).toISOString(),
-        passengers: document.getElementById('chauffeurPassengers').value,
+        passengers: Math.min(5, Math.max(1, parseInt(document.getElementById('chauffeurPassengers').value, 10) || 1)),
         notes: document.getElementById('chauffeurNotes').value.trim(),
         mood: document.getElementById('chauffeurMood').value || null,
         temperature: document.getElementById('chauffeurTemp').value ? Number(document.getElementById('chauffeurTemp').value) : null,
