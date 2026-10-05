@@ -519,6 +519,27 @@
   .map-result-item{ padding:10px 14px; font-size:12.5px; cursor:pointer; border-bottom:1px solid var(--line); }
   .map-result-item:last-child{ border-bottom:none; }
   .map-result-item:hover{ background:rgba(232,163,61,0.1); color:var(--amber); }
+
+  /* searchable vehicle dropdowns (same font/colours as the rest of the form) */
+  .combo{ position:relative; }
+  .combo input{ padding-right:34px; }
+  .combo::after{ content:"▾"; position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--ink-dim); pointer-events:none; font-size:12px; }
+  .combo-list{ display:none; position:absolute; left:0; right:0; top:calc(100% + 4px); z-index:30; background:var(--panel-2); border:1px solid var(--line); border-radius:8px; max-height:240px; overflow-y:auto; box-shadow:0 12px 30px rgba(0,0,0,0.5); }
+  .combo.open .combo-list{ display:block; }
+  .combo-item{ padding:10px 14px; font-size:13.5px; font-family:inherit; cursor:pointer; border-bottom:1px solid var(--line); }
+  .combo-item:last-child{ border-bottom:none; }
+  .combo-item.active, .combo-item:hover{ background:rgba(232,163,61,0.1); color:var(--amber); }
+  .combo-empty{ padding:10px 14px; font-size:12.5px; color:var(--ink-dim); }
+  .form-field select.fit-select{ appearance:none; -webkit-appearance:none; background-image:linear-gradient(45deg,transparent 50%,var(--ink-dim) 50%),linear-gradient(135deg,var(--ink-dim) 50%,transparent 50%); background-position:calc(100% - 18px) 55%,calc(100% - 13px) 55%; background-size:5px 5px,5px 5px; background-repeat:no-repeat; padding-right:34px; }
+
+  /* price comparison */
+  .price-compare{ max-width:1100px; margin:0 auto 28px; }
+  .price-compare .pc-head{ display:flex; flex-wrap:wrap; gap:18px; align-items:flex-end; justify-content:space-between; margin-bottom:10px; }
+  .price-compare .pc-stat b{ display:block; font-family:'Anton',sans-serif; font-size:30px; color:var(--amber); }
+  .price-compare .pc-stat span{ font-size:12px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.05em; font-weight:700; }
+  .price-compare svg{ width:100%; height:auto; display:block; }
+  .pc-legend{ display:flex; gap:18px; font-size:12.5px; color:var(--ink-dim); margin-top:6px; flex-wrap:wrap; }
+  .pc-legend i{ display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; }
   .map-container{ position:relative; margin-top:10px; }
   #chauffeurMap{ width:100%; height:320px; border-radius:10px; border:1px solid var(--line); background:var(--panel-2); transition: height 0.25s ease; }
   .map-container.expanded #chauffeurMap{ height:min(72vh, 680px); }
@@ -1067,6 +1088,20 @@
     <h1 class="display">Book a Vescair Chauffeur</h1>
     <p>Members-only chauffeur service in London, Lagos, and Dubai. Book 24 hours ahead for free, or request same-day for a flat £200 rush fee. First available driver confirms your ride.</p>
   </div>
+  <div class="price-compare profile-card" id="priceCompare">
+    <div class="pc-head">
+      <div>
+        <h3 style="margin-bottom:4px;">Cheaper than the market, every hour</h3>
+        <p style="font-size:13px; color:var(--ink-dim); margin:0;">Total cost of a chauffeur booking by length of hire</p>
+      </div>
+      <div style="display:flex; gap:28px;">
+        <div class="pc-stat"><b id="pcRate"></b><span>Vescair per hour</span></div>
+        <div class="pc-stat"><b id="pcSave"></b><span>Below market</span></div>
+      </div>
+    </div>
+    <svg id="pcChart" viewBox="0 0 760 260" role="img" aria-label="Chart comparing Vescair hourly price with the market price"></svg>
+    <div class="pc-legend"><span><i style="background:#e8a33d;"></i>Vescair</span><span><i style="background:#9a99a1;"></i>Market price</span><span><i style="background:rgba(120,200,140,0.5);"></i>Your saving</span></div>
+  </div>
   <div class="chauffeur-layout">
     <div class="profile-card">
       <h3>Ride Details</h3>
@@ -1091,7 +1126,7 @@
           <div class="form-error">Enter a valid email address.</div>
         </div>
 
-        <div class="form-field" id="lagosZoneLegendField" style="display:none;">
+        <div class="form-field" id="lagosZoneLegendField">
           <p style="font-size:12px; color:var(--ink-dim); margin:0;"><span style="color:#7fb4e8;">● Blue</span> = pickup available &nbsp; <span style="color:#c99ae8;">● Purple</span> = available, limited coverage &nbsp; <span style="color:#f28b85;">● Red</span> = not currently available</p>
         </div>
 
@@ -1128,6 +1163,40 @@
         <div class="form-field" id="chauffeurPassengersField">
           <label for="chauffeurPassengers">Passengers</label>
           <input id="chauffeurPassengers" type="number" min="1" max="8" value="1">
+        </div>
+        <div class="form-field" id="chauffeurMoodField">
+          <label for="chauffeurMood">Mood</label>
+          <select class="fit-select" id="chauffeurMood">
+            <option value="">No preference</option>
+            <option>Quiet / work</option>
+            <option>Relaxed</option>
+            <option>Celebration</option>
+            <option>Romantic</option>
+            <option>Family</option>
+            <option>Business</option>
+          </select>
+        </div>
+        <div class="form-field" id="chauffeurTempField">
+          <label for="chauffeurTemp">Cabin temperature</label>
+          <select class="fit-select" id="chauffeurTemp">
+            <option value="">No preference</option>
+            <option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
+            <option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option>
+          </select>
+        </div>
+        <div class="form-field" id="vehicleBrandField">
+          <label for="vehicleBrand">Vehicle brand</label>
+          <div class="combo" id="brandCombo">
+            <input id="vehicleBrand" autocomplete="off" placeholder="Search or type a brand…">
+            <div class="combo-list"></div>
+          </div>
+        </div>
+        <div class="form-field" id="vehicleModelField">
+          <label for="vehicleModel">Vehicle model</label>
+          <div class="combo" id="modelCombo">
+            <input id="vehicleModel" autocomplete="off" placeholder="Pick a brand first, or type a model…">
+            <div class="combo-list"></div>
+          </div>
         </div>
         <div class="form-field" id="chauffeurNotesField">
           <label for="chauffeurNotes">Notes (optional)</label>
@@ -3219,11 +3288,47 @@
 
     function clearZoneLayers(){ if (!map) return; zoneLayers.forEach(l => map.removeLayer(l)); zoneLayers = []; }
 
+    // Whole-map colour wash: London and Dubai are blue everywhere; Lagos is
+    // red everywhere except the blue/purple zones, which are punched out of
+    // the red so they show their own colour. Drawn on a canvas tile layer in
+    // the overlay pane (above the tint-filtered base tiles, so the colours
+    // aren't inverted by the dark-map CSS filter).
+    let coverageLayer = null;
+    function applyCoverage(city){
+      if (!map || !window.L) return;
+      if (coverageLayer) { map.removeLayer(coverageLayer); coverageLayer = null; }
+      const isLagos = city === 'lagos';
+      const wash = isLagos ? 'rgba(224,100,92,0.30)' : 'rgba(90,150,224,0.20)';
+      const holes = isLagos ? LAGOS_ZONES.filter(z => z.status !== 'red') : [];
+      const Layer = L.GridLayer.extend({
+        createTile(coords){
+          const size = this.getTileSize();
+          const tile = document.createElement('canvas');
+          tile.width = size.x; tile.height = size.y;
+          const ctx = tile.getContext('2d');
+          ctx.fillStyle = wash;
+          ctx.fillRect(0, 0, size.x, size.y);
+          ctx.globalCompositeOperation = 'destination-out';
+          const origin = coords.scaleBy(size);
+          holes.forEach(z => {
+            const p = map.project(L.latLng(z.center), coords.z).subtract(origin);
+            const mpp = 156543.03392 * Math.cos(z.center[0] * Math.PI / 180) / Math.pow(2, coords.z);
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, z.radius / mpp, 0, Math.PI * 2);
+            ctx.fill();
+          });
+          return tile;
+        },
+      });
+      coverageLayer = new Layer({ pane:'overlayPane', tileSize:256, updateWhenIdle:false, keepBuffer:4 }).addTo(map);
+    }
+
     function drawLagosZones(){
       if (!map) return;
       clearZoneLayers();
       LAGOS_ZONES.forEach(z => {
-        const circle = L.circle(z.center, { radius:z.radius, color:ZONE_COLOR[z.status], fillColor:ZONE_COLOR[z.status], fillOpacity:0.22, weight:2 }).addTo(map);
+        const isRed = z.status === 'red';
+        const circle = L.circle(z.center, { radius:z.radius, color:ZONE_COLOR[z.status], fillColor:ZONE_COLOR[z.status], fillOpacity: isRed ? 0 : 0.22, weight:2, interactive:false }).addTo(map);
         const label = L.marker(z.center, { icon: L.divIcon({ className:'zone-label-marker', html:`<span>${z.name}</span>`, iconSize:[0,0] }) }).addTo(map);
         zoneLayers.push(circle, label);
       });
@@ -3298,7 +3403,8 @@
     citySelect.addEventListener('change', () => {
       const city = citySelect.value;
       const isLagos = city === 'lagos';
-      legendField.style.display = isLagos ? 'block' : 'none';
+      legendField.style.display = 'block';
+      applyCoverage(city);
       if (isLagos) drawLagosZones(); else clearZoneLayers();
       if (!isLagos) { zoneNoticeEl.style.display = 'none'; pickupZoneId = null; }
       if (map) {
@@ -3316,7 +3422,10 @@
     // keep working — only the map picker itself degrades.
     try {
       if (!window.L) throw new Error('Leaflet did not load.');
-      map = L.map('chauffeurMap', { zoomControl:true, preferCanvas:true }).setView(CITIES.london.center, CITIES.london.zoom);
+      map = L.map('chauffeurMap', { zoomControl:true, preferCanvas:true, attributionControl:true }).setView(CITIES.london.center, CITIES.london.zoom);
+      // Drop the "Leaflet" flag/prefix. The "© OpenStreetMap contributors"
+      // credit stays: OpenStreetMap's licence requires it.
+      if (map.attributionControl) map.attributionControl.setPrefix(false);
       // Standard OpenStreetMap tiles — free, no API key required. (CartoDB's
       // dark basemap turned out to need a key now, so we're not using it.)
       // The CSS below dims/tints these to sit better against the dark page.
@@ -3326,6 +3435,7 @@
       pickupIcon = L.divIcon({ className:'', html:'<div style="width:16px;height:16px;border-radius:50%;background:#e8a33d;border:3px solid #1a1204;"></div>', iconSize:[16,16] });
       dropoffIcon = L.divIcon({ className:'', html:'<div style="width:16px;height:16px;border-radius:2px;background:#f3f1ea;border:3px solid #0a0a0c;"></div>', iconSize:[16,16] });
       map.on('click', (e) => placePin(e.latlng));
+      applyCoverage(citySelect.value);
 
       // Leaflet measures its container once, at creation time — if the
       // container was 0×0 or partially hidden then (e.g. this page wasn't
@@ -3359,6 +3469,99 @@
       const mapEl = document.getElementById('chauffeurMap');
       if (mapEl) mapEl.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--ink-dim); font-size:13px; text-align:center; padding:20px;">Map couldn\'t load — please refresh, or contact support to book by phone.</div>';
     }
+
+    // ---- searchable vehicle dropdowns (data loads lazily from vehicles.json) ----
+    const brandInput = document.getElementById('vehicleBrand');
+    const modelInput = document.getElementById('vehicleModel');
+    let VEHICLES = null, vehiclesLoading = null;
+    function loadVehicles(){
+      if (VEHICLES) return Promise.resolve(VEHICLES);
+      if (!vehiclesLoading) {
+        vehiclesLoading = fetch('vehicles.json').then(r => r.json()).then(d => (VEHICLES = d)).catch(() => (VEHICLES = {}));
+      }
+      return vehiclesLoading;
+    }
+    function makeCombo(comboId, input, getOptions, onPick){
+      const combo = document.getElementById(comboId);
+      const list = combo.querySelector('.combo-list');
+      let items = [], active = -1;
+      function render(){
+        const q = input.value.trim().toLowerCase();
+        const all = getOptions();
+        items = (q ? all.filter(o => o.toLowerCase().includes(q)) : all).slice(0, 80);
+        active = -1;
+        list.innerHTML = items.length
+          ? items.map((o, i) => `<div class="combo-item" data-i="${i}"></div>`).join('')
+          : `<div class="combo-empty">No match — keep typing and we'll use what you enter.</div>`;
+        list.querySelectorAll('.combo-item').forEach((el, i) => { el.textContent = items[i]; });
+      }
+      function open(){ loadVehicles().then(() => { render(); combo.classList.add('open'); }); }
+      function pick(v){ input.value = v; combo.classList.remove('open'); if (onPick) onPick(v); }
+      input.addEventListener('focus', open);
+      input.addEventListener('click', open);
+      input.addEventListener('input', () => { render(); combo.classList.add('open'); if (onPick) onPick(input.value, true); });
+      input.addEventListener('keydown', (e) => {
+        const els = list.querySelectorAll('.combo-item');
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (!combo.classList.contains('open')) { open(); return; }
+          active = (active + (e.key === 'ArrowDown' ? 1 : -1) + els.length) % (els.length || 1);
+          els.forEach((el, i) => el.classList.toggle('active', i === active));
+          if (els[active]) els[active].scrollIntoView({ block:'nearest' });
+        } else if (e.key === 'Enter' && combo.classList.contains('open') && active >= 0) {
+          e.preventDefault(); pick(items[active]);
+        } else if (e.key === 'Escape') { combo.classList.remove('open'); }
+      });
+      list.addEventListener('mousedown', (e) => {
+        const el = e.target.closest('.combo-item'); if (!el) return;
+        e.preventDefault(); pick(items[+el.dataset.i]);
+      });
+      document.addEventListener('mousedown', (e) => { if (!combo.contains(e.target)) combo.classList.remove('open'); });
+    }
+    function brandKey(){
+      if (!VEHICLES) return null;
+      const v = brandInput.value.trim().toLowerCase();
+      return Object.keys(VEHICLES).find(k => k.toLowerCase() === v) || null;
+    }
+    makeCombo('brandCombo', brandInput, () => Object.keys(VEHICLES || {}).sort((a, b) => a.localeCompare(b)), (v, typing) => {
+      if (!typing) modelInput.value = '';
+      const k = brandKey();
+      modelInput.placeholder = k ? 'Search or type a model…' : 'Pick a brand first, or type a model…';
+    });
+    makeCombo('modelCombo', modelInput, () => { const k = brandKey(); return k ? VEHICLES[k] : []; });
+    brandInput.addEventListener('change', () => { modelInput.value = ''; });
+
+    // ---- price comparison chart ----
+    // Edit these two numbers to change the public prices (per hour, £).
+    // The dealer cost is deliberately NOT on the site.
+    const VESCAIR_RATE = 200, MARKET_RATE = 240;
+    (function drawPriceChart(){
+      const svg = document.getElementById('pcChart'); if (!svg) return;
+      const W = 760, H = 260, L0 = 54, R0 = 20, T0 = 34, B0 = 34, HOURS = 10;
+      const maxY = MARKET_RATE * HOURS;
+      const x = h => L0 + (W - L0 - R0) * (h - 1) / (HOURS - 1);
+      const y = v => T0 + (H - T0 - B0) * (1 - v / maxY);
+      const pts = rate => Array.from({ length: HOURS }, (_, i) => [x(i + 1), y(rate * (i + 1))]);
+      const line = p => p.map((q, i) => (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' ');
+      const m = pts(MARKET_RATE), v = pts(VESCAIR_RATE);
+      let g = '';
+      for (let i = 0; i <= 4; i++) {
+        const val = maxY * i / 4, yy = y(val);
+        g += `<line x1="${L0}" x2="${W - R0}" y1="${yy}" y2="${yy}" stroke="rgba(243,241,234,0.08)"/><text x="${L0 - 8}" y="${yy + 4}" text-anchor="end" font-size="11" fill="#9a99a1">£${Math.round(val)}</text>`;
+      }
+      for (let h = 1; h <= HOURS; h++) g += `<text x="${x(h)}" y="${H - 12}" text-anchor="middle" font-size="11" fill="#9a99a1">${h}h</text>`;
+      const area = line(m) + ' ' + v.slice().reverse().map(q => 'L' + q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' ') + ' Z';
+      const saving = (MARKET_RATE - VESCAIR_RATE) * HOURS;
+      g += `<path d="${area}" fill="rgba(120,200,140,0.18)"/>`;
+      g += `<path d="${line(m)}" fill="none" stroke="#9a99a1" stroke-width="2.5" stroke-linejoin="round"/>`;
+      g += `<path d="${line(v)}" fill="none" stroke="#e8a33d" stroke-width="3" stroke-linejoin="round"/>`;
+      g += `<circle cx="${m[HOURS-1][0]}" cy="${m[HOURS-1][1]}" r="4.5" fill="#9a99a1"/><circle cx="${v[HOURS-1][0]}" cy="${v[HOURS-1][1]}" r="4.5" fill="#e8a33d"/>`;
+      g += `<text x="${W - R0 - 8}" y="${m[HOURS-1][1] - 10}" text-anchor="end" font-size="12" font-weight="700" fill="#9a99a1">Market £${MARKET_RATE * HOURS}</text>`;
+      g += `<text x="${W - R0 - 8}" y="${v[HOURS-1][1] + 42}" text-anchor="end" font-size="12" font-weight="700" fill="#e8a33d">Vescair £${VESCAIR_RATE * HOURS} (save £${saving})</text>`;
+      svg.innerHTML = g;
+      document.getElementById('pcRate').textContent = '£' + VESCAIR_RATE;
+      document.getElementById('pcSave').textContent = Math.round((1 - VESCAIR_RATE / MARKET_RATE) * 100) + '%';
+    })();
 
     const dateInput = document.getElementById('chauffeurDate');
     const rushNotice = document.getElementById('rushNotice');
@@ -3486,6 +3689,10 @@
         pickupDateTime: new Date(dateInput.value).toISOString(),
         passengers: document.getElementById('chauffeurPassengers').value,
         notes: document.getElementById('chauffeurNotes').value.trim(),
+        mood: document.getElementById('chauffeurMood').value || null,
+        temperature: document.getElementById('chauffeurTemp').value ? Number(document.getElementById('chauffeurTemp').value) : null,
+        vehicleBrand: brandInput.value.trim() || null,
+        vehicleModel: modelInput.value.trim() || null,
       };
 
       try {
