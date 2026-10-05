@@ -529,11 +529,15 @@
   .combo-item{ padding:10px 14px; font-size:13.5px; font-family:inherit; cursor:pointer; border-bottom:1px solid var(--line); }
   .combo-item:last-child{ border-bottom:none; }
   .combo-item.active, .combo-item:hover{ background:rgba(232,163,61,0.1); color:var(--amber); }
+  .select-btn{ width:100%; text-align:left; background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:12px 34px 12px 14px; color:var(--ink); font-family:inherit; font-size:14px; cursor:pointer; }
+  .select-btn:focus{ outline:none; border-color:var(--amber); }
+  .select-combo.open .select-btn{ border-color:var(--amber); }
   .combo-empty{ padding:10px 14px; font-size:12.5px; color:var(--ink-dim); }
   .form-field select.fit-select{ appearance:none; -webkit-appearance:none; background-image:linear-gradient(45deg,transparent 50%,var(--ink-dim) 50%),linear-gradient(135deg,var(--ink-dim) 50%,transparent 50%); background-position:calc(100% - 18px) 55%,calc(100% - 13px) 55%; background-size:5px 5px,5px 5px; background-repeat:no-repeat; padding-right:34px; }
 
   /* price comparison */
-  .price-compare{ max-width:1100px; margin:0 auto 28px; }
+  .chauffeur-side{ display:flex; flex-direction:column; gap:24px; }
+  .price-compare{ }
   .price-compare .pc-head{ display:flex; flex-wrap:wrap; gap:18px; align-items:flex-end; justify-content:space-between; margin-bottom:10px; }
   .price-compare .pc-stat b{ display:block; font-family:'Anton',sans-serif; font-size:30px; color:var(--amber); }
   .price-compare .pc-stat span{ font-size:12px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.05em; font-weight:700; }
@@ -1088,20 +1092,6 @@
     <h1 class="display">Book a Vescair Chauffeur</h1>
     <p>Members-only chauffeur service in London, Lagos, and Dubai. Book 24 hours ahead for free, or request same-day for a flat £200 rush fee. First available driver confirms your ride.</p>
   </div>
-  <div class="price-compare profile-card" id="priceCompare">
-    <div class="pc-head">
-      <div>
-        <h3 style="margin-bottom:4px;">Cheaper than the market, every hour</h3>
-        <p style="font-size:13px; color:var(--ink-dim); margin:0;">Total cost of a chauffeur booking by length of hire</p>
-      </div>
-      <div style="display:flex; gap:28px;">
-        <div class="pc-stat"><b id="pcRate"></b><span>Vescair per hour</span></div>
-        <div class="pc-stat"><b id="pcSave"></b><span>Below market</span></div>
-      </div>
-    </div>
-    <svg id="pcChart" viewBox="0 0 760 260" role="img" aria-label="Chart comparing Vescair hourly price with the market price"></svg>
-    <div class="pc-legend"><span><i style="background:#e8a33d;"></i>Vescair</span><span><i style="background:#9a99a1;"></i>Market price</span><span><i style="background:rgba(120,200,140,0.5);"></i>Your saving</span></div>
-  </div>
   <div class="chauffeur-layout">
     <div class="profile-card">
       <h3>Ride Details</h3>
@@ -1144,6 +1134,7 @@
           </div>
           <div class="fit-suggestion neutral" id="lagosZoneNotice" style="display:none; margin-top:10px;"></div>
           <p style="font-size:12px; color:var(--ink-dim); margin-top:8px;">Tap the map to drop a pin, or search above. Toggle pickup/drop-off with the buttons.</p>
+          <p style="font-size:11px; color:var(--ink-dim); margin-top:4px; opacity:0.7;">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener" style="text-decoration:underline;">OpenStreetMap</a> contributors</p>
         </div>
         <div class="form-field" id="chauffeurPickupField">
           <label>Pickup Location</label>
@@ -1171,7 +1162,6 @@
             <option>Quiet / work</option>
             <option>Relaxed</option>
             <option>Celebration</option>
-            <option>Romantic</option>
             <option>Family</option>
             <option>Business</option>
           </select>
@@ -1217,6 +1207,7 @@
         <p id="chauffeurConfirmedText" style="color:var(--ink-dim); font-size:13.5px; margin-top:8px;"></p>
       </div>
     </div>
+    <div class="chauffeur-side">
     <div class="profile-card">
       <h3>How It Works</h3>
       <div class="steps" style="display:flex; flex-direction:column; gap:16px;">
@@ -1236,6 +1227,13 @@
           <p style="font-size:13px;">You'll get an email the moment your driver accepts, with all the details.</p>
         </div>
       </div>
+    </div>
+    <div class="profile-card price-compare" id="priceCompare">
+      <h3 style="margin-bottom:4px;">Vescair vs the market</h3>
+      <p style="font-size:13px; color:var(--ink-dim); margin:0 0 10px;">Cost of a chauffeur hour, compared. Ours is cheaper every hour.</p>
+      <svg id="pcChart" viewBox="0 0 520 260" role="img" aria-label="Line chart: the Vescair price stays below the market price"></svg>
+      <div class="pc-legend"><span><i style="background:#e8a33d;"></i>Vescair</span><span><i style="background:#9a99a1;"></i>Market price</span></div>
+    </div>
     </div>
   </div>
 </div>
@@ -3422,10 +3420,10 @@
     // keep working — only the map picker itself degrades.
     try {
       if (!window.L) throw new Error('Leaflet did not load.');
-      map = L.map('chauffeurMap', { zoomControl:true, preferCanvas:true, attributionControl:true }).setView(CITIES.london.center, CITIES.london.zoom);
+      map = L.map('chauffeurMap', { zoomControl:true, preferCanvas:true, attributionControl:false }).setView(CITIES.london.center, CITIES.london.zoom);
       // Drop the "Leaflet" flag/prefix. The "© OpenStreetMap contributors"
       // credit stays: OpenStreetMap's licence requires it.
-      if (map.attributionControl) map.attributionControl.setPrefix(false);
+
       // Standard OpenStreetMap tiles — free, no API key required. (CartoDB's
       // dark basemap turned out to need a key now, so we're not using it.)
       // The CSS below dims/tints these to sit better against the dark page.
@@ -3531,37 +3529,81 @@
     makeCombo('modelCombo', modelInput, () => { const k = brandKey(); return k ? VEHICLES[k] : []; });
     brandInput.addEventListener('change', () => { modelInput.value = ''; });
 
-    // ---- price comparison chart ----
-    // Edit these two numbers to change the public prices (per hour, £).
-    // The dealer cost is deliberately NOT on the site.
-    const VESCAIR_RATE = 200, MARKET_RATE = 240;
+    // ---- price comparison chart (no figures shown; just the shape) ----
     (function drawPriceChart(){
       const svg = document.getElementById('pcChart'); if (!svg) return;
-      const W = 760, H = 260, L0 = 54, R0 = 20, T0 = 34, B0 = 34, HOURS = 10;
-      const maxY = MARKET_RATE * HOURS;
-      const x = h => L0 + (W - L0 - R0) * (h - 1) / (HOURS - 1);
-      const y = v => T0 + (H - T0 - B0) * (1 - v / maxY);
-      const pts = rate => Array.from({ length: HOURS }, (_, i) => [x(i + 1), y(rate * (i + 1))]);
+      const W = 520, H = 260, L0 = 16, R0 = 16, T0 = 20, B0 = 30, N = 24;
+      // Both lines move together like a price chart; Vescair always sits below.
+      const base = i => 0.52 + 0.30 * (i / (N - 1)) + 0.06 * Math.sin(i * 0.9) + 0.035 * Math.sin(i * 2.3 + 1);
+      const mk = (f) => Array.from({ length: N }, (_, i) => {
+        const x = L0 + (W - L0 - R0) * i / (N - 1);
+        const y = T0 + (H - T0 - B0) * (1 - f(i));
+        return [x, y];
+      });
+      const mkt = mk(i => base(i));
+      const ves = mk(i => base(i) - 0.12 - 0.01 * Math.sin(i * 1.1));
       const line = p => p.map((q, i) => (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' ');
-      const m = pts(MARKET_RATE), v = pts(VESCAIR_RATE);
+      const area = line(mkt) + ' ' + ves.slice().reverse().map(q => 'L' + q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' ') + ' Z';
       let g = '';
       for (let i = 0; i <= 4; i++) {
-        const val = maxY * i / 4, yy = y(val);
-        g += `<line x1="${L0}" x2="${W - R0}" y1="${yy}" y2="${yy}" stroke="rgba(243,241,234,0.08)"/><text x="${L0 - 8}" y="${yy + 4}" text-anchor="end" font-size="11" fill="#9a99a1">£${Math.round(val)}</text>`;
+        const yy = T0 + (H - T0 - B0) * i / 4;
+        g += `<line x1="${L0}" x2="${W - R0}" y1="${yy}" y2="${yy}" stroke="rgba(243,241,234,0.07)"/>`;
       }
-      for (let h = 1; h <= HOURS; h++) g += `<text x="${x(h)}" y="${H - 12}" text-anchor="middle" font-size="11" fill="#9a99a1">${h}h</text>`;
-      const area = line(m) + ' ' + v.slice().reverse().map(q => 'L' + q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' ') + ' Z';
-      const saving = (MARKET_RATE - VESCAIR_RATE) * HOURS;
-      g += `<path d="${area}" fill="rgba(120,200,140,0.18)"/>`;
-      g += `<path d="${line(m)}" fill="none" stroke="#9a99a1" stroke-width="2.5" stroke-linejoin="round"/>`;
-      g += `<path d="${line(v)}" fill="none" stroke="#e8a33d" stroke-width="3" stroke-linejoin="round"/>`;
-      g += `<circle cx="${m[HOURS-1][0]}" cy="${m[HOURS-1][1]}" r="4.5" fill="#9a99a1"/><circle cx="${v[HOURS-1][0]}" cy="${v[HOURS-1][1]}" r="4.5" fill="#e8a33d"/>`;
-      g += `<text x="${W - R0 - 8}" y="${m[HOURS-1][1] - 10}" text-anchor="end" font-size="12" font-weight="700" fill="#9a99a1">Market £${MARKET_RATE * HOURS}</text>`;
-      g += `<text x="${W - R0 - 8}" y="${v[HOURS-1][1] + 42}" text-anchor="end" font-size="12" font-weight="700" fill="#e8a33d">Vescair £${VESCAIR_RATE * HOURS} (save £${saving})</text>`;
+      g += `<path d="${area}" fill="rgba(120,200,140,0.14)"/>`;
+      g += `<path d="${line(mkt)}" fill="none" stroke="#9a99a1" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>`;
+      g += `<path d="${line(ves)}" fill="none" stroke="#e8a33d" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"/>`;
+      const em = mkt[N - 1], ev = ves[N - 1];
+      g += `<circle cx="${em[0]}" cy="${em[1]}" r="4" fill="#9a99a1"/><circle cx="${ev[0]}" cy="${ev[1]}" r="4" fill="#e8a33d"/>`;
+      g += `<text x="${L0 + 4}" y="${mkt[0][1] - 14}" font-size="12" font-weight="700" fill="#9a99a1">Market</text>`;
+      g += `<text x="${L0 + 4}" y="${ves[0][1] + 26}" font-size="12" font-weight="700" fill="#e8a33d">Vescair</text>`;
+      g += `<text x="${W / 2}" y="${H - 8}" text-anchor="middle" font-size="11" fill="#9a99a1">Cheaper per hour, every time</text>`;
       svg.innerHTML = g;
-      document.getElementById('pcRate').textContent = '£' + VESCAIR_RATE;
-      document.getElementById('pcSave').textContent = Math.round((1 - VESCAIR_RATE / MARKET_RATE) * 100) + '%';
     })();
+
+    // ---- theme-matched dropdowns: replace the native pop-up lists in this form ----
+    document.querySelectorAll('#chauffeurForm select').forEach(sel => {
+      const wrap = document.createElement('div');
+      wrap.className = 'combo select-combo';
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'select-btn';
+      const list = document.createElement('div');
+      list.className = 'combo-list';
+      sel.parentNode.insertBefore(wrap, sel);
+      wrap.appendChild(btn); wrap.appendChild(list); wrap.appendChild(sel);
+      sel.style.display = 'none';
+      const labelFor = () => sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].textContent : '';
+      function sync(){
+        btn.textContent = labelFor() + (sel.id === 'chauffeurTemp' && sel.value ? ' °C' : '');
+        list.querySelectorAll('.combo-item').forEach((el, i) => el.classList.toggle('active', i === sel.selectedIndex));
+      }
+      Array.from(sel.options).forEach((o, i) => {
+        const el = document.createElement('div');
+        el.className = 'combo-item'; el.dataset.i = i;
+        el.textContent = o.textContent + (sel.id === 'chauffeurTemp' && o.value ? ' °C' : '');
+        list.appendChild(el);
+      });
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.select-combo.open').forEach(c => { if (c !== wrap) c.classList.remove('open'); });
+        wrap.classList.toggle('open');
+        const act = list.querySelector('.combo-item.active'); if (act) act.scrollIntoView({ block:'nearest' });
+      });
+      list.addEventListener('mousedown', (e) => {
+        const el = e.target.closest('.combo-item'); if (!el) return;
+        e.preventDefault();
+        sel.selectedIndex = +el.dataset.i;
+        sel.dispatchEvent(new Event('change', { bubbles:true }));
+        sync(); wrap.classList.remove('open');
+      });
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          const n = Math.max(0, Math.min(sel.options.length - 1, sel.selectedIndex + (e.key === 'ArrowDown' ? 1 : -1)));
+          sel.selectedIndex = n; sel.dispatchEvent(new Event('change', { bubbles:true })); sync();
+        } else if (e.key === 'Escape') wrap.classList.remove('open');
+      });
+      document.addEventListener('mousedown', (e) => { if (!wrap.contains(e.target)) wrap.classList.remove('open'); });
+      sync();
+    });
 
     const dateInput = document.getElementById('chauffeurDate');
     const rushNotice = document.getElementById('rushNotice');
